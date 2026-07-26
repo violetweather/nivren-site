@@ -2,6 +2,8 @@
 
 The official documentation and download site for the Nivren programming language compatibility beta.
 
+Live site: <https://violetweather.github.io/nivren-site/>
+
 ## Site sections
 
 - Landing page with language overview and verified implementation evidence
@@ -27,7 +29,7 @@ npm test
 npm audit --audit-level=high
 ```
 
-The deployment build targets Cloudflare Workers through vinext and the Sites Vite plugin. Hosting configuration lives in `.openai/hosting.json`.
+Pushes to `main` are validated, statically exported, and deployed to GitHub Pages by `.github/workflows/pages.yml`. The project can also be previewed through Cloudflare Workers using vinext; that hosting configuration lives in `.openai/hosting.json`.
 
 ## Release assets
 

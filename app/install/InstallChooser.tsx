@@ -43,7 +43,7 @@ export function InstallChooser() {
       {(Object.keys(instructions) as Platform[]).map(key => <button role="tab" aria-selected={platform === key} className={platform === key ? "active" : ""} key={key} onClick={() => { setPlatform(key); setCopied(false); }}>{instructions[key].label}</button>)}
     </div>
     <div className="installer-body">
-      <div className="installer-title"><div><span>{item.available}</span><h2>{item.label} installation</h2></div>{platform === "mac" && <a className="button primary" href="/downloads/nivren-0.9.0-beta.1-macos-arm64.zip">Download ZIP</a>}</div>
+      <div className="installer-title"><div><span>{item.available}</span><h2>{item.label} installation</h2></div>{platform === "mac" && <a className="button primary" href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/downloads/nivren-0.9.0-beta.1-macos-arm64.zip`}>Download ZIP</a>}</div>
       <div className="command-block install-command"><button onClick={copy} aria-label="Copy install commands">{copied ? "Copied" : "Copy"}</button><pre><code>{item.commands}</code></pre></div>
       <p className="install-note">{item.note}</p>
     </div>
