@@ -1,26 +1,26 @@
 import Link from "next/link";
 import { CodeWindow } from "./components/CodeWindow";
 
-const helloCode = `let language: String = "Nivren"
-let values: [Int] = [2, 3, 5, 7]
+const helloCode = `keep language: String = "Nivren"
+keep values: [Int] = [2, 3, 5, 7]
 
-fun sum(items: [Int]) -> Int {
-    var total: Int = 0
-    for (value in items) {
+define sum(items: [Int]) gives Int {
+    change total: Int = 0
+    each value within items {
         total = total + value
     }
-    return total
+    give total
 }
 
-print("Hello, " + language + "!")
-print(sum(values))`;
+show("Hello, " + language + "!")
+show(sum(values))`;
 
 export default function Home() {
   return (
     <>
       <section className="hero shell">
         <div className="hero-copy">
-          <div className="eyebrow"><span className="pulse" /> Edition 1 compatibility beta</div>
+          <div className="eyebrow"><span className="pulse" /> Edition 2 compatibility beta</div>
           <h1>Code that reads like <em>intent.</em></h1>
           <p className="hero-lede">
             Nivren is a safe, expressive application language with a small coherent core,
@@ -33,7 +33,7 @@ export default function Home() {
           <div className="quick-command" aria-label="Quick install command">
             <span className="prompt">$</span>
             <code>niv version</code>
-            <span className="command-result">Nivren 0.9.0-beta.1</span>
+            <span className="command-result">Nivren 0.10.0-beta.1</span>
           </div>
         </div>
         <div className="hero-code">
@@ -45,7 +45,7 @@ export default function Home() {
 
       <section className="proof-strip">
         <div className="shell proof-grid">
-          <div><strong>27 / 27</strong><span>Edition 1 conformance</span></div>
+          <div><strong>27 / 27</strong><span>Edition 2 conformance</span></div>
           <div><strong>1.906×</strong><span>tiered JIT speedup</span></div>
           <div><strong>6</strong><span>tier-one build targets</span></div>
           <div><strong>0</strong><span>unsafe Rust blocks</span></div>
@@ -65,8 +65,8 @@ export default function Home() {
             <span className="feature-number">01</span>
             <div>
               <h3>Safety you can explain</h3>
-              <p>Non-null types by default, checked integer overflow, immutable values, exhaustive matches, and a verified bytecode boundary.</p>
-              <code>let answer: Result&lt;Int, String&gt; = ok(42)</code>
+              <p>Non-null types by default, checked integer overflow, immutable values, exhaustive choices, and a verified bytecode boundary.</p>
+              <code>keep answer: Result&lt;Int, String&gt; = ok(42)</code>
             </div>
           </article>
           <article className="feature feature-tools">
@@ -85,13 +85,13 @@ export default function Home() {
             <span className="feature-number">04</span>
             <h3>Packages with receipts</h3>
             <p>Exact versions, checksum-pinned lockfiles, deterministic archives, signed provenance, advisories, and rollback protection.</p>
-            <div className="hash-line"><span>sha256</span><code>cdcb9e6f…e75a7</code></div>
+              <div className="hash-line"><span>sha256</span><code>published per artifact</code></div>
           </article>
           <article className="feature feature-large feature-clarity">
             <span className="feature-number">05</span>
             <div>
               <h3>Clarity scales better</h3>
-              <p>Lexical closures, nominal records, sealed enums, typed results, explicit modules, structured tasks, and a standard library for real applications.</p>
+              <p>Lexical closures, nominal shapes, sealed choices, typed results, explicit modules, structured tasks, and a standard library for real applications.</p>
               <Link href="/docs">Explore the language <span aria-hidden="true">↗</span></Link>
             </div>
           </article>
@@ -113,7 +113,7 @@ export default function Home() {
       <section className="cta-wrap shell">
         <div className="cta-panel">
           <div>
-            <span className="kicker light">Compatibility beta 0.9</span>
+            <span className="kicker light">Edition 2 beta 0.10</span>
             <h2>Make the next program<br />feel obvious.</h2>
           </div>
           <div className="cta-actions">

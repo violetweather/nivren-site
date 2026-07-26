@@ -14,9 +14,9 @@ export function CodeWindow({ filename, code }: { filename: string; code: string 
 }
 
 function highlight(line: string) {
-  const parts = line.split(/(\b(?:let|var|fun|for|in|return|print|String|Int)\b|"[^"]*"|\/\/.*)/g);
+  const parts = line.split(/(\b(?:keep|change|define|gives|each|within|give|show|String|Int)\b|"[^"]*"|\/\/.*)/g);
   return parts.map((part, index) => {
-    if (/^(let|var|fun|for|in|return|print)$/.test(part)) return <span className="syn-keyword" key={index}>{part}</span>;
+    if (/^(keep|change|define|gives|each|within|give|show)$/.test(part)) return <span className="syn-keyword" key={index}>{part}</span>;
     if (/^(String|Int)$/.test(part)) return <span className="syn-type" key={index}>{part}</span>;
     if (part.startsWith('"')) return <span className="syn-string" key={index}>{part}</span>;
     if (part.startsWith("//")) return <span className="syn-comment" key={index}>{part}</span>;

@@ -7,7 +7,7 @@ Live site: <https://violetweather.github.io/nivren-site/>
 ## Site sections
 
 - Landing page with language overview and verified implementation evidence
-- Searchable Edition 1 documentation
+- Searchable Edition 2 documentation
 - Platform-specific installation instructions
 - Release downloads, checksums, and provenance guidance
 - Complete language examples

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: { default: "Nivren — Code that reads like intent", template: "%s · Nivren" },
   description: "A safe, expressive application programming language with a coherent core, predictable performance, and first-party tooling.",
   keywords: ["Nivren", "programming language", "compiler", "bytecode", "JIT"],
-  openGraph: { title: "Nivren — Code that reads like intent", description: "A safe, expressive application language. Edition 1 compatibility beta.", type: "website", images: [{ url: image, width: 1200, height: 630, alt: "Nivren — Code that reads like intent." }] },
+  openGraph: { title: "Nivren — Code that reads like intent", description: "A safe, expressive application language. Edition 2 compatibility beta.", type: "website", images: [{ url: image, width: 1200, height: 630, alt: "Nivren — Code that reads like intent." }] },
   twitter: { card: "summary_large_image", images: [image] },
 };
 
