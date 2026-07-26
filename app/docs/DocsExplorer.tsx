@@ -6,6 +6,14 @@ type Section = { id: string; title: string; group: string; summary: string; body
 
 const sections: Section[] = [
   {
+    id: "install", title: "Guided installation", group: "Start here", summary: "Install the right binary and configure your tools automatically.", search: "install setup path vscode mac linux windows automatic guided",
+    body: <><p>The guided installer detects your operating system and CPU, verifies the official archive, and asks before updating PATH or installing VS Code support.</p><h3>macOS and Linux</h3><pre><code>{`curl --proto '=https' --tlsv1.2 -fsSLO \\
+  https://raw.githubusercontent.com/violetweather/nivren/main/install/install.sh
+sh install.sh`}</code></pre><h3>Windows PowerShell</h3><pre><code>{`Invoke-WebRequest https://raw.githubusercontent.com/violetweather/nivren/main/install/install.ps1 -OutFile install.ps1
+Set-ExecutionPolicy -Scope Process Bypass
+.\\install.ps1`}</code></pre><p>For automated setups, use <code className="inline-code">sh install.sh --yes</code> or <code className="inline-code">.\\install.ps1 -Yes</code>. Manual archives remain available on the Downloads page.</p></>
+  },
+  {
     id: "quickstart", title: "Quickstart", group: "Start here", summary: "Check and run your first Nivren program.", search: "install run check hello first program cli",
     body: <><p>Create a file named <code className="inline-code">hello.niv</code>, then check it before running it.</p><pre><code>{`keep name: String = "Nivren"
 show("Hello, " + name + "!")`}</code></pre><pre><code>{`niv check hello.niv

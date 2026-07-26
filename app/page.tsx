@@ -33,7 +33,7 @@ export default function Home() {
           <div className="quick-command" aria-label="Quick install command">
             <span className="prompt">$</span>
             <code>niv version</code>
-            <span className="command-result">Nivren 0.10.0-beta.1</span>
+            <span className="command-result">Nivren 0.10.0-beta.5</span>
           </div>
         </div>
         <div className="hero-code">
