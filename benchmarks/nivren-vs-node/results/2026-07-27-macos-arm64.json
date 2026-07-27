@@ -1,0 +1,112 @@
+{
+  "schema": "org.nivren.benchmark.v1",
+  "generated_at": "2026-07-27T23:03:01.790Z",
+  "methodology": {
+    "measured_processes": "fresh process per sample",
+    "ordering": "alternating Nivren-first and Node-first",
+    "statistic": "median with p95, minimum, and maximum",
+    "scope": "wall-clock source-to-result latency; not a complete language ranking"
+  },
+  "environment": {
+    "os": "darwin 24.6.0",
+    "architecture": "arm64",
+    "cpu": "Apple M4",
+    "logical_cpus": 10,
+    "nivren": "Nivren 0.10.0-beta.6",
+    "node": "v26.5.0"
+  },
+  "results": [
+    {
+      "id": "startup",
+      "label": "Source-to-result startup",
+      "description": "Parse, compile, execute, and print one integer.",
+      "runs": 21,
+      "warmups": 2,
+      "output": "42",
+      "nivren": {
+        "median_ms": 3.111,
+        "p95_ms": 3.452,
+        "min_ms": 2.634,
+        "max_ms": 4.032,
+        "peak_rss_kb": 9136
+      },
+      "node": {
+        "median_ms": 23.702,
+        "p95_ms": 25.767,
+        "min_ms": 21.974,
+        "max_ms": 25.788,
+        "peak_rss_kb": 44880
+      },
+      "node_speedup": 0.13
+    },
+    {
+      "id": "arithmetic",
+      "label": "Tiered integer loop",
+      "description": "Two million calls to a small integer kernel.",
+      "runs": 11,
+      "warmups": 3,
+      "output": "4000004",
+      "nivren": {
+        "median_ms": 788.816,
+        "p95_ms": 806.755,
+        "min_ms": 778.777,
+        "max_ms": 806.755,
+        "peak_rss_kb": 10768
+      },
+      "node": {
+        "median_ms": 26.032,
+        "p95_ms": 29.895,
+        "min_ms": 24.691,
+        "max_ms": 29.895,
+        "peak_rss_kb": 47488
+      },
+      "node_speedup": 30.3
+    },
+    {
+      "id": "fibonacci",
+      "label": "Recursive calls",
+      "description": "Naive recursive Fibonacci(30).",
+      "runs": 11,
+      "warmups": 3,
+      "output": "832040",
+      "nivren": {
+        "median_ms": 1570.085,
+        "p95_ms": 1858.531,
+        "min_ms": 1561.709,
+        "max_ms": 1858.531,
+        "peak_rss_kb": 10080
+      },
+      "node": {
+        "median_ms": 29.089,
+        "p95_ms": 41.322,
+        "min_ms": 27.522,
+        "max_ms": 41.322,
+        "peak_rss_kb": 47456
+      },
+      "node_speedup": 53.98
+    },
+    {
+      "id": "nested_loops",
+      "label": "Nested loop arithmetic",
+      "description": "A 500 × 500 checked-integer checksum.",
+      "runs": 11,
+      "warmups": 3,
+      "output": "124862000",
+      "nivren": {
+        "median_ms": 118.211,
+        "p95_ms": 125.652,
+        "min_ms": 117.543,
+        "max_ms": 125.652,
+        "peak_rss_kb": 9552
+      },
+      "node": {
+        "median_ms": 26.414,
+        "p95_ms": 29.149,
+        "min_ms": 24.769,
+        "max_ms": 29.149,
+        "peak_rss_kb": 47168
+      },
+      "node_speedup": 4.48
+    }
+  ]
+}

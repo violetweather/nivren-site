@@ -1,0 +1,11 @@
+define kernel(value: Int, salt: Int) gives Int {
+    give (value + salt) * 2
+}
+
+change index = 0
+change result = 0
+repeat index < 2000000 {
+    result = kernel(index, 3)
+    index = index + 1
+}
+show(result)
