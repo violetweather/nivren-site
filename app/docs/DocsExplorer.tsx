@@ -251,9 +251,12 @@ node tools/test_wasm_browser.mjs`}</code></pre><p>The public <code className="in
   },
   {
     id: "containers", title: "Containers", group: "Runtime", summary: "Run the CLI in a small non-root OCI image without weakening project policy.", search: "docker container oci image non-root read-only sbom amd64 arm64 deploy",
-    body: <><p>The official OCI recipe builds the release CLI into a minimal Debian image, includes certificate roots for verified TLS, runs as user/group 10001, and keeps <code className="inline-code">niv</code> as its entrypoint. Container isolation adds a boundary; Nivren capabilities and instruction/memory limits still apply inside it.</p><pre><code>{`docker build -f containers/Dockerfile -t nivren:local .
+    body: <><p>The official OCI recipe builds the release CLI into a minimal Debian image, includes certificate roots for verified TLS, runs as user/group 10001, and keeps <code className="inline-code">niv</code> as its entrypoint. Container isolation adds a boundary; Nivren capabilities and instruction/memory limits still apply inside it.</p><pre><code>{`docker pull ghcr.io/violetweather/nivren:v0.10.0-beta.6
+docker run --rm --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m ghcr.io/violetweather/nivren:v0.10.0-beta.6 version
+
+docker build -f containers/Dockerfile -t nivren:local .
 docker run --rm --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m nivren:local version
-docker run --rm -v "$PWD:/workspace" nivren:local check .`}</code></pre><p>Release automation publishes one amd64/arm64 OCI index only for an audited version tag, with maximal build provenance and an SBOM. The locally verified image is 34.6 MB; no pre-1.0 audit image is published.</p></>
+docker run --rm -v "$PWD:/workspace" nivren:local check .`}</code></pre><p>The published amd64/arm64 OCI index carries maximal build provenance and an SBOM. The image is non-root and keeps the same explicit Nivren authority model as native installations.</p></>
   },
   {
     id: "tooling", title: "Developer tooling", group: "Tools", summary: "Format, test, debug, profile, cover, and document.", search: "formatter fmt test debugger profile coverage lsp vscode docs tools",

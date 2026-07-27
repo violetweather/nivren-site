@@ -109,7 +109,7 @@ export default function Home() {
       <section className="cta-wrap shell">
         <div className="cta-panel">
           <div>
-            <span className="kicker light">Edition 3 · local release candidate work</span>
+            <span className="kicker light">Edition 3 · public beta</span>
             <h2>Make the next program<br />feel obvious.</h2>
           </div>
           <div className="cta-actions">

@@ -14,7 +14,7 @@ sh install.sh`, note: "The installer detects your architecture, verifies the arc
   windows: { label: "Windows", available: "Guided installer · x64 and ARM64", commands: `Invoke-WebRequest https://raw.githubusercontent.com/violetweather/nivren/main/install/install.ps1 -OutFile install.ps1
 Set-ExecutionPolicy -Scope Process Bypass
 .\\install.ps1`, note: "The installer verifies the archive, retains its native SDK and SBOM, and offers to update your user PATH and install the VS Code extension." },
-  source: { label: "From source", available: "Rust 1.85+", commands: `git clone https://github.com/violetweather/nivren.git
+  source: { label: "From source", available: "Rust 1.88+", commands: `git clone https://github.com/violetweather/nivren.git
 cd nivren
 cargo test --workspace --all-targets --locked
 cargo build --release --workspace --locked

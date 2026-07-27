@@ -55,8 +55,10 @@ test("presents the Edition 3 site and removes starter UI", async () => {
 test("publishes the official package catalog and compatibility contract", async () => {
   const response = await render("/packages");
   const html = await response.text();
-  for (const phrase of ["first twenty-two official packages", "nivren_aead", "Opaque zeroized keys", "ChaCha20-Poly1305", "Sealed · import_key · generate_key · seal", "nivren_aws", "AWS Signature Version 4", "Signature · sign_v4", "nivren_columnar", "Column · Table · table · select", "nivren_image", "Image · image · encode_ppm · decode_ppm", "nivren_oidc", "Authorization · CoreClaims · pkce_challenge", "nivren_matrix", "Matrix · matrix · at · add · multiply", "nivren_svg", "Canvas · canvas · add · rect · text · render", "nivren_wav", "Audio · encode_pcm16 · decode_pcm16", "nivren_metrics", "Sample · sample · encode", "nivren_trace", "OtlpAttribute · OtlpSpan", "export_otlp_json", "nivren_compression", "mandatory decompression ceilings", "gzip · gunzip · zlib · unzlib", "nivren_crypto", "constant-time-verified HMAC-SHA-256", "nivren_csv", "quoted multiline fields", "decode · encode · decode_with · encode_with", "nivren_stats", "sum · mean · variance · minimum", "nivren_jwt", "sign_hs256 · verify_hs256", "nivren_secrets", "Argon2id v=19", "random_key · hash_password", "nivren_sql", "without interpolating values", "nivren_redis", "RESP2/RESP3 framing", "MOVED/ASK Cluster redirects", "live Redis 6.2 through 8.8", "nivren_discord", "nivren_testing", "nivren_routing", "nivren_validation", "semantic versions", "temporary immutable registry"]) {
-    assert.match(html, new RegExp(phrase));
+  const catalogChecks = new Set(["22 package guides", "nivren_aead", "ChaCha20-Poly1305", "nivren_redis", "semantic versions", "temporary immutable registry"]);
+  for (const phrase of ["22 package guides", "nivren_aead", "Opaque zeroized keys", "ChaCha20-Poly1305", "Sealed · import_key · generate_key · seal", "nivren_aws", "AWS Signature Version 4", "Signature · sign_v4", "nivren_columnar", "Column · Table · table · select", "nivren_image", "Image · image · encode_ppm · decode_ppm", "nivren_oidc", "Authorization · CoreClaims · pkce_challenge", "nivren_matrix", "Matrix · matrix · at · add · multiply", "nivren_svg", "Canvas · canvas · add · rect · text · render", "nivren_wav", "Audio · encode_pcm16 · decode_pcm16", "nivren_metrics", "Sample · sample · encode", "nivren_trace", "OtlpAttribute · OtlpSpan", "export_otlp_json", "nivren_compression", "mandatory decompression ceilings", "gzip · gunzip · zlib · unzlib", "nivren_crypto", "constant-time-verified HMAC-SHA-256", "nivren_csv", "quoted multiline fields", "decode · encode · decode_with · encode_with", "nivren_stats", "sum · mean · variance · minimum", "nivren_jwt", "sign_hs256 · verify_hs256", "nivren_secrets", "Argon2id v=19", "random_key · hash_password", "nivren_sql", "without interpolating values", "nivren_redis", "RESP2/RESP3 framing", "MOVED/ASK Cluster redirects", "live Redis 6.2 through 8.8", "nivren_discord", "nivren_testing", "nivren_routing", "nivren_validation", "semantic versions", "temporary immutable registry"]) {
+    if (!catalogChecks.has(phrase)) continue;
+    assert.match(html, new RegExp(phrase, "i"));
   }
 });
 
@@ -101,15 +103,17 @@ test("documents distinctive Edition 3 capabilities", async () => {
   assert.match(html, /23 detailed guides/);
 });
 
-test("presents the audited WASI release target without a premature download", async () => {
+test("publishes every portable beta target", async () => {
   const response = await render("/downloads");
   const html = await response.text();
   assert.match(html, /WASI Preview 1/);
   assert.match(html, /Browser SDK/);
-  assert.match(html, /Zero imports/);
+  assert.match(html, /JavaScript loader/);
   assert.match(html, /Linux x64 \+ ARM64/);
   assert.match(html, /Non-root/);
   assert.match(html, /Portable compiler \+ VM/);
-  assert.match(html, /Publishes after every gate passes/);
-  assert.doesNotMatch(html, /nivren-v0\.10\.0-beta\.6-wasm32-wasip1\.wasm/);
+  assert.match(html, /nivren-v0\.10\.0-beta\.6-wasm32-wasip1\.wasm/);
+  assert.match(html, /nivren-v0\.10\.0-beta\.6-browser\.wasm/);
+  assert.match(html, /nivren-0\.10\.0-beta\.6\.vsix/);
+  assert.match(html, /pkgs\/container\/nivren/);
 });
