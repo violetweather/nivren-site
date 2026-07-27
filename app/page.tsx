@@ -4,27 +4,23 @@ import { CodeWindow } from "./components/CodeWindow";
 const helloCode = `keep language: String = "Nivren"
 keep values: [Int] = [2, 3, 5, 7]
 
-define sum(items: [Int]) gives Int {
-    change total: Int = 0
-    each value within items {
-        total = total + value
-    }
-    give total
+define add(total: Int, value: Int) gives Int {
+    give total + value
 }
 
 show("Hello, " + language + "!")
-show(sum(values))`;
+show(values through std.list.fold(0, add))`;
 
 export default function Home() {
   return (
     <>
       <section className="hero shell">
         <div className="hero-copy">
-          <div className="eyebrow"><span className="pulse" /> Edition 2 compatibility beta</div>
+          <div className="eyebrow"><span className="pulse" /> Edition 3 capability program</div>
           <h1>Code that reads like <em>intent.</em></h1>
           <p className="hero-lede">
-            Nivren is a safe, expressive application language with a small coherent core,
-            predictable performance, and tooling that arrives on day one.
+            Nivren is an intent-first application language with visible authority,
+            typed failure, scoped concurrency, deterministic resources, and tooling from day one.
           </p>
           <div className="hero-actions">
             <Link className="button primary" href="/install">Install Nivren <span aria-hidden="true">→</span></Link>
@@ -33,7 +29,7 @@ export default function Home() {
           <div className="quick-command" aria-label="Quick install command">
             <span className="prompt">$</span>
             <code>niv version</code>
-            <span className="command-result">Nivren 0.10.0-beta.5</span>
+            <span className="command-result">Nivren 0.10.0-beta.6</span>
           </div>
         </div>
         <div className="hero-code">
@@ -45,10 +41,10 @@ export default function Home() {
 
       <section className="proof-strip">
         <div className="shell proof-grid">
-          <div><strong>27 / 27</strong><span>Edition 2 conformance</span></div>
+          <div><strong>17 / 17</strong><span>Edition 3 black-box corpus</span></div>
           <div><strong>1.906×</strong><span>tiered JIT speedup</span></div>
-          <div><strong>6</strong><span>tier-one build targets</span></div>
-          <div><strong>0</strong><span>unsafe Rust blocks</span></div>
+          <div><strong>6 + WebAssembly</strong><span>native, WASI & browser targets</span></div>
+          <div><strong>0</strong><span>unsafe blocks in the core VM</span></div>
         </div>
       </section>
 
@@ -65,8 +61,8 @@ export default function Home() {
             <span className="feature-number">01</span>
             <div>
               <h3>Safety you can explain</h3>
-              <p>Non-null types by default, checked integer overflow, immutable values, exhaustive choices, and a verified bytecode boundary.</p>
-              <code>keep answer: Result&lt;Int, String&gt; = ok(42)</code>
+              <p>Non-null types by default, checked overflow, typed results, explicit <code>needs</code>, scoped grants, and a verified bytecode boundary.</p>
+              <code>keep answer = load() or give</code>
             </div>
           </article>
           <article className="feature feature-tools">
@@ -78,8 +74,8 @@ export default function Home() {
           <article className="feature feature-runtime">
             <span className="feature-number">03</span>
             <h3>Start simple. Get fast.</h3>
-            <p>A portable bytecode VM starts immediately. Hot integer functions tier into native code with checked semantics preserved.</p>
-            <div className="runtime-path"><span>source</span><i>→</i><span>bytecode</span><i>→</i><strong>native</strong></div>
+            <p>A verified bytecode VM starts immediately. Hot integer functions tier into native code, standalone apps ship directly, and the compiler plus VM run under WASI or in a browser.</p>
+            <div className="runtime-path"><span>source</span><i>→</i><span>bytecode</span><i>→</i><strong>native / web</strong></div>
           </article>
           <article className="feature feature-packages">
             <span className="feature-number">04</span>
@@ -91,7 +87,7 @@ export default function Home() {
             <span className="feature-number">05</span>
             <div>
               <h3>Clarity scales better</h3>
-              <p>Lexical closures, nominal shapes, sealed choices, typed results, explicit modules, structured tasks, and a standard library for real applications.</p>
+              <p><code>through</code> pipelines, <code>or give</code>, <code>using</code>, structured tasks, persistent data, and bounded web clients and servers.</p>
               <Link href="/docs">Explore the language <span aria-hidden="true">↗</span></Link>
             </div>
           </article>
@@ -101,23 +97,23 @@ export default function Home() {
       <section className="section shell path-section">
         <div className="section-heading centered">
           <span className="kicker">From zero to running</span>
-          <h2>Three commands. No ceremony.</h2>
+          <h2>One path. No ceremony.</h2>
         </div>
         <div className="steps">
-          <article><span>1</span><h3>Check</h3><code>niv check hello.niv</code><p>Catch syntax and type errors without executing the program.</p></article>
-          <article><span>2</span><h3>Run</h3><code>niv run hello.niv</code><p>Execute source directly through the verified runtime.</p></article>
-          <article><span>3</span><h3>Build</h3><code>niv build .</code><p>Create a deterministic, portable bytecode application bundle.</p></article>
+          <article><span>1</span><h3>Create</h3><code>niv new my-app</code><p>Start with one standard layout, a first program, and a native test.</p></article>
+          <article><span>2</span><h3>Develop</h3><code>niv dev</code><p>Check and run with the project&apos;s explicit authority and resource policy.</p></article>
+          <article><span>3</span><h3>Ship</h3><code>niv ship</code><p>Test, document, package, and emit a directly executable standalone app.</p></article>
         </div>
       </section>
 
       <section className="cta-wrap shell">
         <div className="cta-panel">
           <div>
-            <span className="kicker light">Edition 2 beta 0.10</span>
+            <span className="kicker light">Edition 3 · local release candidate work</span>
             <h2>Make the next program<br />feel obvious.</h2>
           </div>
           <div className="cta-actions">
-            <Link className="button light-button" href="/downloads">Download the beta</Link>
+            <Link className="button light-button" href="/install">See installation choices</Link>
             <Link className="text-link-light" href="/examples">Browse examples →</Link>
           </div>
         </div>

@@ -7,17 +7,17 @@ type Platform = "mac" | "linux" | "windows" | "source";
 const instructions: Record<Platform, { label: string; available: string; commands: string; note: string }> = {
   mac: { label: "macOS", available: "Guided installer · Apple Silicon and Intel", commands: `curl --proto '=https' --tlsv1.2 -fsSLO \\
   https://raw.githubusercontent.com/violetweather/nivren/main/install/install.sh
-sh install.sh`, note: "The installer detects your Mac, verifies the official archive, keeps the bundled docs, and offers to configure PATH and VS Code." },
+sh install.sh`, note: "The installer detects your Mac, verifies the archive, keeps the docs, native libraries, C header, SBOM, and offers to configure PATH and VS Code." },
   linux: { label: "Linux", available: "Guided installer · x64 and ARM64", commands: `curl --proto '=https' --tlsv1.2 -fsSLO \\
   https://raw.githubusercontent.com/violetweather/nivren/main/install/install.sh
-sh install.sh`, note: "The installer detects your architecture, verifies the official archive, keeps the bundled docs, and offers to configure PATH and VS Code." },
+sh install.sh`, note: "The installer detects your architecture, verifies the archive, keeps the docs, native libraries, C header, SBOM, and offers to configure PATH and VS Code." },
   windows: { label: "Windows", available: "Guided installer · x64 and ARM64", commands: `Invoke-WebRequest https://raw.githubusercontent.com/violetweather/nivren/main/install/install.ps1 -OutFile install.ps1
 Set-ExecutionPolicy -Scope Process Bypass
-.\\install.ps1`, note: "The installer detects your architecture, verifies the official archive, and offers to update your user PATH and install the VS Code extension." },
+.\\install.ps1`, note: "The installer verifies the archive, retains its native SDK and SBOM, and offers to update your user PATH and install the VS Code extension." },
   source: { label: "From source", available: "Rust 1.85+", commands: `git clone https://github.com/violetweather/nivren.git
 cd nivren
 cargo test --workspace --all-targets --locked
-cargo build --release --locked
+cargo build --release --workspace --locked
 ./target/release/niv version`, note: "Building from source uses the exact dependency graph in Cargo.lock and runs on any supported Rust host." },
 };
 
