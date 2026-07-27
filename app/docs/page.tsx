@@ -14,7 +14,7 @@ export default function DocsPage() {
           <span className="kicker">Edition 3 guide</span>
           <h1>Documentation</h1>
           <p>A detailed, searchable guide to syntax, typed failure, projects, package authoring, capabilities, I/O, concurrency, native boundaries, deployment targets, and the complete toolchain.</p>
-          <div className="page-hero-meta"><span className="meta-pill">23 detailed guides</span><span className="meta-pill">Edition 3 working draft</span><span className="meta-pill">Copyable examples</span><span className="meta-pill">15 black-box vectors</span></div>
+          <div className="page-hero-meta"><span className="meta-pill">23 detailed guides</span><span className="meta-pill">Edition 3 public beta</span><span className="meta-pill">Copyable examples</span><span className="meta-pill">17 black-box vectors</span></div>
         </div>
       </section>
       <DocsExplorer />
