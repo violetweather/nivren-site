@@ -20,9 +20,10 @@ test("renders the complete Nivren landing page", async () => {
   const html = await response.text();
   assert.match(html, /<title>Nivren — Code that reads like intent<\/title>/i);
   assert.match(html, /Code that reads like/);
-  assert.match(html, /Edition 2 compatibility beta/);
-  assert.match(html, /0\.10\.0-beta\.1/);
-  assert.match(html, /27 \/ 27/);
+  assert.match(html, /Edition 3 capability program/);
+  assert.match(html, /0\.10\.0-beta\.6/);
+  assert.match(html, /17 \/ 17/);
+  assert.match(html, /6 \+ WebAssembly/);
   assert.match(html, /href="\/docs"/);
   assert.match(html, /href="\/install"/);
   assert.match(html, /href="\/downloads"/);
@@ -35,6 +36,7 @@ for (const [pathname, expected] of [
   ["/install", "Install Nivren"],
   ["/downloads", "Downloads"],
   ["/examples", "Examples"],
+  ["/packages", "Packages"],
 ]) {
   test(`renders ${pathname}`, async () => {
     const response = await render(pathname);
@@ -43,9 +45,53 @@ for (const [pathname, expected] of [
   });
 }
 
-test("links the Edition 2 release and removes starter UI", async () => {
+test("presents the Edition 3 site and removes starter UI", async () => {
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
   const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   assert.equal(packageJson.name, "nivren-site");
   assert.equal(packageJson.dependencies["react-loading-skeleton"], undefined);
+});
+
+test("publishes the official package catalog and compatibility contract", async () => {
+  const response = await render("/packages");
+  const html = await response.text();
+  for (const phrase of ["first twenty-two official packages", "nivren_aead", "Opaque zeroized keys", "ChaCha20-Poly1305", "Sealed · import_key · generate_key · seal", "nivren_aws", "AWS Signature Version 4", "Signature · sign_v4", "nivren_columnar", "Column · Table · table · select", "nivren_image", "Image · image · encode_ppm · decode_ppm", "nivren_oidc", "Authorization · CoreClaims · pkce_challenge", "nivren_matrix", "Matrix · matrix · at · add · multiply", "nivren_svg", "Canvas · canvas · add · rect · text · render", "nivren_wav", "Audio · encode_pcm16 · decode_pcm16", "nivren_metrics", "Sample · sample · encode", "nivren_trace", "OtlpAttribute · OtlpSpan", "export_otlp_json", "nivren_compression", "mandatory decompression ceilings", "gzip · gunzip · zlib · unzlib", "nivren_crypto", "constant-time-verified HMAC-SHA-256", "nivren_csv", "quoted multiline fields", "decode · encode · decode_with · encode_with", "nivren_stats", "sum · mean · variance · minimum", "nivren_jwt", "sign_hs256 · verify_hs256", "nivren_secrets", "Argon2id v=19", "random_key · hash_password", "nivren_sql", "without interpolating values", "nivren_redis", "RESP2/RESP3 framing", "MOVED/ASK Cluster redirects", "live Redis 6.2 through 8.8", "nivren_discord", "nivren_testing", "nivren_routing", "nivren_validation", "semantic versions", "temporary immutable registry"]) {
+    assert.match(html, new RegExp(phrase));
+  }
+});
+
+test("documents the guided cross-platform installers", async () => {
+  const install = await render("/install");
+  const html = await install.text();
+  assert.match(html, /install\/install\.sh/);
+  assert.match(html, /Verification is built in/);
+  assert.match(html, /ownership marker/);
+  const chooser = await readFile(new URL("../app/install/InstallChooser.tsx", import.meta.url), "utf8");
+  assert.match(chooser, /install\.ps1/);
+  const explorer = await readFile(new URL("../app/docs/DocsExplorer.tsx", import.meta.url), "utf8");
+  assert.match(explorer, /--uninstall/);
+  assert.match(explorer, /-Uninstall/);
+});
+
+test("documents distinctive Edition 3 capabilities", async () => {
+  const docs = await render("/docs");
+  const html = await docs.text();
+  assert.match(html, /Edition 3 guide/);
+  const explorer = await readFile(new URL("../app/docs/DocsExplorer.tsx", import.meta.url), "utf8");
+  for (const phrase of ["or give", "memory_bytes", "prefix:NIVREN_", "command:git", "kind:database", "protocol Named", "adopt Named for User", "Named.name(value)", "orphan ownership rule", "qualified identities", "Failed(String)", "Array([Response])", "Pair<Left, Right>", "Maybe<Value>", "Pair<String, Int>", "std.bigint.parse", "std.binary.u16_be", "std.binary.read_u16_be", "little-endian", "std.iter.range", "std.iter.lines", "std.iter.tcp_lines", "lazy, end-exclusive", "truly lazy", "std.iter.transform", "std.iter.fold", "std.iter.find", "single-pass", "std.transactions.commit", "always rolls back", "std.native.open", "std.native.call_int", "NativeLibrary", "std.host.invoke_async", "shared executor", "std.files.read_async", "std.json.decode", "std.json.read_next_as", "std.reflect.schema", "niv bindgen c", "niv inspect", "event-loop wake", "wake-driven runtime event loop", "std.web.request", "std.net.write_some", "std.net.ready_any", "std.net.read_ready", "std.net.write_ready", "std.web.websocket_connect", "websocket_secure_connect", "std.web.websocket_secure_listen", "std.web.websocket_secure_accept", "TlsListener", "client_certificate_pem", "client_auth", "client_ca_pem", "std.web.tls_options", "std.locks.acquire", "AtomicInt", "std.atomics.add", "sequentially consistent", "niv registry search", "--crash-report", "build --standalone", "start produce", "wasm32-wasip1", "wasm32-unknown-unknown", "zero-import", "JavaScript SDK", "nivren_wasm_run", "16 MiB", "no silent security downgrade"]) {
+    assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+});
+
+test("presents the audited WASI release target without a premature download", async () => {
+  const response = await render("/downloads");
+  const html = await response.text();
+  assert.match(html, /WASI Preview 1/);
+  assert.match(html, /Browser SDK/);
+  assert.match(html, /Zero imports/);
+  assert.match(html, /Linux x64 \+ ARM64/);
+  assert.match(html, /Non-root/);
+  assert.match(html, /Portable compiler \+ VM/);
+  assert.match(html, /Publishes after every gate passes/);
+  assert.doesNotMatch(html, /nivren-v0\.10\.0-beta\.6-wasm32-wasip1\.wasm/);
 });
