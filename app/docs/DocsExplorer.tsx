@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 
 type Section = { id: string; title: string; group: string; summary: string; body: React.ReactElement; search: string };
 
@@ -15,11 +16,42 @@ Set-ExecutionPolicy -Scope Process Bypass
   },
   {
     id: "quickstart", title: "Quickstart", group: "Start here", summary: "Check and run your first Nivren program.", search: "install run check hello first program cli",
-    body: <><p>Create one standard project, develop it under explicit policy, and ship the same layout.</p><pre><code>{`niv new hello-nivren
+    body: <><p>Create one standard project, develop it under explicit policy, and ship the same layout. The generated project includes a strict manifest, source directory, tests, and a place for generated documentation.</p><pre><code>{`niv new hello-nivren
 cd hello-nivren
 niv dev
 niv test
 niv ship`}</code></pre><p><code className="inline-code">ship</code> checks, tests, documents, packages, and emits a directly executable standalone application. It never publishes externally.</p></>
+  },
+  {
+    id: "program-shape", title: "Anatomy of a program", group: "Start here", summary: "Read a complete Edition 3 program from imports to handled output.", search: "program anatomy syntax use expose define needs result choose show example",
+    body: <><p>A Nivren file reads from declarations into intent. Imports are explicit, bindings default to immutable, effectful functions publish their authority, and failures stay in the return type.</p><pre><code>{`use "@nivren_validation"
+
+shape Signup { name: String, age: Int }
+
+define welcome(input: Signup) gives Result<String, nivren_validation.Violation> {
+    keep name = nivren_validation.required("name", input.name) or give
+    keep age = nivren_validation.range("age", input.age, 13, 120) or give
+    keep checked_age = age
+    give ok(name)
+}
+
+keep result = welcome(Signup("Mira", 24))
+choose result {
+    Ok(message) => show(message),
+    Err(problem) => show(problem.message)
+}`}</code></pre><h3>How to read it</h3><p><code className="inline-code">use</code> names a module, <code className="inline-code">shape</code> creates a nominal record, <code className="inline-code">define</code> declares a checked function, and <code className="inline-code">or give</code> forwards the exact error payload. The final <code className="inline-code">choose</code> is exhaustive, so adding a result variant cannot silently fall through.</p><h3>Source conventions</h3><p>Files use UTF-8, newline-separated statements, braces for explicit scopes, and nested block comments. The formatter owns whitespace, while names and intent words remain ordinary readable text.</p></>
+  },
+  {
+    id: "errors", title: "Results, errors & recovery", group: "Start here", summary: "Model expected failure as data and preserve context without exceptions.", search: "result error recovery ok err or give choose typed failure context nullable",
+    body: <><p>Recoverable operations return <code className="inline-code">Result&lt;Value, Problem&gt;</code>. There is no invisible exception channel: a caller must propagate, transform, or exhaustively handle the error.</p><pre><code>{`define load(path: String) gives Result<String, String> needs FileRead {
+    keep bytes = std.files.read(path, 1048576) or give
+    give std.bytes.to_string(bytes)
+}
+
+choose load("settings.json") {
+    Ok(text) => show(text),
+    Err(problem) => std.log.error(problem)
+}`}</code></pre><h3>Propagation</h3><p><code className="inline-code">expression or give</code> unwraps success and immediately returns the same typed error on failure. It is valid only where the surrounding function&apos;s result type can carry that error.</p><h3>Optional is not failure</h3><p>Use <code className="inline-code">Value?</code> and <code className="inline-code">none</code> for absence; use <code className="inline-code">Result</code> when the reason matters. <code className="inline-code">??</code> supplies an explicit nullable fallback, while <code className="inline-code">choose</code> keeps rich failures available.</p><h3>Cleanup</h3><p><code className="inline-code">using</code> closes owned resources on success, propagated error, early return, and cancellation. Cleanup errors are reported according to the resource contract instead of being discarded behind a destructor.</p></>
   },
   {
     id: "values", title: "Values & types", group: "Language", summary: "Numbers, strings, booleans, arrays, and nullability.", search: "int float string bool none array types immutable keep change overflow optional",
@@ -123,6 +155,21 @@ niv package .
 niv package verify target/my-app-1.0.0.nivpkg`}</code></pre><p>Search is deterministic and bounded. Trusted public registries add signed publishing provenance, authorization, advisories, revocation, and generation rollback protection.</p></>
   },
   {
+    id: "package-authoring", title: "Authoring a package", group: "Projects", summary: "Design a small public surface, test it, document it, and produce a reproducible archive.", search: "author package publish version expose api docs semantic reproducible archive registry",
+    body: <><p>A package is a strict project whose entry module exposes its supported API. Everything else stays private, letting maintainers refactor without expanding compatibility obligations.</p><pre><code>{`[package]
+name = "acme_slug"
+version = "1.0.0"
+entry = "src/main.niv"
+
+[dependencies]
+nivren_validation = "1.0.0"`}</code></pre><pre><code>{`// src/main.niv
+define slug(value: String) gives Result<String, String> {
+    give std.text.lower(value)
+}
+
+expose { slug }`}</code></pre><h3>Release checklist</h3><p>Run <code className="inline-code">niv check .</code>, <code className="inline-code">niv test .</code>, <code className="inline-code">niv doc .</code>, then <code className="inline-code">niv package .</code>. Verify the resulting archive independently with <code className="inline-code">niv package verify</code>. A registry publication binds the exact version to content identity and provenance; the same version cannot later mean different bytes.</p><h3>Compatibility surface</h3><p>Exposed declarations, parameter and result types, declared capabilities, error payloads, deterministic ordering, and documented resource ceilings are public behavior. Additive APIs usually fit a minor release; removed or narrowed behavior requires a major release.</p><p>Browse the <Link className="inline-code" href="/packages">official package guides</Link> for concrete patterns covering pure libraries, effectful adapters, cryptography, protocols, and typed data.</p></>
+  },
+  {
     id: "stdlib", title: "Standard library", group: "Applications", summary: "Files, tables, encoding, cryptography, typed streams, zoned time, HTTP/TLS, and WebSockets.", search: "standard library file path process env datetime timezone time csv tables hex base64 base64url encoding crypto random argon2 password sha256 hmac constant time json schema ndjson stream tcp http tls websocket log sockets",
     body: <><p>The standard library provides typed boundaries for deterministic files, paths, explicit bounded text splitting and concatenation, finite float parsing, bounded SHA-256/HMAC protocol primitives, capability-checked OS entropy, bounded Argon2id password storage, opaque zeroized <code className="inline-code">SecretKey</code> values and ChaCha20-Poly1305 authenticated encryption, environment, processes, immutable IANA-zoned DateTime values, shape-derived JSON and bounded newline-delimited streams, TCP clients/listeners with exact-byte and CRLF framing, distinct certificate-verified raw <code className="inline-code">TlsStream</code> connections, bounded HTTP and WebSocket clients/servers, native hosts, and structured logs.</p><pre><code>{`define fetch(url: String) gives Result<String, String> needs Network {
     keep response = std.web.request(
@@ -224,6 +271,16 @@ niv bindgen c messages.niv generated/messages.h
 niv lsp`}</code></pre><p>JSON observations and nested source maps have stable schemas. <code className="inline-code">niv inspect</code> flushes versioned JSONL events while a program runs, including locations, operations, stack depth, variable names, final metrics, and heap counts while omitting source and variable values. Crash reports omit source, arguments, environment variables, local values, and full paths by design. The language server powers first-party VS Code diagnostics, intent-first correction hints, completion, formatting, and Unicode-correct rename that skips strings and comments. Its bounded workspace index covers open and closed modules, so exposed declarations and qualified references update together while unrelated same-named bindings remain untouched. Build tools can use the versioned Rust compiler facade or C ABI v2. Shape/choice bindings compile as C11 and C++17 views with explicit ownership. <code className="inline-code">std.host.invoke_async</code> submits a bounded native operation to the shared executor and returns an ordinary structured task with backpressure and cancellation checks; embedded program runs also receive one owned completion, cooperative cancellation, a joinable handle, and an event-loop wake callback. Scoped opaque handles keep native identifiers out of program values.</p></>
   },
   {
+    id: "production-workflow", title: "Production workflow", group: "Tools", summary: "Turn a checked project into a reproducible, observable, least-authority application.", search: "production deploy release checklist ci observability profile coverage crash standalone security reproducible",
+    body: <><p>The recommended workflow keeps the same project and policy from local development through release. CI should reject formatting drift, checker failures, test failures, unreviewed snapshots, dependency changes, and packaging differences.</p><pre><code>{`niv fmt --check .
+niv check .
+niv test .
+niv coverage .
+niv doc .
+niv package .
+niv build --standalone .`}</code></pre><h3>Before shipping</h3><ul><li>Pin every dependency exactly and review the resulting <code className="inline-code">niv.lock</code> identity.</li><li>Narrow filesystem paths, network hosts and methods, environment prefixes, process commands, and native kinds in <code className="inline-code">niv.toml</code>.</li><li>Set instruction and memory ceilings from measured production behavior, with deliberate headroom.</li><li>Exercise cancellation, deadlines, oversized input, unavailable services, and cleanup paths—not only success.</li><li>Capture coverage and profile output, and wire privacy-safe crash reports or live inspection into your operations path.</li></ul><h3>Release artifacts</h3><p><code className="inline-code">niv ship</code> is the convenient aggregate: it checks, tests, documents, packages, and creates a standalone executable without publishing externally. For web or sandboxed hosts, build the audited WASI guest; for containers, retain Nivren&apos;s project policy even when the container adds a second isolation boundary.</p><h3>Version discipline</h3><p>Edition changes protect syntax and semantic evolution. Package semantic versions protect library APIs. Application artifacts record compiler, bytecode, dependency, capability, and resource-limit inputs so a future build can explain what changed.</p></>
+  },
+  {
     id: "cli", title: "CLI reference", group: "Tools", summary: "The complete command surface at a glance.", search: "cli command run check build install package registry disasm debug profile coverage fmt doc test repl lsp version help",
     body: <><div className="cli-grid">{[
       ["new", "Create the standard project layout"], ["add", "Add an exact dependency"], ["dev", "Check and run a project"], ["ship", "Test, document, package, and stand alone"], ["run", "Run source, bytecode, or a project"], ["check", "Check without executing"], ["build", "Build bytecode, a standalone app, or checked native AOT objects"], ["bindgen", "Generate typed C11/C++17 schema views"], ["install", "Resolve and verify dependencies"], ["package", "Create or verify a package"], ["registry", "Search, publish, fetch, serve, and verify"], ["disasm", "Inspect verified bytecode"], ["sourcemap", "Export stable nested source mappings as JSON"], ["debug", "Start the source debugger"], ["inspect", "Stream privacy-safe live JSONL runtime events"], ["profile", "Measure runtime operations"], ["coverage", "Report source-line coverage"], ["fmt", "Format or verify formatting"], ["doc", "Generate public API docs"], ["test", "Run language-native tests"], ["repl", "Open the interactive shell"], ["lsp", "Start the language server"],
@@ -239,12 +296,16 @@ export function DocsExplorer() {
     if (!needle) return sections;
     return sections.filter(section => `${section.title} ${section.group} ${section.summary} ${section.search}`.toLowerCase().includes(needle));
   }, [query]);
-  const current = sections.find(section => section.id === active) ?? filtered[0] ?? sections[0];
+  const current = filtered.find(section => section.id === active) ?? filtered[0] ?? sections[0];
+  const currentIndex = sections.findIndex(section => section.id === current.id);
+  const previous = currentIndex > 0 ? sections[currentIndex - 1] : undefined;
+  const next = currentIndex < sections.length - 1 ? sections[currentIndex + 1] : undefined;
 
   return (
     <div className="shell docs-layout">
       <aside className="docs-sidebar">
         <label className="doc-search"><span aria-hidden="true">⌕</span><span className="sr-only">Search documentation</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search docs" /></label>
+        <p className="doc-count">{filtered.length} of {sections.length} detailed guides</p>
         <nav aria-label="Documentation sections">
           {filtered.length ? filtered.map(section => <button className={current.id === section.id ? "active" : ""} key={section.id} onClick={() => setActive(section.id)}><span>{section.group}</span>{section.title}</button>) : <p className="no-results">No sections match “{query}”.</p>}
         </nav>
@@ -255,6 +316,10 @@ export function DocsExplorer() {
         <p className="doc-summary">{current.summary}</p>
         <div className="doc-body">{current.body}</div>
         <div className="doc-source">Normative behavior is defined by the Edition 3 language, standard-library, bytecode, package, and WASM specifications in the source repository.</div>
+        <nav className="doc-pager" aria-label="Previous and next documentation sections">
+          {previous ? <button type="button" onClick={() => setActive(previous.id)}><span>Previous</span>{previous.title}</button> : <span />}
+          {next ? <button type="button" onClick={() => setActive(next.id)}><span>Next</span>{next.title}</button> : <span />}
+        </nav>
       </article>
     </div>
   );

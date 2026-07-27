@@ -60,6 +60,20 @@ test("publishes the official package catalog and compatibility contract", async 
   }
 });
 
+test("publishes a detailed guide for every official package", async () => {
+  const catalog = await readFile(new URL("../app/packages/catalog.ts", import.meta.url), "utf8");
+  const names = [...catalog.matchAll(/name: "(nivren_[a-z]+)"/g)].map((match) => match[1]);
+  assert.equal(names.length, 22);
+  for (const name of names) {
+    const response = await render(`/packages/${name}`);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    for (const phrase of [name, "Add it to a project", "A focused example", "Public API", "Required authority", "Bounds and failure behavior", "When to use it"]) {
+      assert.match(html, new RegExp(phrase));
+    }
+  }
+});
+
 test("documents the guided cross-platform installers", async () => {
   const install = await render("/install");
   const html = await install.text();
@@ -81,6 +95,10 @@ test("documents distinctive Edition 3 capabilities", async () => {
   for (const phrase of ["or give", "memory_bytes", "prefix:NIVREN_", "command:git", "kind:database", "protocol Named", "adopt Named for User", "Named.name(value)", "orphan ownership rule", "qualified identities", "Failed(String)", "Array([Response])", "Pair<Left, Right>", "Maybe<Value>", "Pair<String, Int>", "std.bigint.parse", "std.binary.u16_be", "std.binary.read_u16_be", "little-endian", "std.iter.range", "std.iter.lines", "std.iter.tcp_lines", "lazy, end-exclusive", "truly lazy", "std.iter.transform", "std.iter.fold", "std.iter.find", "single-pass", "std.transactions.commit", "always rolls back", "std.native.open", "std.native.call_int", "NativeLibrary", "std.host.invoke_async", "shared executor", "std.files.read_async", "std.json.decode", "std.json.read_next_as", "std.reflect.schema", "niv bindgen c", "niv inspect", "event-loop wake", "wake-driven runtime event loop", "std.web.request", "std.net.write_some", "std.net.ready_any", "std.net.read_ready", "std.net.write_ready", "std.web.websocket_connect", "websocket_secure_connect", "std.web.websocket_secure_listen", "std.web.websocket_secure_accept", "TlsListener", "client_certificate_pem", "client_auth", "client_ca_pem", "std.web.tls_options", "std.locks.acquire", "AtomicInt", "std.atomics.add", "sequentially consistent", "niv registry search", "--crash-report", "build --standalone", "start produce", "wasm32-wasip1", "wasm32-unknown-unknown", "zero-import", "JavaScript SDK", "nivren_wasm_run", "16 MiB", "no silent security downgrade"]) {
     assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
+  for (const phrase of ["Anatomy of a program", "Results, errors & recovery", "Authoring a package", "Production workflow", "Previous", "Next"]) {
+    assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+  assert.match(html, /23 detailed guides/);
 });
 
 test("presents the audited WASI release target without a premature download", async () => {
