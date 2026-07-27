@@ -12,6 +12,7 @@ export function SiteHeader() {
           <Link href="/packages">Packages</Link>
           <Link href="/install">Install</Link>
           <Link href="/examples">Examples</Link>
+          <Link href="/benchmarks">Benchmarks</Link>
           <Link href="/downloads">Downloads</Link>
         </nav>
         <div className="nav-actions">
@@ -21,7 +22,7 @@ export function SiteHeader() {
         <details className="mobile-menu">
           <summary aria-label="Open navigation">Menu</summary>
           <nav aria-label="Mobile navigation">
-            <Link href="/docs">Docs</Link><Link href="/packages">Packages</Link><Link href="/install">Install</Link><Link href="/examples">Examples</Link><Link href="/downloads">Downloads</Link>
+            <Link href="/docs">Docs</Link><Link href="/packages">Packages</Link><Link href="/install">Install</Link><Link href="/examples">Examples</Link><Link href="/benchmarks">Benchmarks</Link><Link href="/downloads">Downloads</Link>
           </nav>
         </details>
       </div>

@@ -1,0 +1,11 @@
+change row = 0
+change checksum = 0
+repeat row < 500 {
+    change column = 0
+    repeat column < 500 {
+        checksum = checksum + ((row * 17 + column * 31) % 1000)
+        column = column + 1
+    }
+    row = row + 1
+}
+show(checksum)

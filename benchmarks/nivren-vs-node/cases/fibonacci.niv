@@ -1,0 +1,8 @@
+define fibonacci(value: Int) gives Int {
+    when value < 2 {
+        give value
+    }
+    give fibonacci(value - 1) + fibonacci(value - 2)
+}
+
+show(fibonacci(30))

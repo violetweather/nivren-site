@@ -36,6 +36,7 @@ for (const [pathname, expected] of [
   ["/install", "Install Nivren"],
   ["/downloads", "Downloads"],
   ["/examples", "Examples"],
+  ["/benchmarks", "Nivren vs Node.js"],
   ["/packages", "Packages"],
 ]) {
   test(`renders ${pathname}`, async () => {
@@ -116,4 +117,15 @@ test("publishes every portable beta target", async () => {
   assert.match(html, /nivren-v0\.10\.0-beta\.6-browser\.wasm/);
   assert.match(html, /nivren-0\.10\.0-beta\.6\.vsix/);
   assert.match(html, /pkgs\/container\/nivren/);
+});
+
+test("publishes reproducible Nivren versus Node.js results", async () => {
+  const response = await render("/benchmarks");
+  const html = await response.text();
+  for (const phrase of ["Measured, not marketed", "7.62", "4.48", "53.98", "Source-to-result startup", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "Apple M4", "Nivren 0.10.0-beta.6", "Node.js 26.5.0", "What they do not say", "Every input is public"]) {
+    assert.match(html, new RegExp(phrase));
+  }
+  const benchmarkReport = JSON.parse(await readFile(new URL("../benchmarks/nivren-vs-node/results/2026-07-27-macos-arm64.json", import.meta.url), "utf8"));
+  assert.equal(benchmarkReport.results.length, 4);
+  assert.equal(benchmarkReport.results[0].output, "42");
 });

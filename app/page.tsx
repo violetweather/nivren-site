@@ -42,7 +42,7 @@ export default function Home() {
       <section className="proof-strip">
         <div className="shell proof-grid">
           <div><strong>17 / 17</strong><span>Edition 3 black-box corpus</span></div>
-          <div><strong>1.906×</strong><span>tiered JIT speedup</span></div>
+          <div><strong>7.62×</strong><span>faster startup than Node on M4</span></div>
           <div><strong>6 + WebAssembly</strong><span>native, WASI & browser targets</span></div>
           <div><strong>0</strong><span>unsafe blocks in the core VM</span></div>
         </div>
@@ -76,6 +76,7 @@ export default function Home() {
             <h3>Start simple. Get fast.</h3>
             <p>A verified bytecode VM starts immediately. Hot integer functions tier into native code, standalone apps ship directly, and the compiler plus VM run under WASI or in a browser.</p>
             <div className="runtime-path"><span>source</span><i>→</i><span>bytecode</span><i>→</i><strong>native / web</strong></div>
+            <Link className="runtime-benchmark-link" href="/benchmarks">See the honest Node.js comparison →</Link>
           </article>
           <article className="feature feature-packages">
             <span className="feature-number">04</span>
