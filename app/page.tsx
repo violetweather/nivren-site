@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CodeWindow } from "./components/CodeWindow";
+import { candidateRelease, publicRelease } from "./release";
 
 const helloCode = `keep language is String set "Nivren"
 keep values is [Int] set [2, 3, 5, 7]
@@ -20,6 +21,8 @@ show(values through std.list.fold with {
     combine set add
 })`;
 
+const checkpointSummary = `${candidateRelease.checkpointGatesPassed} / ${candidateRelease.checkpointGatesRequired}`;
+
 export default function Home() {
   return (
     <>
@@ -38,7 +41,7 @@ export default function Home() {
           <div className="quick-command" aria-label="Quick install command">
             <span className="prompt">$</span>
             <code>niv version</code>
-            <span className="command-result">Nivren 0.10.0-beta.6</span>
+            <span className="command-result">Public: Nivren {publicRelease.version}</span>
           </div>
         </div>
         <div className="hero-code">
@@ -50,7 +53,7 @@ export default function Home() {
 
       <section className="proof-strip">
         <div className="shell proof-grid">
-          <div><strong>3 / 4</strong><span>checkpoint gates passed</span></div>
+          <div><strong>{checkpointSummary}</strong><span>checkpoint gates passed for {candidateRelease.version}</span></div>
           <div><strong>7.62×</strong><span>faster startup than Node on M4</span></div>
           <div><strong>6 + WebAssembly</strong><span>native, WASI & browser targets</span></div>
           <div><strong>0</strong><span>unsafe blocks in the core VM</span></div>
@@ -90,7 +93,7 @@ export default function Home() {
           <article className="feature feature-packages">
             <span className="feature-number">04</span>
             <h3>Packages with receipts</h3>
-            <p>Exact versions, checksum-pinned lockfiles, deterministic archives, publisher ownership, capability audits, yanking, signed provenance, advisories, and offline verification.</p>
+            <p>Exact versions, checksum-pinned dependency locks, reviewable transitive authority locks, deterministic archives, publisher ownership, yanking, signed provenance, advisories, and offline verification.</p>
               <div className="hash-line"><span>sha256</span><code>published per artifact</code></div>
           </article>
           <article className="feature feature-large feature-clarity">

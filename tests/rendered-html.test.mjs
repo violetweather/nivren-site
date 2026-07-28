@@ -140,3 +140,36 @@ test("publishes reproducible Nivren versus Node.js results", async () => {
   assert.ok(benchmarkReport.results[2].output.includes("Nivren benchmark events"));
   assert.ok(benchmarkReport.results[3].output.includes("start worker=alpha"));
 });
+
+test("keeps release versions and download assets synchronized", async () => {
+  const release = JSON.parse(await readFile(new URL("../release.json", import.meta.url), "utf8"));
+  const response = await render("/downloads");
+  const html = await response.text();
+  assert.match(html, new RegExp(release.public.version.replaceAll(".", "\\.")));
+  assert.doesNotMatch(html, new RegExp(`/releases/download/v${release.candidate.version.replaceAll(".", "\\.")}/`));
+  for (const asset of release.public.assets) {
+    assert.match(html, new RegExp(asset.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+});
+
+test("renders accessible landmarks and resolves every internal link", async () => {
+  const catalog = await readFile(new URL("../app/packages/catalog.ts", import.meta.url), "utf8");
+  const packageRoutes = [...catalog.matchAll(/name: "(nivren_[a-z]+)"/g)].map((match) => `/packages/${match[1]}`);
+  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages", ...packageRoutes];
+  const known = new Set(routes);
+  for (const route of routes) {
+    const response = await render(route);
+    assert.equal(response.status, 200, route);
+    const html = await response.text();
+    assert.match(html, /<html lang="en">/, route);
+    assert.match(html, /<a class="skip-link" href="#main">Skip to content<\/a>/, route);
+    assert.match(html, /<main id="main">/, route);
+    assert.equal((html.match(/<h1(?:\s|>)/g) ?? []).length, 1, `${route} must have exactly one h1`);
+    for (const match of html.matchAll(/href="([^"]+)"/g)) {
+      const href = match[1];
+      if (!href.startsWith("/") || href.startsWith("/assets/")) continue;
+      const target = href.split(/[?#]/, 1)[0].replace(/\/$/, "") || "/";
+      assert.ok(known.has(target), `${route} links to unknown internal route ${href}`);
+    }
+  }
+});

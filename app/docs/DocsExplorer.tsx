@@ -189,7 +189,7 @@ needs Native
   },
   {
     id: "packages", title: "Packages, registry, and offline work", group: "Projects", summary: "Pin immutable contents, authority, provenance, ownership, and advisories.", search: "package registry lock offline cache yank ownership provenance advisory",
-    paragraphs: ["The 25 official packages are Edition 4 modules rebuilt, documented, published to a fixture registry, installed, imported, and executed together. Exact dependencies and content hashes are recorded in niv.lock. Offline install verifies the cached graph without network access.", "niv cache list verifies archive, extracted source, identity, checksum, and reachability. niv cache prune removes only verified entries unreachable from the complete dependency graph. Publication records ownership, authority, provenance, and immutable contents; hosted recovery and signed administrative operations remain release blockers."],
+    paragraphs: ["The 25 official packages are Edition 4 modules rebuilt, documented, published to a fixture registry, installed, imported, and executed together. Exact dependencies and content hashes are recorded in niv.lock. Offline install verifies the cached graph without network access.", "niv.authority.lock separately records the exact root and transitive package identity behind every capability scope and declared unsafe module. niv authority report previews the verified graph, check detects an unreviewed change, and lock accepts the new deterministic record. niv cache list verifies archive, extracted source, identity, checksum, and reachability; prune removes only verified unreachable entries. Hosted recovery and signed administrative operations remain release blockers."],
   },
   {
     id: "tooling", title: "Tooling and workspaces", group: "Tools", summary: "Use one formatter, language server, debugger protocol, profiler, and workspace workflow.", search: "fmt lsp dap debug profile coverage benchmark workspace incremental",
@@ -216,8 +216,10 @@ niv coverage app.niv`,
 niv dev [project]          niv check <path>
 niv test [path]            niv test --time <unix> [path]
 niv test --property        niv test --fuzz-smoke
-niv bench [path]           niv cache list [project]
-niv cache prune [project]  niv release verify-channel …
+niv bench [path]             niv cache list [project]
+niv cache prune [project]    niv authority report [project]
+niv authority check [project]
+niv authority lock [project] niv release verify-channel …
 niv build [project]        niv explain <path>
 niv ship [project]         niv workspace <action>
 niv install --offline      niv package verify <archive>
