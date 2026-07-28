@@ -5,6 +5,18 @@ import { spawnSync } from "node:child_process";
 
 const examples = readFileSync(resolve("app/examples/page.tsx"), "utf8");
 const docs = readFileSync(resolve("app/docs/DocsExplorer.tsx"), "utf8");
+const packageCatalog = readFileSync(resolve("app/packages/catalog.ts"), "utf8");
+const packageSnippets = [...packageCatalog.matchAll(/example: `([\s\S]*?)`/g)].map((match) => match[1]);
+if (packageSnippets.length !== 25) {
+  throw new Error(`expected 25 official package examples, found ${packageSnippets.length}`);
+}
+for (const [index, snippet] of packageSnippets.entries()) {
+  if (/^\s*define\s+\w+\s*\(/m.test(snippet)
+      || /^\s*(?:keep|change)\s+\w+(?:\s*:\s*[^=]+)?\s*=/m.test(snippet)
+      || /^\s*(?:shape|choice)\s+\w+\s*\{/m.test(snippet)) {
+    throw new Error(`official package example ${index + 1} contains Edition 3 syntax`);
+  }
+}
 const snippets = [
   ...[...examples.matchAll(/code: `([\s\S]*?)`\s*}/g)].map((match) => match[1]),
   ...[...docs.matchAll(/nivren: `([\s\S]*?)`/g)].map((match) => match[1]),
@@ -24,7 +36,7 @@ try {
       throw new Error(`Edition 4 snippet ${index + 1} did not type-check`);
     }
   }
-  console.log(`${snippets.length} Edition 4 site snippets type-check`);
+  console.log(`${snippets.length} Edition 4 site snippets type-check; 25 package examples pass the Edition 4 residue gate`);
 } finally {
   rmSync(root, { recursive: true, force: true });
 }
