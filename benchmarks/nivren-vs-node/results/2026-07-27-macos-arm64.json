@@ -1,11 +1,12 @@
 {
   "schema": "org.nivren.benchmark.v1",
-  "generated_at": "2026-07-27T23:03:01.790Z",
+  "generated_at": "2026-07-28T02:40:53.421Z",
   "methodology": {
     "measured_processes": "fresh process per sample",
     "ordering": "alternating Nivren-first and Node-first",
     "statistic": "median with p95, minimum, and maximum",
-    "scope": "wall-clock source-to-result latency; not a complete language ranking"
+    "scope": "wall-clock source-to-result latency; not a complete language ranking",
+    "semantics": "paired programs produce identical output; source checking reflects each runtime's built-in checker, while Nivren's typed JSON case additionally enforces a declared schema and file capability"
   },
   "environment": {
     "os": "darwin 24.6.0",
@@ -18,95 +19,172 @@
   "results": [
     {
       "id": "startup",
+      "category": "strength",
       "label": "Source-to-result startup",
-      "description": "Parse, compile, execute, and print one integer.",
+      "description": "Parse, check, compile, execute, and print one integer.",
       "runs": 21,
       "warmups": 2,
       "output": "42",
       "nivren": {
-        "median_ms": 3.111,
-        "p95_ms": 3.452,
-        "min_ms": 2.634,
-        "max_ms": 4.032,
-        "peak_rss_kb": 9136
+        "median_ms": 2.927,
+        "p95_ms": 3.219,
+        "min_ms": 2.503,
+        "max_ms": 3.273,
+        "peak_rss_kb": 9168
       },
       "node": {
-        "median_ms": 23.702,
-        "p95_ms": 25.767,
-        "min_ms": 21.974,
-        "max_ms": 25.788,
-        "peak_rss_kb": 44880
+        "median_ms": 23.835,
+        "p95_ms": 25.457,
+        "min_ms": 22.328,
+        "max_ms": 26.377,
+        "peak_rss_kb": 43808
+      },
+      "node_speedup": 0.12
+    },
+    {
+      "id": "cli_check",
+      "category": "strength",
+      "label": "One-shot source check",
+      "description": "Nivren performs semantic and capability checks; Node.js performs its built-in syntax check.",
+      "compareOutput": false,
+      "runs": 15,
+      "warmups": 2,
+      "output": "successful check",
+      "nivren": {
+        "median_ms": 2.777,
+        "p95_ms": 2.941,
+        "min_ms": 2.428,
+        "max_ms": 2.941,
+        "peak_rss_kb": 8992
+      },
+      "node": {
+        "median_ms": 21.644,
+        "p95_ms": 23.299,
+        "min_ms": 20.927,
+        "max_ms": 23.299,
+        "peak_rss_kb": 42112
       },
       "node_speedup": 0.13
     },
     {
+      "id": "typed_json_file",
+      "category": "strength",
+      "label": "Typed JSON file pipeline",
+      "description": "Read a file, validate its complete schema, and emit canonical JSON.",
+      "runs": 15,
+      "warmups": 2,
+      "output": "{\"events\":[{\"active\":true,\"id\":1,\"kind\":\"start\"},{\"active\":true,\"id\":2,\"kind\":\"parse\"},{\"active\":true,\"id\":3,\"kind\":\"check\"},{\"active\":true,\"id\":4,\"kind\":\"compile\"},{\"active\":true,\"id\":5,\"kind\":\"execute\"},{\"active\":false,\"id\":6,\"kind\":\"observe\"},{\"active\":true,\"id\":7,\"kind\":\"package\"},{\"active\":true,\"id\":8,\"kind\":\"install\"},{\"active\":true,\"id\":9,\"kind\":\"test\"},{\"active\":false,\"id\":10,\"kind\":\"ship\"},{\"active\":true,\"id\":11,\"kind\":\"start\"},{\"active\":true,\"id\":12,\"kind\":\"parse\"},{\"active\":true,\"id\":13,\"kind\":\"check\"},{\"active\":true,\"id\":14,\"kind\":\"compile\"},{\"active\":true,\"id\":15,\"kind\":\"execute\"},{\"active\":false,\"id\":16,\"kind\":\"observe\"},{\"active\":true,\"id\":17,\"kind\":\"package\"},{\"active\":true,\"id\":18,\"kind\":\"install\"},{\"active\":true,\"id\":19,\"kind\":\"test\"},{\"active\":false,\"id\":20,\"kind\":\"ship\"}],\"title\":\"Nivren benchmark events\"}",
+      "nivren": {
+        "median_ms": 3.519,
+        "p95_ms": 3.672,
+        "min_ms": 3.206,
+        "max_ms": 3.672,
+        "peak_rss_kb": 9840
+      },
+      "node": {
+        "median_ms": 24.903,
+        "p95_ms": 26.762,
+        "min_ms": 23.671,
+        "max_ms": 26.762,
+        "peak_rss_kb": 45584
+      },
+      "node_speedup": 0.14
+    },
+    {
+      "id": "text_file",
+      "category": "strength",
+      "label": "Text file pipeline",
+      "description": "Read a UTF-8 log, split bounded lines, and emit a JSON array.",
+      "runs": 15,
+      "warmups": 2,
+      "output": "[\"2026-07-27T20:00:01Z start worker=alpha\",\"2026-07-27T20:00:02Z parse records=20\",\"2026-07-27T20:00:03Z check schemas=2\",\"2026-07-27T20:00:04Z compile modules=4\",\"2026-07-27T20:00:05Z execute tasks=8\",\"2026-07-27T20:00:06Z observe spans=16\",\"2026-07-27T20:00:07Z package files=32\",\"2026-07-27T20:00:08Z install target=local\",\"2026-07-27T20:00:09Z test passed=142\",\"2026-07-27T20:00:10Z ship status=ready\",\"2026-07-27T20:00:11Z start worker=beta\",\"2026-07-27T20:00:12Z parse records=20\",\"2026-07-27T20:00:13Z check schemas=2\",\"2026-07-27T20:00:14Z compile modules=4\",\"2026-07-27T20:00:15Z execute tasks=8\",\"2026-07-27T20:00:16Z observe spans=16\",\"2026-07-27T20:00:17Z package files=32\",\"2026-07-27T20:00:18Z install target=local\",\"2026-07-27T20:00:19Z test passed=142\",\"2026-07-27T20:00:20Z ship status=ready\",\"\"]",
+      "nivren": {
+        "median_ms": 3.5,
+        "p95_ms": 4.028,
+        "min_ms": 3.053,
+        "max_ms": 4.028,
+        "peak_rss_kb": 9712
+      },
+      "node": {
+        "median_ms": 24.862,
+        "p95_ms": 26.477,
+        "min_ms": 23.818,
+        "max_ms": 26.477,
+        "peak_rss_kb": 45152
+      },
+      "node_speedup": 0.14
+    },
+    {
       "id": "arithmetic",
+      "category": "limit",
       "label": "Tiered integer loop",
-      "description": "Two million calls to a small integer kernel.",
+      "description": "Two million calls to a small checked-integer kernel.",
       "runs": 11,
       "warmups": 3,
       "output": "4000004",
       "nivren": {
-        "median_ms": 788.816,
-        "p95_ms": 806.755,
-        "min_ms": 778.777,
-        "max_ms": 806.755,
-        "peak_rss_kb": 10768
+        "median_ms": 666.458,
+        "p95_ms": 689.764,
+        "min_ms": 660.299,
+        "max_ms": 689.764,
+        "peak_rss_kb": 10960
       },
       "node": {
-        "median_ms": 26.032,
-        "p95_ms": 29.895,
-        "min_ms": 24.691,
-        "max_ms": 29.895,
-        "peak_rss_kb": 47488
+        "median_ms": 27.114,
+        "p95_ms": 28.604,
+        "min_ms": 26.497,
+        "max_ms": 28.604,
+        "peak_rss_kb": 47280
       },
-      "node_speedup": 30.3
+      "node_speedup": 24.58
     },
     {
       "id": "fibonacci",
+      "category": "limit",
       "label": "Recursive calls",
       "description": "Naive recursive Fibonacci(30).",
       "runs": 11,
       "warmups": 3,
       "output": "832040",
       "nivren": {
-        "median_ms": 1570.085,
-        "p95_ms": 1858.531,
-        "min_ms": 1561.709,
-        "max_ms": 1858.531,
-        "peak_rss_kb": 10080
+        "median_ms": 658.734,
+        "p95_ms": 672.652,
+        "min_ms": 651.684,
+        "max_ms": 672.652,
+        "peak_rss_kb": 9680
       },
       "node": {
-        "median_ms": 29.089,
-        "p95_ms": 41.322,
-        "min_ms": 27.522,
-        "max_ms": 41.322,
-        "peak_rss_kb": 47456
+        "median_ms": 30.191,
+        "p95_ms": 32.313,
+        "min_ms": 28.807,
+        "max_ms": 32.313,
+        "peak_rss_kb": 46880
       },
-      "node_speedup": 53.98
+      "node_speedup": 21.82
     },
     {
       "id": "nested_loops",
+      "category": "limit",
       "label": "Nested loop arithmetic",
       "description": "A 500 × 500 checked-integer checksum.",
       "runs": 11,
       "warmups": 3,
       "output": "124862000",
       "nivren": {
-        "median_ms": 118.211,
-        "p95_ms": 125.652,
-        "min_ms": 117.543,
-        "max_ms": 125.652,
-        "peak_rss_kb": 9552
+        "median_ms": 53.351,
+        "p95_ms": 54.111,
+        "min_ms": 52.582,
+        "max_ms": 54.111,
+        "peak_rss_kb": 9600
       },
       "node": {
-        "median_ms": 26.414,
-        "p95_ms": 29.149,
-        "min_ms": 24.769,
-        "max_ms": 29.149,
-        "peak_rss_kb": 47168
+        "median_ms": 25.768,
+        "p95_ms": 27.976,
+        "min_ms": 24.684,
+        "max_ms": 27.976,
+        "peak_rss_kb": 47120
       },
-      "node_speedup": 4.48
+      "node_speedup": 2.07
     }
   ]
 }

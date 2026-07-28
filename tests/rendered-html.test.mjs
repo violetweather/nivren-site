@@ -36,7 +36,7 @@ for (const [pathname, expected] of [
   ["/install", "Install Nivren"],
   ["/downloads", "Downloads"],
   ["/examples", "Examples"],
-  ["/benchmarks", "Nivren vs Node.js"],
+  ["/benchmarks", "Quick tools. Small processes. Explicit safety."],
   ["/packages", "Packages"],
 ]) {
   test(`renders ${pathname}`, async () => {
@@ -122,10 +122,15 @@ test("publishes every portable beta target", async () => {
 test("publishes reproducible Nivren versus Node.js results", async () => {
   const response = await render("/benchmarks");
   const html = await response.text();
-  for (const phrase of ["Measured, not marketed", "7.62", "4.48", "53.98", "Source-to-result startup", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "Apple M4", "Nivren 0.10.0-beta.6", "Node.js 26.5.0", "What they do not say", "Every input is public"]) {
+  for (const phrase of ["Measured on real Nivren-shaped work", "Where Nivren fits today", "Current limits", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "Apple M4", "Nivren 0.10.0-beta.6", "Node.js 26.5.0", "What the strengths mean", "The wins and losses use one public harness"]) {
     assert.match(html, new RegExp(phrase));
   }
   const benchmarkReport = JSON.parse(await readFile(new URL("../benchmarks/nivren-vs-node/results/2026-07-27-macos-arm64.json", import.meta.url), "utf8"));
-  assert.equal(benchmarkReport.results.length, 4);
+  assert.equal(benchmarkReport.results.length, 7);
+  assert.equal(benchmarkReport.results.filter(result => result.category === "strength").length, 4);
+  assert.equal(benchmarkReport.results.filter(result => result.category === "limit").length, 3);
   assert.equal(benchmarkReport.results[0].output, "42");
+  assert.equal(benchmarkReport.results[1].output, "successful check");
+  assert.ok(benchmarkReport.results[2].output.includes("Nivren benchmark events"));
+  assert.ok(benchmarkReport.results[3].output.includes("start worker=alpha"));
 });

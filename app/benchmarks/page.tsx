@@ -3,8 +3,8 @@ import Link from "next/link";
 import report from "@/benchmarks/nivren-vs-node/results/2026-07-27-macos-arm64.json";
 
 export const metadata: Metadata = {
-  title: "Nivren vs Node.js benchmarks",
-  description: "A reproducible, plain-spoken comparison of Nivren 0.10.0-beta.6 and Node.js 26 on startup, computation, and memory.",
+  title: "Nivren performance benchmarks",
+  description: "Reproducible Nivren and Node.js measurements for startup, source checking, typed JSON and file work, memory, and compute-heavy limits.",
 };
 
 const sourceUrl = "https://github.com/violetweather/nivren-site/tree/main/benchmarks/nivren-vs-node";
@@ -23,45 +23,60 @@ function comparison(nivren: number, node: number) {
 }
 
 export default function BenchmarksPage() {
-  const startup = report.results[0];
-  const startupLead = startup.node.median_ms / startup.nivren.median_ms;
-  const compute = report.results.slice(1);
-  const minimumComputeLead = Math.min(...compute.map(result => result.node_speedup));
-  const maximumComputeLead = Math.max(...compute.map(result => result.node_speedup));
-  const memoryRatios = report.results.flatMap(result => result.nivren.peak_rss_kb && result.node.peak_rss_kb
+  const strengths = report.results.filter(result => result.category === "strength");
+  const limits = report.results.filter(result => result.category === "limit");
+  const strengthLeads = strengths.map(result => result.node.median_ms / result.nivren.median_ms);
+  const computeLeads = limits.map(result => result.node_speedup);
+  const memoryRatios = strengths.flatMap(result => result.nivren.peak_rss_kb && result.node.peak_rss_kb
     ? [result.node.peak_rss_kb / result.nivren.peak_rss_kb]
     : []);
+  const groups = [
+    {
+      id: "strength-results",
+      kicker: "Where Nivren fits today",
+      title: "Fast, lean command-line work.",
+      description: "These fresh-process tests match Nivren’s current strengths: getting to a result quickly, checking a source file, and safely moving a typed document from disk to canonical JSON.",
+      results: strengths,
+    },
+    {
+      id: "limit-results",
+      kicker: "Current limits",
+      title: "Hot compute still belongs to V8.",
+      description: "We keep the compute-heavy cases visible so optimization progress remains measurable. They are useful engineering diagnostics, not the whole story of either language.",
+      results: limits,
+    },
+  ];
 
   return <>
     <section className="page-hero benchmark-hero">
       <div className="shell">
-        <span className="kicker">Measured, not marketed</span>
-        <h1>Nivren vs Node.js</h1>
-        <p>A small reproducible comparison of source-to-result latency, sustained computation, and process memory. The result is mixed: Nivren starts lean and fast; Node&apos;s mature optimizing runtime wins decisively once computation gets hot.</p>
-        <div className="page-hero-meta"><span className="meta-pill">Apple M4 · arm64</span><span className="meta-pill">Nivren 0.10.0-beta.6</span><span className="meta-pill">Node.js 26.5.0</span><span className="meta-pill">July 27, 2026</span></div>
+        <span className="kicker">Measured on real Nivren-shaped work</span>
+        <h1>Quick tools. Small processes. Explicit safety.</h1>
+        <p>Nivren reaches useful command-line results in a few milliseconds while type and capability checks stay built in. The same transparent suite also shows where Node.js remains faster: long-running, compute-heavy JavaScript.</p>
+        <div className="page-hero-meta"><span className="meta-pill">Apple M4 · arm64</span><span className="meta-pill">Nivren 0.10.0-beta.6 + Phase 2</span><span className="meta-pill">Node.js 26.5.0</span><span className="meta-pill">July 27, 2026</span></div>
       </div>
     </section>
 
     <div className="shell content-shell benchmark-page">
       <section className="benchmark-verdict" aria-labelledby="benchmark-summary">
         <div className="benchmark-verdict-copy">
-          <span className="kicker">The honest summary</span>
-          <h2 id="benchmark-summary">Fast to arrive.<br />More work to do.</h2>
-          <p>Nivren&apos;s tiny runtime reaches the first result quickly and stays memory-light. Node.js pays more to start V8, then repays that cost with far stronger optimization on loops and recursive calls.</p>
+          <span className="kicker">The useful summary</span>
+          <h2 id="benchmark-summary">Built for work that starts now.</h2>
+          <p>Across startup, one-shot checking, typed JSON, and bounded text-file processing, Nivren completes the whole command before Node.js finishes paying most of its process-start cost. It does so with lower peak memory and stricter default semantics.</p>
         </div>
         <div className="benchmark-stat-grid">
-          <article className="benchmark-stat nivren-win"><strong>{startupLead.toFixed(2)}×</strong><span>Nivren&apos;s startup lead</span><p>{formatMs(startup.nivren.median_ms)} versus {formatMs(startup.node.median_ms)}</p></article>
-          <article className="benchmark-stat node-win"><strong>{minimumComputeLead.toFixed(2)}–{maximumComputeLead.toFixed(0)}×</strong><span>Node&apos;s compute lead</span><p>Across the three sustained workloads</p></article>
-          <article className="benchmark-stat memory-win"><strong>{Math.min(...memoryRatios).toFixed(1)}–{Math.max(...memoryRatios).toFixed(1)}×</strong><span>Lower Nivren peak memory</span><p>Across all four fresh processes</p></article>
+          <article className="benchmark-stat nivren-win"><strong>{Math.min(...strengthLeads).toFixed(1)}–{Math.max(...strengthLeads).toFixed(1)}×</strong><span>Nivren&apos;s lead</span><p>Across the four strength-first workflows</p></article>
+          <article className="benchmark-stat memory-win"><strong>{Math.min(...memoryRatios).toFixed(1)}–{Math.max(...memoryRatios).toFixed(1)}×</strong><span>Lower peak memory</span><p>Across the same fresh processes</p></article>
+          <article className="benchmark-stat node-win"><strong>{Math.min(...computeLeads).toFixed(1)}–{Math.max(...computeLeads).toFixed(1)}×</strong><span>Node&apos;s compute lead</span><p>The optimization target remains visible</p></article>
         </div>
       </section>
 
-      <section className="benchmark-results" aria-labelledby="results-title">
-        <div className="benchmark-section-heading"><div><span className="kicker">Median wall time</span><h2 id="results-title">Four deliberately small tests.</h2></div><p>Each sample starts a fresh process. Runtime order alternates, outputs must match, and every compute test gets three warmup processes before eleven measured runs.</p></div>
+      {groups.map(group => <section className="benchmark-results" aria-labelledby={group.id} key={group.id}>
+        <div className="benchmark-section-heading"><div><span className="kicker">{group.kicker}</span><h2 id={group.id}>{group.title}</h2></div><p>{group.description}</p></div>
         <div className="benchmark-table-wrap">
           <table className="benchmark-table">
             <thead><tr><th>Workload</th><th>Nivren</th><th>Node.js</th><th>Fastest</th><th>Peak memory</th></tr></thead>
-            <tbody>{report.results.map(result => {
+            <tbody>{group.results.map(result => {
               const resultComparison = comparison(result.nivren.median_ms, result.node.median_ms);
               const scale = Math.max(result.nivren.median_ms, result.node.median_ms);
               return <tr key={result.id}>
@@ -74,19 +89,19 @@ export default function BenchmarksPage() {
             })}</tbody>
           </table>
         </div>
-      </section>
+      </section>)}
 
       <section className="benchmark-reading">
-        <article><span>01</span><h2>What the numbers say</h2><p>Nivren&apos;s 3.11 ms source startup and roughly 9–11 MiB footprint are excellent foundations for command-line tools, scripts, and short-lived workers. Node wins the compute tests by 4.48× to 53.98×, with recursion exposing the largest gap. Nivren&apos;s tiered JIT is working, but it is not yet in V8&apos;s performance class.</p></article>
-        <article><span>02</span><h2>What they do not say</h2><p>These are microbenchmarks, not a universal language ranking. They do not cover servers, asynchronous I/O, databases, WebAssembly, package workloads, developer productivity, or Nivren&apos;s checked arithmetic and capability enforcement. JavaScript numbers and Nivren integers also have different overflow semantics.</p></article>
+        <article><span>01</span><h2>What the strengths mean</h2><p>Low startup and memory make Nivren a natural fit for command-line tools, scripts, automation steps, short-lived workers, and local data utilities. The data cases cover bounded text splitting plus typed JSON with file-capability enforcement, complete schema validation, and deterministic output.</p></article>
+        <article><span>02</span><h2>How to read the caveats</h2><p>The source-check row is intentionally not identical work: Nivren performs semantic, type, and capability checks, while <code>node --check</code> checks JavaScript syntax. Compute cases use checked 64-bit Nivren integers and optimized JavaScript numbers. This is a workload comparison, not a universal language ranking.</p></article>
       </section>
 
       <section className="benchmark-method" aria-labelledby="method-title">
-        <div><span className="kicker">Reproduce it</span><h2 id="method-title">Every input is public.</h2><p>The repository contains the paired Nivren and JavaScript programs, runner, raw samples summary, runtime versions, and machine description. Change the run counts or point it at a future Nivren binary and regenerate the report.</p><a className="button primary" href={sourceUrl}>View benchmark source <span aria-hidden="true">↗</span></a></div>
+        <div><span className="kicker">Reproduce it</span><h2 id="method-title">The wins and losses use one public harness.</h2><p>Every sample starts a fresh process, runtime order alternates, paired programs must succeed with matching output, and the report includes medians, p95s, ranges, runtime versions, memory, and machine details. The strength-first presentation changes emphasis—not the underlying evidence.</p><a className="button primary" href={sourceUrl}>View benchmark source <span aria-hidden="true">↗</span></a></div>
         <div className="prose-card benchmark-recipe"><h3>Measured environment</h3><dl><div><dt>Processor</dt><dd>{report.environment.cpu}</dd></div><div><dt>System</dt><dd>{report.environment.os} · {report.environment.architecture}</dd></div><div><dt>Nivren</dt><dd>{report.environment.nivren}</dd></div><div><dt>Node.js</dt><dd>{report.environment.node}</dd></div></dl><h3>Run it</h3><pre><code>NIVREN_BIN=/path/to/niv node benchmarks/nivren-vs-node/run.mjs</code></pre></div>
       </section>
 
-      <div className="benchmark-next"><div><strong>Performance is now a visible product promise.</strong><span>Future releases can rerun this exact suite and show progress without moving the goalposts.</span></div><Link href="/downloads">Try the measured beta →</Link></div>
+      <div className="benchmark-next"><div><strong>Performance is a visible product promise.</strong><span>Each release can rerun the same workflows, keep the limits public, and add new real-world cases without rewriting history.</span></div><Link href="/downloads">Try the measured beta →</Link></div>
     </div>
   </>;
 }
