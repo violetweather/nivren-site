@@ -206,7 +206,7 @@ export const packages: PackageDoc[] = [
     name: "nivren_database", purpose: "Database driver contracts",
     summary: "Define bounded pools, parameterized driver requests, ordered migrations, and typed result pages behind one inspectable adapter boundary.",
     api: ["PoolConfig", "DriverRequest", "Migration", "QueryPage", "validate_pool", "validate_request", "validate_migrations", "encode_request", "decode_page", "open_driver", "query_driver", "execute_driver"],
-    capabilities: "The contracts/codecs are pure. The official opaque-handle adapter declares Native within database; each embedding host implements the concrete PostgreSQL, MySQL, SQLite, or managed-service transport.",
+    capabilities: "The contracts/codecs are pure. The adapter declares Native within database. Native CLI projects receive a bundled rooted SQLite host; PostgreSQL, MySQL, and managed-service transports remain host integrations.",
     limits: "Pools cap at 1,024 connections; connect/query timeouts cap at 300 seconds; statements cap at 1 MiB; parameters at 65,536; and result requests at one million rows.",
     useWhen: "Use it to keep application queries portable across PostgreSQL, MySQL, SQLite, or host-provided drivers while preserving visible transactions and limits.",
     notes: "This package is the safe driver boundary, not a bundled database client. Adapters must preserve parameter ordering, typed failures, cancellation, and transaction cleanup.",

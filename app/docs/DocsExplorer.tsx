@@ -146,7 +146,7 @@ needs Network
   },
   {
     id: "database", title: "Database services", group: "Applications", summary: "Use typed requests, bounded pages, transactions, migrations, and owned drivers.", search: "database sql driver pool migration transaction query rows postgres mysql sqlite",
-    paragraphs: ["nivren_database defines Edition 4 driver, pool, migration, request, row, and page contracts. Its Native host adapter owns an opaque database handle, passes bounded typed JSON, and closes deterministically.", "Real released PostgreSQL, MySQL, and SQLite hosts, query streaming, pool integration, and clean-platform fixtures remain blocking work; the docs do not claim those adapters are shipped yet."],
+    paragraphs: ["nivren_database defines Edition 4 driver, pool, migration, request, row, and page contracts. The native CLI now ships a bundled SQLite host with rooted paths, parameterized query/execute, explicit transactions, bounded JSON rows, and deterministic opaque-handle cleanup.", "PostgreSQL and MySQL hosts, query streaming, pool integration, migration reference services, and the six-platform SQLite fixture matrix remain blocking work."],
     checks: ["Parameterize values and validate identifiers.", "Bound rows, field bytes, timeouts, and pool size.", "Test rollback, cancellation, saturation, reconnect, and migration recovery."],
   },
   {
