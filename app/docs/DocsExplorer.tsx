@@ -18,14 +18,16 @@ type Section = {
 const sections: Section[] = [
   {
     id: "install", title: "Guided installation", group: "Start here", summary: "Install, update, roll back, and remove Nivren safely.", search: "install setup path vscode rollback windows mac linux",
-    paragraphs: ["The guided installer detects the operating system and CPU, verifies the selected archive, and asks before changing PATH or installing VS Code support. Every managed install has an ownership marker and machine-readable receipt.", "The current public download is the Edition 3 beta. Edition 4 remains an unpublished candidate until every Product Proof gate passes. Local rollback is implemented; signed stable, beta, and nightly update channels remain a release blocker."],
+    paragraphs: ["The guided installer detects the operating system and CPU, verifies the selected archive, and asks before changing PATH or installing VS Code support. Every managed install has an ownership marker and machine-readable receipt.", "The current public download is the Edition 3 beta. Edition 4 remains an unpublished candidate until every Product Proof gate passes. Local rollback and signed stable, beta, and nightly manifests are implemented; the production channel key, manifests, clean-platform recovery matrix, and incident drill remain release gates."],
     command: `# macOS or Linux
 sh install.sh
+sh install.sh --channel beta --channel-key ./nivren-channel.pub
 sh install.sh --rollback
 sh install.sh --uninstall
 
 # Windows PowerShell
 .\\install.ps1
+.\\install.ps1 -Channel beta -ChannelKey .\\nivren-channel.pub
 .\\install.ps1 -Rollback
 .\\install.ps1 -Uninstall`,
     checks: ["Use --yes or -Yes only in controlled automation.", "Never install over an unmarked directory.", "Keep checksums, receipts, and the previous version until validation passes."],
