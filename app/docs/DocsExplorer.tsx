@@ -193,7 +193,7 @@ needs Native
   },
   {
     id: "tooling", title: "Tooling and workspaces", group: "Tools", summary: "Use one formatter, language server, debugger protocol, profiler, and workspace workflow.", search: "fmt lsp dap debug profile coverage benchmark workspace incremental",
-    paragraphs: ["niv-workspace.toml lists up to 256 normalized members in explicit order. check, build, test, bench, and ship retain each member's content fingerprint. niv bench reports warmups, 15 samples, median, p95, minimum, and versioned JSON. Property, compatibility, fuzz-smoke, and deterministic-time test profiles have first-class commands.", "The LSP provides diagnostics, completion, formatting, and Unicode-correct workspace rename. VS Code now registers Edition 4 highlighting and a niv dap launch adapter. The bounded DAP endpoint supports protocol framing and core requests; real pause/resume semantics and multi-editor evidence remain unfinished."],
+    paragraphs: ["niv-workspace.toml lists up to 256 normalized members. Nivren schedules exact-version internal dependencies first, preserves declaration order among independent members, and rejects cycles or member-version drift. check, build, test, bench, and ship retain each member's content fingerprint. niv bench reports warmups, 15 samples, median, p95, minimum, and versioned JSON. Property, compatibility, fuzz-smoke, and deterministic-time test profiles have first-class commands.", "niv profile reports execution and operation counts, allocation and garbage-collection work, materialized plans and ordered effects, async spawns/joins/cancellations/waits, and JIT/native decisions without recording source, values, secrets, or absolute project paths. The LSP provides diagnostics, completion, formatting, and Unicode-correct workspace rename. VS Code registers Edition 4 highlighting and a niv dap launch adapter; real pause/resume semantics and multi-editor evidence remain unfinished."],
     command: `niv workspace check .
 niv workspace test .
 niv workspace bench .
@@ -211,7 +211,7 @@ niv coverage app.niv`,
   },
   {
     id: "cli", title: "CLI reference", group: "Tools", summary: "The candidate command surface at a glance.", search: "cli new add dev check test bench build explain ship install registry dap",
-    paragraphs: ["Core project commands, test profiles, deterministic time, verified cache management, and signed-channel verification are implemented. Complete DAP execution control, hosted recovery, clean-platform update evidence, and broader profiling remain Product Proof blockers."],
+    paragraphs: ["Core project commands, dependency-aware workspaces, test profiles, deterministic time, verified cache management, broad profiling, and signed-channel verification are implemented. Complete DAP execution control, hosted recovery, clean-platform update evidence, and independent audit evidence remain Product Proof blockers."],
     command: `niv new <project>          niv add <package> <version>
 niv dev [project]          niv check <path>
 niv test [path]            niv test --time <unix> [path]
