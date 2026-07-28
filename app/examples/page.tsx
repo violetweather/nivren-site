@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SyntaxCode } from "../components/SyntaxCode";
 
 export const metadata: Metadata = { title: "Examples", description: "See distinctive Edition 4 programs for typed failure, capabilities, structured concurrency, native hosts, and web services." };
 
@@ -195,5 +196,5 @@ needs FileRead
 
 export default function ExamplesPage() {
   return <><section className="page-hero compact"><div className="shell"><span className="kicker">Learn by reading</span><h1>Examples</h1><p>Complete, type-checked patterns showing what makes Edition 4 unmistakably Nivren.</p></div></section>
-  <div className="shell content-shell example-list">{examples.map((example, index) => <article className="example-row" key={example.title}><div className="example-copy"><span>{String(index + 1).padStart(2,"0")} · {example.tag}</span><h2>{example.title}</h2><p>{example.copy}</p></div><div className="example-code"><div><i /><i /><i /><span>example.niv</span></div><pre><code>{example.code}</code></pre></div></article>)}</div></>;
+  <div className="shell content-shell example-list">{examples.map((example, index) => <article className="example-row" key={example.title}><div className="example-copy"><span>{String(index + 1).padStart(2,"0")} · {example.tag}</span><h2>{example.title}</h2><p>{example.copy}</p></div><div className="example-code"><div><i /><i /><i /><span>example.niv</span></div><pre><SyntaxCode code={example.code} /></pre></div></article>)}</div></>;
 }

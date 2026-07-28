@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { SyntaxCode } from "../components/SyntaxCode";
 
 type Section = {
   id: string;
@@ -248,7 +249,7 @@ export function DocsExplorer() {
     </aside>
     <article className="docs-content" key={current.id}>
       <span className="doc-group">{current.group}</span><h2>{current.title}</h2><p className="doc-summary">{current.summary}</p>
-      <div className="doc-body">{current.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}{current.nivren ? <pre><code>{current.nivren}</code></pre> : null}{current.command ? <pre><code>{current.command}</code></pre> : null}{current.checks ? <><h3>Production checks</h3><ul>{current.checks.map((check) => <li key={check}>{check}</li>)}</ul></> : null}{current.id === "packages" ? <p>Explore the <Link className="inline-code" href="/packages">official package guides</Link> for APIs, failures, performance notes, and release checks.</p> : null}</div>
+      <div className="doc-body">{current.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}{current.nivren ? <pre><SyntaxCode code={current.nivren} /></pre> : null}{current.command ? <pre><SyntaxCode code={current.command} language="shell" /></pre> : null}{current.checks ? <><h3>Production checks</h3><ul>{current.checks.map((check) => <li key={check}>{check}</li>)}</ul></> : null}{current.id === "packages" ? <p>Explore the <Link className="inline-code" href="/packages">official package guides</Link> for APIs, failures, performance notes, and release checks.</p> : null}</div>
       <div className="doc-source">Normative behavior is defined by the executable Edition 4 draft and source-controlled standard-library, bytecode, package, embedding, and Wasm specifications.</div>
       <nav className="doc-pager" aria-label="Previous and next documentation sections">{previous ? <button type="button" onClick={() => setActive(previous.id)}><span>Previous</span>{previous.title}</button> : <span />}{next ? <button type="button" onClick={() => setActive(next.id)}><span>Next</span>{next.title}</button> : <span />}</nav>
     </article>

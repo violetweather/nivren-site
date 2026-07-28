@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import report from "@/benchmarks/nivren-vs-node/results/2026-07-27-macos-arm64.json";
+import { SyntaxCode } from "../components/SyntaxCode";
 
 export const metadata: Metadata = {
   title: "Nivren performance benchmarks",
@@ -98,7 +99,7 @@ export default function BenchmarksPage() {
 
       <section className="benchmark-method" aria-labelledby="method-title">
         <div><span className="kicker">Reproduce it</span><h2 id="method-title">The wins and losses use one public harness.</h2><p>Every sample starts a fresh process, runtime order alternates, paired programs must succeed with matching output, and the report includes medians, p95s, ranges, runtime versions, memory, and machine details. The strength-first presentation changes emphasis—not the underlying evidence.</p><a className="button primary" href={sourceUrl}>View benchmark source <span aria-hidden="true">↗</span></a></div>
-        <div className="prose-card benchmark-recipe"><h3>Measured environment</h3><dl><div><dt>Processor</dt><dd>{report.environment.cpu}</dd></div><div><dt>System</dt><dd>{report.environment.os} · {report.environment.architecture}</dd></div><div><dt>Nivren</dt><dd>{report.environment.nivren}</dd></div><div><dt>Node.js</dt><dd>{report.environment.node}</dd></div></dl><h3>Run it</h3><pre><code>NIVREN_BIN=/path/to/niv node benchmarks/nivren-vs-node/run.mjs</code></pre></div>
+        <div className="prose-card benchmark-recipe"><h3>Measured environment</h3><dl><div><dt>Processor</dt><dd>{report.environment.cpu}</dd></div><div><dt>System</dt><dd>{report.environment.os} · {report.environment.architecture}</dd></div><div><dt>Nivren</dt><dd>{report.environment.nivren}</dd></div><div><dt>Node.js</dt><dd>{report.environment.node}</dd></div></dl><h3>Run it</h3><pre><SyntaxCode language="shell" code="NIVREN_BIN=/path/to/niv node benchmarks/nivren-vs-node/run.mjs" /></pre></div>
       </section>
 
       <div className="benchmark-next"><div><strong>Performance is a visible product promise.</strong><span>Each release can rerun the same workflows, keep the limits public, and add new real-world cases without rewriting history.</span></div><Link href="/downloads">Try the measured beta →</Link></div>

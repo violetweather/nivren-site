@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { betaLabel, publicRelease, releaseAssetUrl } from "../release";
+import { SyntaxCode } from "../components/SyntaxCode";
 
 export const metadata: Metadata = { title: "Downloads", description: "Download Nivren binaries and verify release integrity." };
 
@@ -34,9 +35,9 @@ export default function DownloadsPage() {
       </div>
       <section className="verify-section">
         <div><span className="kicker">Trust, then run</span><h2>Verify the download.</h2><p>Download the release checksum manifest and compare the entry for your artifact. Browser users need both the <a href={browserSdk}>JavaScript SDK</a> and its <a href={browserModule}>browser module</a>.</p><div className="digest"><span>SHA-256</span><a href={checksums}>Download SHA256SUMS ↗</a></div></div>
-        <div className="prose-card"><h3>GitHub attestation</h3><p>Verify an archive or WASM module&apos;s signed build provenance:</p><pre><code>gh attestation verify --repo violetweather/nivren &lt;artifact&gt;</code></pre><h3>Build it yourself</h3><pre><code>{`git clone https://github.com/violetweather/nivren.git
+        <div className="prose-card"><h3>GitHub attestation</h3><p>Verify an archive or WASM module&apos;s signed build provenance:</p><pre><SyntaxCode language="shell" code="gh attestation verify --repo violetweather/nivren <artifact>" /></pre><h3>Build it yourself</h3><pre><SyntaxCode language="shell" code={`git clone https://github.com/violetweather/nivren.git
 cd nivren
-cargo build --release --locked`}</code></pre><Link href="/install">Full installation guide →</Link></div>
+cargo build --release --locked`} /></pre><Link href="/install">Full installation guide →</Link></div>
       </section>
     </div>
   </>;

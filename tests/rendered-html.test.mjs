@@ -125,6 +125,17 @@ test("publishes every portable beta target", async () => {
   assert.match(html, /pkgs\/container\/nivren/);
 });
 
+test("syntax-highlights every block-level code sample", async () => {
+  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages/nivren_database"];
+  for (const route of routes) {
+    const response = await render(route);
+    const html = await response.text();
+    for (const block of html.matchAll(/<pre[^>]*>([\s\S]*?)<\/pre>/g)) {
+      assert.match(block[1], /class="[^"]*syn-|class="syntax-code/, `${route} contains an unhighlighted code block`);
+    }
+  }
+});
+
 test("publishes reproducible Nivren versus Node.js results", async () => {
   const response = await render("/benchmarks");
   const html = await response.text();
