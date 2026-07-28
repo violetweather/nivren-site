@@ -189,14 +189,16 @@ needs Native
   },
   {
     id: "packages", title: "Packages, registry, and offline work", group: "Projects", summary: "Pin immutable contents, authority, provenance, ownership, and advisories.", search: "package registry lock offline cache yank ownership provenance advisory",
-    paragraphs: ["The 25 official packages are rebuilt, documented, published to a fixture registry, installed, imported, and executed together. Exact dependencies and content hashes are recorded in niv.lock. Offline install verifies the cached graph without network access.", "Publication records first-publisher ownership, capability scopes, unsafe modules, provenance, and immutable contents. Yanking hides unsafe versions without deleting artifacts. Hosted recovery and signed administrative operations remain release blockers."],
+    paragraphs: ["The 25 official packages are Edition 4 modules rebuilt, documented, published to a fixture registry, installed, imported, and executed together. Exact dependencies and content hashes are recorded in niv.lock. Offline install verifies the cached graph without network access.", "niv cache list verifies archive, extracted source, identity, checksum, and reachability. niv cache prune removes only verified entries unreachable from the complete dependency graph. Publication records ownership, authority, provenance, and immutable contents; hosted recovery and signed administrative operations remain release blockers."],
   },
   {
     id: "tooling", title: "Tooling and workspaces", group: "Tools", summary: "Use one formatter, language server, debugger protocol, profiler, and workspace workflow.", search: "fmt lsp dap debug profile coverage benchmark workspace incremental",
-    paragraphs: ["niv-workspace.toml lists up to 256 normalized members in explicit order. check, build, test, bench, and ship retain each member's content fingerprint. niv bench reports warmups, 15 samples, median, p95, minimum, and versioned JSON.", "The LSP provides diagnostics, completion, formatting, and Unicode-correct workspace rename. The bounded DAP endpoint supports protocol framing and core requests; real pause/resume semantics and multi-editor evidence remain unfinished."],
+    paragraphs: ["niv-workspace.toml lists up to 256 normalized members in explicit order. check, build, test, bench, and ship retain each member's content fingerprint. niv bench reports warmups, 15 samples, median, p95, minimum, and versioned JSON. Property, compatibility, fuzz-smoke, and deterministic-time test profiles have first-class commands.", "The LSP provides diagnostics, completion, formatting, and Unicode-correct workspace rename. VS Code now registers Edition 4 highlighting and a niv dap launch adapter. The bounded DAP endpoint supports protocol framing and core requests; real pause/resume semantics and multi-editor evidence remain unfinished."],
     command: `niv workspace check .
 niv workspace test .
 niv workspace bench .
+niv test --property tests/property
+niv test --time 1700000000 tests/niv
 niv fmt --check .
 niv dap
 niv profile --json profile.json app.niv
@@ -209,10 +211,13 @@ niv coverage app.niv`,
   },
   {
     id: "cli", title: "CLI reference", group: "Tools", summary: "The candidate command surface at a glance.", search: "cli new add dev check test bench build explain ship install registry dap",
-    paragraphs: ["Core project commands are available now. Property/fuzz/compatibility UX, deterministic-time testing, complete DAP execution control, signed update channels, and broader profiling remain Product Proof blockers."],
+    paragraphs: ["Core project commands, test profiles, deterministic time, verified cache management, and signed-channel verification are implemented. Complete DAP execution control, hosted recovery, clean-platform update evidence, and broader profiling remain Product Proof blockers."],
     command: `niv new <project>          niv add <package> <version>
 niv dev [project]          niv check <path>
-niv test [path]            niv bench [path]
+niv test [path]            niv test --time <unix> [path]
+niv test --property        niv test --fuzz-smoke
+niv bench [path]           niv cache list [project]
+niv cache prune [project]  niv release verify-channel …
 niv build [project]        niv explain <path>
 niv ship [project]         niv workspace <action>
 niv install --offline      niv package verify <archive>
