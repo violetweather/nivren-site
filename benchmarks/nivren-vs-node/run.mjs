@@ -16,13 +16,26 @@ if (!Number.isInteger(measuredRuns) || measuredRuns < 3 || !Number.isInteger(war
 }
 
 const definitions = [
-  { id: "startup", label: "Source-to-result startup", description: "Parse, compile, execute, and print one integer.", runs: Math.max(measuredRuns, 21), warmups: 2 },
-  { id: "arithmetic", label: "Tiered integer loop", description: "Two million calls to a small integer kernel.", runs: measuredRuns, warmups: warmupRuns },
-  { id: "fibonacci", label: "Recursive calls", description: "Naive recursive Fibonacci(30).", runs: measuredRuns, warmups: warmupRuns },
-  { id: "nested_loops", label: "Nested loop arithmetic", description: "A 500 × 500 checked-integer checksum.", runs: measuredRuns, warmups: warmupRuns },
+  { id: "startup", category: "strength", label: "Source-to-result startup", description: "Parse, check, compile, execute, and print one integer.", runs: Math.max(measuredRuns, 21), warmups: 2 },
+  { id: "cli_check", category: "strength", label: "One-shot source check", description: "Nivren performs semantic and capability checks; Node.js performs its built-in syntax check.", compareOutput: false, runs: Math.max(measuredRuns, 15), warmups: 2 },
+  { id: "typed_json_file", category: "strength", label: "Typed JSON file pipeline", description: "Read a file, validate its complete schema, and emit canonical JSON.", runs: Math.max(measuredRuns, 15), warmups: 2 },
+  { id: "text_file", category: "strength", label: "Text file pipeline", description: "Read a UTF-8 log, split bounded lines, and emit a JSON array.", runs: Math.max(measuredRuns, 15), warmups: 2 },
+  { id: "arithmetic", category: "limit", label: "Tiered integer loop", description: "Two million calls to a small checked-integer kernel.", runs: measuredRuns, warmups: warmupRuns },
+  { id: "fibonacci", category: "limit", label: "Recursive calls", description: "Naive recursive Fibonacci(30).", runs: measuredRuns, warmups: warmupRuns },
+  { id: "nested_loops", category: "limit", label: "Nested loop arithmetic", description: "A 500 × 500 checked-integer checksum.", runs: measuredRuns, warmups: warmupRuns },
 ];
 
 function commandFor(runtime, id) {
+  if (id === "cli_check") {
+    return runtime === "nivren"
+      ? { command: nivren, args: ["check", join(casesRoot, "arithmetic.niv")] }
+      : { command: node, args: ["--check", join(casesRoot, "arithmetic.mjs")] };
+  }
+  if (id === "typed_json_file" || id === "text_file") {
+    return runtime === "nivren"
+      ? { command: nivren, args: ["run", "."], cwd: join(casesRoot, id) }
+      : { command: node, args: [join(casesRoot, `${id}.mjs`)] };
+  }
   return runtime === "nivren"
     ? { command: nivren, args: ["run", join(casesRoot, `${id}.niv`)] }
     : { command: node, args: [join(casesRoot, `${id}.mjs`)] };
@@ -30,7 +43,7 @@ function commandFor(runtime, id) {
 
 function execute(spec) {
   const started = process.hrtime.bigint();
-  const result = spawnSync(spec.command, spec.args, { encoding: "utf8", timeout: 120_000 });
+  const result = spawnSync(spec.command, spec.args, { cwd: spec.cwd, encoding: "utf8", timeout: 120_000 });
   const elapsedMs = Number(process.hrtime.bigint() - started) / 1_000_000;
   if (result.error) throw result.error;
   if (result.status !== 0) throw new Error(`${spec.command} failed:\n${result.stderr}`);
@@ -53,7 +66,7 @@ function summarize(values) {
 
 function residentMemoryKb(spec) {
   if (platform() !== "darwin") return null;
-  const timed = spawnSync("/usr/bin/time", ["-l", spec.command, ...spec.args], { encoding: "utf8", timeout: 120_000 });
+  const timed = spawnSync("/usr/bin/time", ["-l", spec.command, ...spec.args], { cwd: spec.cwd, encoding: "utf8", timeout: 120_000 });
   const match = timed.stderr.match(/(\d+)\s+maximum resident set size/);
   return match ? Math.round(Number(match[1]) / 1024) : null;
 }
@@ -79,8 +92,9 @@ for (const definition of definitions) {
     const order = index % 2 === 0 ? ["nivren", "node"] : ["node", "nivren"];
     for (const runtime of order) {
       const sample = execute(commands[runtime]);
-      expectedOutput ??= sample.output;
-      if (sample.output !== expectedOutput) {
+      const comparableOutput = definition.compareOutput === false ? "successful check" : sample.output;
+      expectedOutput ??= comparableOutput;
+      if (comparableOutput !== expectedOutput) {
         throw new Error(`${definition.id} output mismatch: expected ${expectedOutput}, received ${sample.output}`);
       }
       samples[runtime].push(sample.elapsedMs);
@@ -106,6 +120,7 @@ const report = {
     ordering: "alternating Nivren-first and Node-first",
     statistic: "median with p95, minimum, and maximum",
     scope: "wall-clock source-to-result latency; not a complete language ranking",
+    semantics: "paired programs produce identical output; source checking reflects each runtime's built-in checker, while Nivren's typed JSON case additionally enforces a declared schema and file capability",
   },
   environment: {
     os: `${platform()} ${release()}`,

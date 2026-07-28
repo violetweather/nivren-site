@@ -8,6 +8,9 @@ export type PackageDoc = {
   useWhen: string;
   notes: string;
   example: string;
+  failures?: string[];
+  performance?: string;
+  checklist?: string[];
 };
 
 export const packages: PackageDoc[] = [
@@ -19,7 +22,7 @@ export const packages: PackageDoc[] = [
     limits: "Keys are exactly 32 bytes, nonces exactly 12 bytes, associated data is capped at 1 MiB, and plaintext/ciphertext at 16 MiB including the tag.",
     useWhen: "Use it for encrypted records, tokens, or protocol payloads where tampering must be detected before plaintext is released.",
     notes: "Prefer seal, which creates a fresh nonce. seal_with_nonce is for deterministic protocols and tests; reusing a nonce with one key breaks security.",
-    example: `keep key = nivren_aead.generate_key() or give\nkeep context = std.bytes.from_string("user:42")\nkeep sealed = nivren_aead.seal(key, context, std.bytes.from_string("private")) or give\nkeep opened = nivren_aead.unseal(key, context, sealed) or give`,
+    example: `keep key set perform nivren_aead.generate_key with { } or give\nkeep context set std.bytes.from_string with { value set "user:42" }\nkeep sealed set perform nivren_aead.seal with { key set key context set context plaintext set std.bytes.from_string with { value set "private" } } or give\nkeep opened set nivren_aead.unseal with { key set key context set context sealed set sealed } or give`,
   },
   {
     name: "nivren_aws", purpose: "AWS request signing",
@@ -28,7 +31,7 @@ export const packages: PackageDoc[] = [
     limits: "Inputs are bounded by the underlying text, bytes, SHA-256, and HMAC operations. The package never reads credentials from the environment.",
     useWhen: "Use it when calling AWS APIs directly and you need request signing without hiding canonicalization or credential access.",
     notes: "URI, query, and headers must already be canonical. Keep long-lived secrets in an opaque native or cloud key-store adapter.",
-    example: `keep signed = nivren_aws.sign_v4(\n    "GET", "/", "Action=ListUsers&Version=2010-05-08",\n    canonical_headers, signed_headers, "", timestamp, date,\n    "us-east-1", "iam", access_key, secret_key\n) or give`,
+    example: `keep signed set nivren_aws.sign_v4 with {\n    method set "GET"\n    canonical_uri set "/"\n    canonical_query set "Action=ListUsers&Version=2010-05-08"\n    canonical_headers set canonical_headers\n    signed_headers set signed_headers\n    payload set ""\n    timestamp set timestamp\n    date set date\n    region set "us-east-1"\n    service set "iam"\n    access_key set access_key\n    secret_key set secret_key\n} or give`,
   },
   {
     name: "nivren_columnar", purpose: "Columnar data",
@@ -36,7 +39,7 @@ export const packages: PackageDoc[] = [
     api: ["IntColumn", "FloatColumn", "TextColumn", "Column", "Table", "column_name", "column_length", "table", "select"],
     capabilities: "Pure data transformation; no capabilities are required.", limits: "Construction allows at most 4,096 unique columns and one million equal-length rows.",
     useWhen: "Use it for bounded analytics, import pipelines, reporting, and typed table interchange.", notes: "table rejects duplicate names and mismatched column lengths. select preserves both column order and concrete value types.",
-    example: `keep names = Column.Text(TextColumn("name", ["Ada", "Lin"]))\nkeep scores = Column.Int(IntColumn("score", [10, 12]))\nkeep table = nivren_columnar.table([names, scores]) or give\nkeep view = nivren_columnar.select(table, ["name"]) or give`,
+    example: `keep names set nivren_columnar.Column.Texts(nivren_columnar.TextColumn("name", ["Ada", "Lin"]))\nkeep scores set nivren_columnar.Column.Ints(nivren_columnar.IntColumn("score", [10, 12]))\nkeep table set nivren_columnar.table with { columns set [names, scores] } or give\nkeep view set nivren_columnar.select with { value set table names set ["name"] } or give`,
   },
   {
     name: "nivren_compression", purpose: "Bounded compression",
@@ -44,7 +47,7 @@ export const packages: PackageDoc[] = [
     api: ["gzip", "gunzip", "zlib", "unzlib", "gzip_text", "gunzip_text"], capabilities: "Pure codecs; no capabilities are required.",
     limits: "Compressed input and output are capped at 16 MiB. Callers choose a decompressed-output maximum to block expansion bombs.",
     useWhen: "Use it for cache entries, wire payloads, files, and reproducible build artifacts.", notes: "Gzip timestamps are fixed to zero, so identical content, level, and package release produce identical bytes.",
-    example: `keep packed = nivren_compression.gzip_text("Nivren", 6) or give\nkeep text = nivren_compression.gunzip_text(packed, 1024) or give`,
+    example: `keep packed set nivren_compression.gzip_text with { text set "Nivren" level set 6 } or give\nkeep text set nivren_compression.gunzip_text with { data set packed maximum set 1024 } or give`,
   },
   {
     name: "nivren_crypto", purpose: "Hashes and authentication",
@@ -52,7 +55,7 @@ export const packages: PackageDoc[] = [
     api: ["fingerprint", "sign", "verify"], capabilities: "Pure cryptographic operations; no capabilities are required.",
     limits: "Keys are capped at 1 MiB and messages at 16 MiB. Malformed tags return typed errors.", useWhen: "Use it for fingerprints and protocol message authentication with an existing secret.",
     notes: "It is intentionally not password hashing, encryption, key generation, or certificate management; use nivren_secrets or nivren_aead for those jobs.",
-    example: `keep tag = nivren_crypto.sign(secret, message) or give\nkeep authentic = nivren_crypto.verify(secret, message, tag) or give`,
+    example: `keep tag set nivren_crypto.sign with { key set secret message set message } or give\nkeep authentic set nivren_crypto.verify with { key set secret message set message tag set tag } or give`,
   },
   {
     name: "nivren_csv", purpose: "CSV interchange",
@@ -60,15 +63,18 @@ export const packages: PackageDoc[] = [
     api: ["decode", "encode", "decode_with", "encode_with", "read", "write"], capabilities: "decode and encode are pure. read needs FileRead; write needs FileWrite.",
     limits: "Documents are capped at 16 MiB, fields at 1 MiB, columns at 4,096, and rows at a caller-selected maximum no greater than one million.",
     useWhen: "Use it for spreadsheet exports, imports, and predictable tabular interchange.", notes: "Rows are Map<String,String>; callers own schema conversion. Custom delimiters must be one visible ASCII byte.",
-    example: `keep rows = nivren_csv.decode(source, ["name", "score"], 10000) or give\nkeep canonical = nivren_csv.encode(rows, ["name", "score"]) or give`,
+    example: `keep rows set nivren_csv.decode with { source set source headers set ["name", "score"] maximum_rows set 10000 } or give\nkeep canonical set nivren_csv.encode with { rows set rows headers set ["name", "score"] } or give`,
   },
   {
     name: "nivren_discord", purpose: "Discord REST",
-    summary: "Build typed message JSON and send bounded, certificate-verified Discord channel messages.",
-    api: ["Message", "message_body", "bot_headers", "send_message"], capabilities: "Only send_message needs Network; JSON and header construction remain pure.",
-    limits: "Requests inherit bounded std.web response handling. Tokens are placed in request headers and are not logged by the package.",
-    useWhen: "Use it as the small official foundation for bots, notifications, and Discord automation.", notes: "This beta package covers REST message sending, not Gateway events, voice, command registration, rate-limit orchestration, or token storage.",
-    example: `define notify(token: String, channel: String) gives Result<String, String> needs Network {\n    give nivren_discord.send_message(token, channel, "Hello from Nivren")\n}`,
+    summary: "Build bounded REST messages and commands, make explicit retry/rate-limit decisions, and validate secure Gateway plans and typed events.",
+    api: ["Message", "Command", "RetryPolicy", "RetryDecision", "GatewayPlan", "GatewayEvent", "message_body", "bot_headers", "validate_command", "command_body", "retry_decision", "validate_gateway", "identify_body", "decode_event", "send_message"], capabilities: "Only send_message needs Network; payloads, policy validation, retry decisions, and Gateway event decoding remain pure.",
+    limits: "Messages cap at 2,000 characters, commands at Discord's 32/100 character bounds, Gateway events at 16 MiB, retries at 16 attempts, and delays at 300 seconds. Tokens are never logged.",
+    useWhen: "Use it for bots, notifications, command payloads, and the policy layer beneath a structured WebSocket Gateway loop.", notes: "Applications still own heartbeat scheduling, resume/session storage, interaction acknowledgements, permission checks, global rate-limit coordination, and secret storage.",
+    example: `keep policy set nivren_discord.RetryPolicy with {\n    maximum_attempts set 4\n    base_delay set 0.5\n    maximum_delay set 8.0\n}\nkeep decision set nivren_discord.retry_decision with {\n    status set 429\n    attempt set 1\n    retry_after set 2.0\n    policy set policy\n} or give`,
+    failures: ["Empty or oversized message/command", "Invalid retry attempts or backoff ceiling", "Rate-limit delay above policy", "Insecure Gateway URL or invalid intents", "Malformed or oversized Gateway event JSON"],
+    performance: "Policy decisions are constant-time apart from bounded backoff iteration. JSON work is linear in the bounded payload; network latency remains outside the pure policy layer.",
+    checklist: ["Store tokens outside logs and source", "Use WSS and explicit message ceilings", "Honor Discord retry_after exactly within policy", "Persist sequence/session state for resume", "Acknowledge interactions before long work"],
   },
   {
     name: "nivren_image", purpose: "RGB raster images",
@@ -76,7 +82,7 @@ export const packages: PackageDoc[] = [
     api: ["Image", "image", "encode_ppm", "decode_ppm"], capabilities: "Pure image construction and codec operations; file access remains separate.",
     limits: "Dimensions, pixel multiplication, token lengths, comments, and the 16 MiB payload ceiling are checked before allocation.",
     useWhen: "Use it for generated images, tests, simple pipelines, and a stable interchange boundary for future codecs.", notes: "Pixels are packed RGB bytes in row-major order. image requires exactly width × height × 3 bytes.",
-    example: `keep pixels = std.bytes.from_array([255, 98, 70, 17, 29, 44]) or give\nkeep image = nivren_image.image(2, 1, pixels) or give\nkeep ppm = nivren_image.encode_ppm(image) or give`,
+    example: `keep pixels set std.bytes.from_values with { values set [255, 98, 70, 17, 29, 44] } or give\nkeep image set nivren_image.image with { width set 2 height set 1 pixels set pixels } or give\nkeep ppm set nivren_image.encode_ppm with { value set image } or give`,
   },
   {
     name: "nivren_jwt", purpose: "Compact authentication tokens",
@@ -84,7 +90,7 @@ export const packages: PackageDoc[] = [
     api: ["sign_hs256", "verify_hs256", "sign_eddsa", "verify_eddsa"], capabilities: "Signing and verification are pure once key material is supplied.",
     limits: "Tokens must have exactly three bounded, unpadded base64url segments and a valid canonical JSON payload.",
     useWhen: "Use it to authenticate compact payloads after your application has chosen an algorithm and key-management policy.", notes: "Verification authenticates bytes; it does not decide issuer, audience, expiry, nonce, clock skew, or authorization. Decode claims into a shape and validate them explicitly.",
-    example: `keep token = nivren_jwt.sign_eddsa(payload_json, signing_key) or give\nkeep authenticated_json = nivren_jwt.verify_eddsa(token, public_key) or give`,
+    example: `keep token set nivren_jwt.sign_eddsa with { payload_json set payload_json key set signing_key } or give\nkeep authenticated_json set nivren_jwt.verify_eddsa with { token set token public_key set public_key } or give`,
   },
   {
     name: "nivren_matrix", purpose: "Dense matrices",
@@ -92,7 +98,7 @@ export const packages: PackageDoc[] = [
     api: ["Matrix", "matrix", "at", "add", "multiply", "transpose"], capabilities: "Pure numerical work; no capabilities are required.",
     limits: "Dimensions and indices are checked, and result allocations are capped at one million values.", useWhen: "Use it for small scientific, graphics, transform, and teaching workloads where transparent allocation matters.",
     notes: "Values are row-major Float arrays. Addition requires equal dimensions; multiplication requires matching inner dimensions.",
-    example: `keep left = nivren_matrix.matrix(2, 2, [1.0, 2.0, 3.0, 4.0]) or give\nkeep identity = nivren_matrix.matrix(2, 2, [1.0, 0.0, 0.0, 1.0]) or give\nkeep result = nivren_matrix.multiply(left, identity) or give`,
+    example: `keep left set nivren_matrix.matrix with { rows set 2 columns set 2 values set [1.0, 2.0, 3.0, 4.0] } or give\nkeep identity set nivren_matrix.matrix with { rows set 2 columns set 2 values set [1.0, 0.0, 0.0, 1.0] } or give\nkeep result set nivren_matrix.multiply with { left set left right set identity } or give`,
   },
   {
     name: "nivren_metrics", purpose: "Prometheus metrics",
@@ -100,7 +106,7 @@ export const packages: PackageDoc[] = [
     api: ["Sample", "sample", "encode"], capabilities: "Building exposition text is pure; serving it needs explicit Network authority in application code.",
     limits: "Metric names, help, labels, sample counts, and final output have fixed ceilings.", useWhen: "Use it to expose application counters and gauges to Prometheus-compatible collectors.",
     notes: "The package validates metric kinds and canonicalizes label/help escaping. Collection, aggregation, and HTTP serving remain separate concerns.",
-    example: `keep active = nivren_metrics.sample("active_jobs", "Running jobs", "gauge", 3.0, std.map.empty()) or give\nkeep body = nivren_metrics.encode([active]) or give`,
+    example: `keep labels set std.map.single with { key set "service" value set "worker" }\nkeep active set nivren_metrics.sample with { name set "active_jobs" help set "Running jobs" kind set "gauge" value set 3.0 labels set labels } or give\nkeep body set nivren_metrics.encode with { samples set [active] } or give`,
   },
   {
     name: "nivren_oidc", purpose: "OpenID Connect",
@@ -108,7 +114,7 @@ export const packages: PackageDoc[] = [
     api: ["Authorization", "CoreClaims", "pkce_challenge", "authorization_url", "validate_claims", "validate_id_claims"], capabilities: "URL and claim work is pure; random state/nonces and provider requests are supplied by the application.",
     limits: "Endpoints, parameters, JSON, claim fields, and allowed clock skew are bounded and validated.", useWhen: "Use it for browser sign-in flows after choosing a provider and a trusted token verifier.",
     notes: "Verify the token signature first, then validate issuer, audience, nonce, expiry, and issued-at. Discovery, key rotation, refresh tokens, and provider extensions belong in adapters.",
-    example: `keep authorization = nivren_oidc.authorization_url(endpoint, client_id, redirect_uri, "openid profile", state, nonce, verifier) or give\nkeep claims = nivren_oidc.validate_id_claims(authenticated_json, issuer, client_id, nonce, now, 60) or give`,
+    example: `keep authorization set nivren_oidc.authorization_url with { endpoint set endpoint client_id set client_id redirect_uri set redirect_uri scope set "openid profile" state set state nonce set nonce verifier set verifier } or give\nkeep claims set nivren_oidc.validate_id_claims with { payload_json set authenticated_json expected_issuer set issuer expected_audience set client_id expected_nonce set nonce now set now clock_skew set 60 } or give`,
   },
   {
     name: "nivren_redis", purpose: "Redis and Redis Cluster",
@@ -118,15 +124,18 @@ export const packages: PackageDoc[] = [
     limits: "Commands allow 1,024 parts, pipelines 4,096 commands, frames 16 MiB, collections one million entries, nesting 128 levels, and redirects a caller-selected count.",
     useWhen: "Use it for caches, queues, sessions, and direct Redis services where transport and redirect policy must stay visible.",
     notes: "RESP framing never consumes the next reply. The release matrix tests Redis 6.2, 7.2, 7.4, 8.0, 8.2, 8.4, 8.6, and 8.8 on both engines.",
-    example: `keep client = nivren_redis.client(host, 6379, "", password, yes, tls_options, 2.0, 1048576, 4) or give\nkeep outcome = nivren_redis.execute(client, ["GET", "greeting"]) or give`,
+    example: `keep client set perform nivren_redis.client with { host set host port set 6379 username set "" password set password secure set yes options set tls_options timeout set 2.0 maximum set 1048576 redirects set 4 } or give\nkeep outcome set perform nivren_redis.execute with { client_value set client parts set ["GET", "greeting"] } or give`,
   },
   {
     name: "nivren_routing", purpose: "Pure HTTP routing",
-    summary: "Represent exact method/path routes and choose the first deterministic match independently of sockets.",
-    api: ["Route", "route", "matches", "first_match"], capabilities: "Pure route construction and lookup; no capabilities are required.",
-    limits: "Designed for small bounded route lists; it performs exact matching rather than hidden patterns.", useWhen: "Use it to keep request dispatch testable while std.web owns listening and response I/O.",
-    notes: "Routes are matched in declaration order. Dynamic segments and middleware are intentionally left to higher-level packages.",
-    example: `keep routes = [\n    nivren_routing.route("GET", "/health", "health"),\n    nivren_routing.route("POST", "/events", "create_event")\n]\nkeep selected = nivren_routing.first_match(routes, method, path)`,
+    summary: "Select exact or :parameter routes, validate bounded request policies, require headers/bearer presence, and construct checked responses independently of sockets.",
+    api: ["Route", "RouteMatch", "RequestContext", "RequestPolicy", "Response", "route", "matches", "first_match", "match_route", "first_parameterized_match", "validate_request", "response"], capabilities: "Pure route, policy, and response work; no capabilities are required. std.web owns listening, TLS, body reads, and response writes.",
+    limits: "Parameterized routes allow at most 128 path parts. Request and response bodies cap at 16 MiB, and responses accept HTTP status 100 through 599.", useWhen: "Use it to keep dispatch and middleware-style boundary policy testable while std.web owns network I/O.",
+    notes: "Routes are matched in declaration order. Bearer policy checks presence and shape only; token signature, claims, authorization, CSRF, and rate limiting remain application responsibilities.",
+    example: `keep route set nivren_routing.route with { method set "GET" path set "/users/:id" name set "user" }\nkeep selected set nivren_routing.match_route with {\n    candidate set route\n    method set "GET"\n    path set "/users/42"\n} or give`,
+    failures: ["Empty route parameter name or value", "Request body above its policy ceiling", "Missing required header", "Missing or malformed bearer header", "Invalid response status or oversized body"],
+    performance: "Exact matching is constant work per route. Parameter matching is linear in bounded route parts, with deterministic first-match ordering and no regex engine.",
+    checklist: ["Order specific routes before broad parameter routes", "Normalize header names before policy validation", "Verify bearer signatures and claims separately", "Set the smallest practical body ceiling", "Apply rate limits before expensive handlers"],
   },
   {
     name: "nivren_secrets", purpose: "Passwords and random keys",
@@ -134,7 +143,7 @@ export const packages: PackageDoc[] = [
     api: ["random_key", "hash_password", "hash_password_with_salt", "verify_password"], capabilities: "random_key and hash_password need Random; deterministic hashing and verification do not.",
     limits: "Password hashing uses 19 MiB, two iterations, one lane, 32 output bytes, and a 16-byte salt. Hostile PHC parameters are rejected before allocation.",
     useWhen: "Use it for password databases and generating random application key material.", notes: "Prefer hash_password. hash_password_with_salt is for migrations and tests and requires a unique cryptographically random salt.",
-    example: `keep stored = nivren_secrets.hash_password(password) or give\nkeep accepted = nivren_secrets.verify_password(candidate, stored) or give`,
+    example: `keep stored set perform nivren_secrets.hash_password with { password set password } or give\nkeep accepted set nivren_secrets.verify_password with { password set candidate encoded set stored } or give`,
   },
   {
     name: "nivren_sql", purpose: "Parameterized SQL",
@@ -142,7 +151,7 @@ export const packages: PackageDoc[] = [
     api: ["Query", "identifier", "select", "where_equal"], capabilities: "Pure query construction; database transport belongs to a separate capability-bearing driver.",
     limits: "Identifiers use ASCII letters, digits, and underscores and cannot begin with a digit. Collections and text remain bounded.",
     useWhen: "Use it at the boundary between application filters and a driver that accepts SQL plus parameters.", notes: "This package prevents value interpolation but is not a general SQL AST or a claim of compatibility with every database dialect.",
-    example: `keep query = nivren_sql.select("users", ["id", "name"]) or give\nkeep filtered = nivren_sql.where_equal(query, "status", "active") or give\n// filtered.text contains ?, filtered.parameters contains "active"`,
+    example: `keep query set nivren_sql.select with { table set "users" columns set ["id", "name"] } or give\nkeep filtered set nivren_sql.where_equal with { query set query column set "status" value set "active" } or give\n// filtered.text contains ?, filtered.parameters contains "active"`,
   },
   {
     name: "nivren_stats", purpose: "Descriptive statistics",
@@ -150,7 +159,7 @@ export const packages: PackageDoc[] = [
     api: ["sum", "mean", "variance", "minimum", "maximum", "normalize"], capabilities: "Pure scalar calculations; no capabilities or hidden native code.",
     limits: "Works on bounded in-memory [Float] values. Empty input and zero-range normalization return typed errors.",
     useWhen: "Use it for small datasets, summaries, tests, and the scalar layer beneath larger analytics packages.", notes: "variance is population variance. Large columnar, vectorized, and accelerator workloads belong in separate packages with visible memory/device policy.",
-    example: `keep values = [2.0, 4.0, 6.0, 8.0]\nkeep average = nivren_stats.mean(values) or give\nkeep scaled = nivren_stats.normalize(values) or give`,
+    example: `keep values set [2.0, 4.0, 6.0, 8.0]\nkeep average set nivren_stats.mean with { values set values } or give\nkeep scaled set nivren_stats.normalize with { values set values } or give`,
   },
   {
     name: "nivren_svg", purpose: "Vector interfaces",
@@ -158,7 +167,7 @@ export const packages: PackageDoc[] = [
     api: ["Canvas", "canvas", "add", "rect", "text", "render"], capabilities: "Pure construction and rendering; displaying or writing the result is a separate explicit effect.",
     limits: "Canvas dimensions, element counts, input strings, and final output are capped.", useWhen: "Use it for dashboards, generated diagrams, documents, tests, and desktop web-view interfaces.",
     notes: "Text and attributes are escaped. add supports already constructed elements; rect and text are the safe convenience primitives.",
-    example: `keep canvas = nivren_svg.canvas(640, 360) or give\nkeep card = nivren_svg.rect(canvas, 20, 20, 600, 320, "#c8f7dc") or give\nkeep titled = nivren_svg.text(card, 48, 72, "Nivren", "#111d2c") or give\nkeep svg = nivren_svg.render(titled) or give`,
+    example: `keep canvas set nivren_svg.canvas with { width set 640 height set 360 } or give\nkeep card set nivren_svg.rect with { value set canvas x set 20 y set 20 width set 600 height set 320 fill set "#c8f7dc" } or give\nkeep titled set nivren_svg.text with { value set card x set 48 y set 72 content set "Nivren" fill set "#111d2c" } or give\nkeep svg set nivren_svg.render with { value set titled } or give`,
   },
   {
     name: "nivren_testing", purpose: "Deterministic tests",
@@ -166,7 +175,7 @@ export const packages: PackageDoc[] = [
     api: ["Gate", "expect_equal", "expect_yes", "expect_no", "gate", "open", "pass", "checkpoint"], capabilities: "Assertions are pure. Gate and checkpoint operations declare Channel.",
     limits: "Scheduling remains bounded by ordinary channel capacity, deadlines, and the structured task tree.", useWhen: "Use it for readable unit checks and reproducible ordering in task, channel, and race-condition tests.",
     notes: "Assertions return Result<Null,String>, so suites compose with or give. Gates control order without depending on runner speed.",
-    example: `keep ready = nivren_testing.gate()\nkeep opened = nivren_testing.open(ready) or give\nkeep observed = nivren_testing.pass(ready) or give\nkeep checked = nivren_testing.expect_equal(actual, expected, "result") or give`,
+    example: `keep ready set nivren_testing.gate with { }\nkeep opened set perform nivren_testing.open with { value set ready } or give\nkeep observed set perform nivren_testing.pass with { value set ready } or give\nkeep checked set nivren_testing.expect_equal with { actual set actual expected set expected label set "result" } or give`,
   },
   {
     name: "nivren_trace", purpose: "Distributed tracing",
@@ -175,7 +184,7 @@ export const packages: PackageDoc[] = [
     capabilities: "fresh and child need Random; export_otlp_json needs Network. Parsing, formatting, and encoding are pure.",
     limits: "Identifier widths, all-zero values, names, attributes, Int64 nanosecond strings, endpoints, response bodies, and final JSON are bounded.",
     useWhen: "Use it to carry trace identity through services and send explicit single-span OTLP payloads.", notes: "Transport success remains visible as an HTTP status. Sampling policy, queues, retries, batching, and resource metadata belong in application or higher-level packages.",
-    example: `keep root = nivren_trace.fresh(yes) or give\nkeep attribute = nivren_trace.otlp_attribute("service", "checkout") or give\nkeep span = nivren_trace.otlp_span(root, "charge", start_ns, end_ns, [attribute]) or give\nkeep status = nivren_trace.export_otlp_json(endpoint, headers, span, 3.0) or give`,
+    example: `keep root set perform nivren_trace.fresh with { sampled set yes } or give\nkeep attribute set nivren_trace.otlp_attribute with { key set "service" value set "checkout" } or give\nkeep span set nivren_trace.otlp_span with { value set root name set "charge" start_unix_nano set start_ns end_unix_nano set end_ns attributes set [attribute] } or give\nkeep status set perform nivren_trace.export_otlp_json with { endpoint set endpoint request_headers set headers span set span timeout set 3.0 } or give`,
   },
   {
     name: "nivren_validation", purpose: "Structured validation",
@@ -183,7 +192,7 @@ export const packages: PackageDoc[] = [
     api: ["Violation", "required", "positive", "range"], capabilities: "Pure validation; no capabilities are required.",
     limits: "Validation stays within bounded strings and ordinary fixed-width integers.", useWhen: "Use it at form, API, configuration, and domain boundaries where callers need machine-readable field errors.",
     notes: "Failures carry Violation { field, message } rather than flattened strings, so they survive JSON and application boundaries.",
-    example: `keep name = nivren_validation.required("name", input.name) or give\nkeep age = nivren_validation.range("age", input.age, 13, 120) or give`,
+    example: `keep name set nivren_validation.required with { field set "name" value set input.name } or give\nkeep age set nivren_validation.range with { field set "age" value set input.age minimum set 13 maximum set 120 } or give`,
   },
   {
     name: "nivren_wav", purpose: "PCM16 audio",
@@ -191,7 +200,46 @@ export const packages: PackageDoc[] = [
     api: ["Audio", "encode_pcm16", "decode_pcm16"], capabilities: "Pure audio interchange; device and file access remain separate effects.",
     limits: "Sample range, channel/frame alignment, arithmetic, header consistency, and the 16 MiB payload ceiling are enforced.",
     useWhen: "Use it for generated audio, analysis, fixtures, and a stable interchange layer for media applications.", notes: "Audio stores a sample rate, channel count, and interleaved signed integer samples. Only PCM16 is accepted in this package.",
-    example: `keep tone = Audio(48000, 1, [0, 12000, 0, -12000])\nkeep wav = nivren_wav.encode_pcm16(tone) or give\nkeep decoded = nivren_wav.decode_pcm16(wav) or give`,
+    example: `keep tone set nivren_wav.Audio(48000, 1, [0, 12000, 0, -12000])\nkeep wav set nivren_wav.encode_pcm16 with { value set tone } or give\nkeep decoded set nivren_wav.decode_pcm16 with { source set wav } or give`,
+  },
+  {
+    name: "nivren_database", purpose: "Database driver contracts",
+    summary: "Define bounded pools, parameterized driver requests, ordered migrations, and typed result pages behind one inspectable adapter boundary.",
+    api: ["PoolConfig", "DriverRequest", "Migration", "QueryPage", "validate_pool", "validate_request", "validate_migrations", "encode_request", "decode_page", "open_driver", "query_driver", "execute_driver"],
+    capabilities: "The contracts/codecs are pure. The adapter declares Native within database. Native CLI projects receive a bundled rooted SQLite host; PostgreSQL, MySQL, and managed-service transports remain host integrations.",
+    limits: "Pools cap at 1,024 connections; connect/query timeouts cap at 300 seconds; statements cap at 1 MiB; parameters at 65,536; and result requests at one million rows.",
+    useWhen: "Use it to keep application queries portable across PostgreSQL, MySQL, SQLite, or host-provided drivers while preserving visible transactions and limits.",
+    notes: "This package is the safe driver boundary, not a bundled database client. Adapters must preserve parameter ordering, typed failures, cancellation, and transaction cleanup.",
+    example: `define prepare_admins\ngives nivren_database.DriverRequest or String\n{\n    keep request set nivren_database.DriverRequest with {\n        operation set "query"\n        statement set "SELECT id, name FROM users WHERE role = ?"\n        parameters set ["admin"]\n        maximum_rows set 100\n        timeout set 10.0\n    }\n    give nivren_database.validate_request with { request set request }\n}`,
+    failures: ["Invalid pool bounds or timeouts", "Unsupported transaction/driver operation", "Oversized SQL, parameter list, or result ceiling", "Out-of-order or empty migrations", "Malformed typed result JSON"],
+    performance: "Validation is linear in migration count and otherwise constant-time apart from bounded JSON encoding. The package does not copy database rows until an adapter returns a page.",
+    checklist: ["Use parameters instead of interpolating values", "Set a measured query timeout and row ceiling", "Keep migrations strictly increasing", "Close or roll back transactions during cancellation", "Grant only the driver authority the deployment needs"],
+  },
+  {
+    name: "nivren_desktop", purpose: "Desktop host contracts",
+    summary: "Validate system-webview windows, encode a typed JSON bridge, and verify signed update metadata for cross-platform desktop hosts.",
+    api: ["Window", "BridgeMessage", "UpdateManifest", "validate_window", "encode_message", "validate_update", "open_host", "send_bridge", "stage_update"],
+    capabilities: "Validation and bridge encoding are pure. The opaque-handle adapter declares Native within desktop; filesystem/network access and the platform webview implementation remain explicit host effects.",
+    limits: "Window dimensions are bounded; titles and command identifiers cap at 256/128 characters; bridge payloads cap at 1 MiB; update URLs require HTTPS.",
+    useWhen: "Use it for Nivren desktop applications whose interface runs in the operating system webview and communicates through a narrow typed host bridge.",
+    notes: "Treat every webview message as untrusted input. The native host must allowlist commands, isolate navigation, and verify checksum plus signature before staging an update.",
+    example: `keep window set nivren_desktop.Window with {\n    title set "Nivren Studio"\n    width set 1280\n    height set 800\n    start_url set "app://index.html"\n}\n\nchoose nivren_desktop.validate_window with { window set window } {\n    case Ok carries ready => show(ready.title)\n    case Err carries problem => show(problem)\n}`,
+    failures: ["Unsafe navigation scheme", "Out-of-range dimensions", "Empty or oversized bridge identity/command", "Bridge payload above 1 MiB", "Unknown update channel or invalid HTTPS/signature metadata"],
+    performance: "Validation is allocation-light and bridge encoding is linear in the bounded payload. Rendering performance remains the responsibility of the system webview and application frontend.",
+    checklist: ["Serve bundled UI from app://index.html", "Allowlist every bridge command", "Apply a strict content security policy", "Never place secrets in bridge logs", "Verify signed update metadata before download and again before activation"],
+  },
+  {
+    name: "nivren_gpu", purpose: "Portable checked compute",
+    summary: "Compile bounded vector-add work into deterministic WGSL while always producing a semantics-matched vectorized CPU fallback.",
+    api: ["ComputeLimits", "AddPlan", "ComputeArtifact", "VectorResult", "validate_plan", "add_cpu", "add_wgsl", "compile_add", "execute_gpu"],
+    capabilities: "Plan validation, WGSL generation, and CPU fallback are pure. execute_gpu declares Native within gpu and uses one opaque experimental device-host handle.",
+    limits: "Inputs must have equal lengths, workgroups cap at 256 lanes, and each plan declares a maximum no greater than 1,048,576 items.",
+    useWhen: "Use it to prototype portable checked compute that must remain correct on machines without a compatible GPU.",
+    notes: "Edition 4 promises compute, not a rendering engine. Device selection, buffer ownership, shader validation, and fallback telemetry must remain visible at the host boundary.",
+    example: `keep plan set nivren_gpu.AddPlan with {\n    left set [1, 2, 3, 4]\n    right set [10, 20, 30, 40]\n    limits set nivren_gpu.ComputeLimits with {\n        maximum_items set 1024\n        workgroup_size set 64\n    }\n}\nkeep artifact set nivren_gpu.compile_add with { plan set plan } or give`,
+    failures: ["Mismatched vector lengths", "Invalid item or workgroup ceiling", "Input larger than the declared maximum", "Unavailable/unsupported GPU host", "GPU validation failure requiring CPU fallback"],
+    performance: "The CPU fallback processes four lanes per loop with a scalar tail. GPU benefit depends on transfer cost and workload size, so applications should measure both targets before selecting one.",
+    checklist: ["Declare the smallest safe maximum_items", "Keep GPU buffers free of secrets", "Test exact GPU/CPU result parity", "Record when fallback is selected", "Benchmark transfer plus execution—not shader time alone"],
   },
 ];
 

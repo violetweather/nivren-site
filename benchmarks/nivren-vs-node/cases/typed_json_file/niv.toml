@@ -1,0 +1,11 @@
+[package]
+name = "typed-json-benchmark"
+version = "0.1.0"
+entry = "src/main.niv"
+
+[capabilities]
+FileRead = "path:./data"
+
+[limits]
+instructions = "1000000"
+memory_bytes = "67108864"

@@ -1,0 +1,12 @@
+shape Event { id: Int, kind: String, active: Bool }
+shape Dataset { title: String, events: [Event] }
+
+define main() gives Result<Null, String> needs FileRead {
+    keep source = std.files.read("data/input.json") or give
+    keep dataset = std.json.decode(Dataset, source) or give
+    keep encoded = std.json.stringify(dataset) or give
+    show(encoded)
+    give ok(none)
+}
+
+main()

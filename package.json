@@ -11,6 +11,9 @@
     "build:pages": "next build",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
+    "test:snippets": "node tools/verify-nivren-snippets.mjs",
+    "test:release": "node tools/verify-release-state.mjs",
+    "test:release:remote": "node tools/verify-release-state.mjs --remote",
     "lint": "oxlint app worker build tests benchmarks --deny-warnings && tsc --noEmit"
   },
   "dependencies": {

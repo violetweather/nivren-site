@@ -20,9 +20,9 @@ test("renders the complete Nivren landing page", async () => {
   const html = await response.text();
   assert.match(html, /<title>Nivren — Code that reads like intent<\/title>/i);
   assert.match(html, /Code that reads like/);
-  assert.match(html, /Edition 3 capability program/);
+  assert.match(html, /Edition 4 product candidate/);
   assert.match(html, /0\.10\.0-beta\.6/);
-  assert.match(html, /17 \/ 17/);
+  assert.match(html, /3 \/ 4/);
   assert.match(html, /6 \+ WebAssembly/);
   assert.match(html, /href="\/docs"/);
   assert.match(html, /href="\/install"/);
@@ -36,7 +36,7 @@ for (const [pathname, expected] of [
   ["/install", "Install Nivren"],
   ["/downloads", "Downloads"],
   ["/examples", "Examples"],
-  ["/benchmarks", "Nivren vs Node.js"],
+  ["/benchmarks", "Quick tools. Small processes. Explicit safety."],
   ["/packages", "Packages"],
 ]) {
   test(`renders ${pathname}`, async () => {
@@ -46,7 +46,7 @@ for (const [pathname, expected] of [
   });
 }
 
-test("presents the Edition 3 site and removes starter UI", async () => {
+test("presents the Edition 4 candidate site and removes starter UI", async () => {
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
   const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   assert.equal(packageJson.name, "nivren-site");
@@ -56,8 +56,8 @@ test("presents the Edition 3 site and removes starter UI", async () => {
 test("publishes the official package catalog and compatibility contract", async () => {
   const response = await render("/packages");
   const html = await response.text();
-  const catalogChecks = new Set(["22 package guides", "nivren_aead", "ChaCha20-Poly1305", "nivren_redis", "semantic versions", "temporary immutable registry"]);
-  for (const phrase of ["22 package guides", "nivren_aead", "Opaque zeroized keys", "ChaCha20-Poly1305", "Sealed · import_key · generate_key · seal", "nivren_aws", "AWS Signature Version 4", "Signature · sign_v4", "nivren_columnar", "Column · Table · table · select", "nivren_image", "Image · image · encode_ppm · decode_ppm", "nivren_oidc", "Authorization · CoreClaims · pkce_challenge", "nivren_matrix", "Matrix · matrix · at · add · multiply", "nivren_svg", "Canvas · canvas · add · rect · text · render", "nivren_wav", "Audio · encode_pcm16 · decode_pcm16", "nivren_metrics", "Sample · sample · encode", "nivren_trace", "OtlpAttribute · OtlpSpan", "export_otlp_json", "nivren_compression", "mandatory decompression ceilings", "gzip · gunzip · zlib · unzlib", "nivren_crypto", "constant-time-verified HMAC-SHA-256", "nivren_csv", "quoted multiline fields", "decode · encode · decode_with · encode_with", "nivren_stats", "sum · mean · variance · minimum", "nivren_jwt", "sign_hs256 · verify_hs256", "nivren_secrets", "Argon2id v=19", "random_key · hash_password", "nivren_sql", "without interpolating values", "nivren_redis", "RESP2/RESP3 framing", "MOVED/ASK Cluster redirects", "live Redis 6.2 through 8.8", "nivren_discord", "nivren_testing", "nivren_routing", "nivren_validation", "semantic versions", "temporary immutable registry"]) {
+  const catalogChecks = new Set(["25 package guides", "nivren_aead", "ChaCha20-Poly1305", "nivren_redis", "nivren_database", "nivren_desktop", "nivren_gpu", "semantic versions", "temporary immutable registry"]);
+  for (const phrase of ["25 package guides", "nivren_aead", "Opaque zeroized keys", "ChaCha20-Poly1305", "Sealed · import_key · generate_key · seal", "nivren_aws", "AWS Signature Version 4", "Signature · sign_v4", "nivren_columnar", "Column · Table · table · select", "nivren_image", "Image · image · encode_ppm · decode_ppm", "nivren_oidc", "Authorization · CoreClaims · pkce_challenge", "nivren_matrix", "Matrix · matrix · at · add · multiply", "nivren_svg", "Canvas · canvas · add · rect · text · render", "nivren_wav", "Audio · encode_pcm16 · decode_pcm16", "nivren_metrics", "Sample · sample · encode", "nivren_trace", "OtlpAttribute · OtlpSpan", "export_otlp_json", "nivren_compression", "mandatory decompression ceilings", "gzip · gunzip · zlib · unzlib", "nivren_crypto", "constant-time-verified HMAC-SHA-256", "nivren_csv", "quoted multiline fields", "decode · encode · decode_with · encode_with", "nivren_stats", "sum · mean · variance · minimum", "nivren_jwt", "sign_hs256 · verify_hs256", "nivren_secrets", "Argon2id v=19", "random_key · hash_password", "nivren_sql", "without interpolating values", "nivren_redis", "RESP2/RESP3 framing", "MOVED/ASK Cluster redirects", "live Redis 6.2 through 8.8", "nivren_discord", "nivren_testing", "nivren_routing", "nivren_validation", "nivren_database", "nivren_desktop", "nivren_gpu", "semantic versions", "temporary immutable registry"]) {
     if (!catalogChecks.has(phrase)) continue;
     assert.match(html, new RegExp(phrase, "i"));
   }
@@ -66,12 +66,12 @@ test("publishes the official package catalog and compatibility contract", async 
 test("publishes a detailed guide for every official package", async () => {
   const catalog = await readFile(new URL("../app/packages/catalog.ts", import.meta.url), "utf8");
   const names = [...catalog.matchAll(/name: "(nivren_[a-z]+)"/g)].map((match) => match[1]);
-  assert.equal(names.length, 22);
+  assert.equal(names.length, 25);
   for (const name of names) {
     const response = await render(`/packages/${name}`);
     assert.equal(response.status, 200);
     const html = await response.text();
-    for (const phrase of [name, "Add it to a project", "A focused example", "Public API", "Required authority", "Bounds and failure behavior", "When to use it"]) {
+    for (const phrase of [name, "Add it to a project", "A focused example", "Public API", "Required authority", "Bounds and failure behavior", "Failures to handle", "Performance notes", "Production checklist", "When to use it"]) {
       assert.match(html, new RegExp(phrase));
     }
   }
@@ -83,25 +83,31 @@ test("documents the guided cross-platform installers", async () => {
   assert.match(html, /install\/install\.sh/);
   assert.match(html, /Verification is built in/);
   assert.match(html, /ownership marker/);
+  assert.match(html, /Roll back without redownloading/);
+  assert.match(html, /install-receipt\.json/);
+  assert.match(html, /--rollback/);
+  assert.match(html, /-Rollback/);
   const chooser = await readFile(new URL("../app/install/InstallChooser.tsx", import.meta.url), "utf8");
   assert.match(chooser, /install\.ps1/);
   const explorer = await readFile(new URL("../app/docs/DocsExplorer.tsx", import.meta.url), "utf8");
   assert.match(explorer, /--uninstall/);
   assert.match(explorer, /-Uninstall/);
+  assert.match(explorer, /--rollback/);
+  assert.match(explorer, /-Rollback/);
 });
 
-test("documents distinctive Edition 3 capabilities", async () => {
+test("documents distinctive Edition 4 capabilities", async () => {
   const docs = await render("/docs");
   const html = await docs.text();
-  assert.match(html, /Edition 3 guide/);
+  assert.match(html, /Edition 4 guide/);
   const explorer = await readFile(new URL("../app/docs/DocsExplorer.tsx", import.meta.url), "utf8");
-  for (const phrase of ["or give", "memory_bytes", "prefix:NIVREN_", "command:git", "kind:database", "protocol Named", "adopt Named for User", "Named.name(value)", "orphan ownership rule", "qualified identities", "Failed(String)", "Array([Response])", "Pair<Left, Right>", "Maybe<Value>", "Pair<String, Int>", "std.bigint.parse", "std.binary.u16_be", "std.binary.read_u16_be", "little-endian", "std.iter.range", "std.iter.lines", "std.iter.tcp_lines", "lazy, end-exclusive", "truly lazy", "std.iter.transform", "std.iter.fold", "std.iter.find", "single-pass", "std.transactions.commit", "always rolls back", "std.native.open", "std.native.call_int", "NativeLibrary", "std.host.invoke_async", "shared executor", "std.files.read_async", "std.json.decode", "std.json.read_next_as", "std.reflect.schema", "niv bindgen c", "niv inspect", "event-loop wake", "wake-driven runtime event loop", "std.web.request", "std.net.write_some", "std.net.ready_any", "std.net.read_ready", "std.net.write_ready", "std.web.websocket_connect", "websocket_secure_connect", "std.web.websocket_secure_listen", "std.web.websocket_secure_accept", "TlsListener", "client_certificate_pem", "client_auth", "client_ca_pem", "std.web.tls_options", "std.locks.acquire", "AtomicInt", "std.atomics.add", "sequentially consistent", "niv registry search", "--crash-report", "build --standalone", "start produce", "wasm32-wasip1", "wasm32-unknown-unknown", "zero-import", "JavaScript SDK", "nivren_wasm_run", "16 MiB", "no silent security downgrade"]) {
+  for (const phrase of ["or give", "memory_bytes", "kind:database", "shape Signup holds", "gives String or String", "prepare request", "perform request", "start produce", "std.channels.send", "std.web.get", "nivren_routing", "nivren_database", "nivren_discord", "nivren_desktop", "Kotlin/JNI", "nivren_gpu", "CPU fallback", "std.native.open", "std.native.call_int", "ABI v3", "WASI Preview 1", "zero-import", "25 official packages", "niv-workspace.toml", "niv dap", "independent security audit"]) {
     assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
-  for (const phrase of ["Anatomy of a program", "Results, errors & recovery", "Authoring a package", "Production workflow", "Previous", "Next"]) {
+  for (const phrase of ["Intent-first language", "Failure, absence, and cleanup", "Database services", "Production checklist", "Previous", "Next"]) {
     assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
-  assert.match(html, /23 detailed guides/);
+  assert.match(html, /19 detailed guides/);
 });
 
 test("publishes every portable beta target", async () => {
@@ -122,10 +128,48 @@ test("publishes every portable beta target", async () => {
 test("publishes reproducible Nivren versus Node.js results", async () => {
   const response = await render("/benchmarks");
   const html = await response.text();
-  for (const phrase of ["Measured, not marketed", "7.62", "4.48", "53.98", "Source-to-result startup", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "Apple M4", "Nivren 0.10.0-beta.6", "Node.js 26.5.0", "What they do not say", "Every input is public"]) {
+  for (const phrase of ["Measured on real Nivren-shaped work", "Where Nivren fits today", "Current limits", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "Apple M4", "Nivren 0.10.0-beta.6", "Node.js 26.5.0", "What the strengths mean", "The wins and losses use one public harness"]) {
     assert.match(html, new RegExp(phrase));
   }
   const benchmarkReport = JSON.parse(await readFile(new URL("../benchmarks/nivren-vs-node/results/2026-07-27-macos-arm64.json", import.meta.url), "utf8"));
-  assert.equal(benchmarkReport.results.length, 4);
+  assert.equal(benchmarkReport.results.length, 7);
+  assert.equal(benchmarkReport.results.filter(result => result.category === "strength").length, 4);
+  assert.equal(benchmarkReport.results.filter(result => result.category === "limit").length, 3);
   assert.equal(benchmarkReport.results[0].output, "42");
+  assert.equal(benchmarkReport.results[1].output, "successful check");
+  assert.ok(benchmarkReport.results[2].output.includes("Nivren benchmark events"));
+  assert.ok(benchmarkReport.results[3].output.includes("start worker=alpha"));
+});
+
+test("keeps release versions and download assets synchronized", async () => {
+  const release = JSON.parse(await readFile(new URL("../release.json", import.meta.url), "utf8"));
+  const response = await render("/downloads");
+  const html = await response.text();
+  assert.match(html, new RegExp(release.public.version.replaceAll(".", "\\.")));
+  assert.doesNotMatch(html, new RegExp(`/releases/download/v${release.candidate.version.replaceAll(".", "\\.")}/`));
+  for (const asset of release.public.assets) {
+    assert.match(html, new RegExp(asset.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+});
+
+test("renders accessible landmarks and resolves every internal link", async () => {
+  const catalog = await readFile(new URL("../app/packages/catalog.ts", import.meta.url), "utf8");
+  const packageRoutes = [...catalog.matchAll(/name: "(nivren_[a-z]+)"/g)].map((match) => `/packages/${match[1]}`);
+  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages", ...packageRoutes];
+  const known = new Set(routes);
+  for (const route of routes) {
+    const response = await render(route);
+    assert.equal(response.status, 200, route);
+    const html = await response.text();
+    assert.match(html, /<html lang="en">/, route);
+    assert.match(html, /<a class="skip-link" href="#main">Skip to content<\/a>/, route);
+    assert.match(html, /<main id="main">/, route);
+    assert.equal((html.match(/<h1(?:\s|>)/g) ?? []).length, 1, `${route} must have exactly one h1`);
+    for (const match of html.matchAll(/href="([^"]+)"/g)) {
+      const href = match[1];
+      if (!href.startsWith("/") || href.startsWith("/assets/")) continue;
+      const target = href.split(/[?#]/, 1)[0].replace(/\/$/, "") || "/";
+      assert.ok(known.has(target), `${route} links to unknown internal route ${href}`);
+    }
+  }
 });

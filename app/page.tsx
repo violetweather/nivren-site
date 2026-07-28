@@ -1,22 +1,34 @@
 import Link from "next/link";
 import { CodeWindow } from "./components/CodeWindow";
+import { candidateRelease, publicRelease } from "./release";
 
-const helloCode = `keep language: String = "Nivren"
-keep values: [Int] = [2, 3, 5, 7]
+const helloCode = `keep language is String set "Nivren"
+keep values is [Int] set [2, 3, 5, 7]
 
-define add(total: Int, value: Int) gives Int {
+define add
+takes {
+    total is Int
+    value is Int
+}
+gives Int
+{
     give total + value
 }
 
 show("Hello, " + language + "!")
-show(values through std.list.fold(0, add))`;
+show(values through std.list.fold with {
+    initial set 0
+    combine set add
+})`;
+
+const checkpointSummary = `${candidateRelease.checkpointGatesPassed} / ${candidateRelease.checkpointGatesRequired}`;
 
 export default function Home() {
   return (
     <>
       <section className="hero shell">
         <div className="hero-copy">
-          <div className="eyebrow"><span className="pulse" /> Edition 3 capability program</div>
+          <div className="eyebrow"><span className="pulse" /> Edition 4 product candidate</div>
           <h1>Code that reads like <em>intent.</em></h1>
           <p className="hero-lede">
             Nivren is an intent-first application language with visible authority,
@@ -29,7 +41,7 @@ export default function Home() {
           <div className="quick-command" aria-label="Quick install command">
             <span className="prompt">$</span>
             <code>niv version</code>
-            <span className="command-result">Nivren 0.10.0-beta.6</span>
+            <span className="command-result">Public: Nivren {publicRelease.version}</span>
           </div>
         </div>
         <div className="hero-code">
@@ -41,7 +53,7 @@ export default function Home() {
 
       <section className="proof-strip">
         <div className="shell proof-grid">
-          <div><strong>17 / 17</strong><span>Edition 3 black-box corpus</span></div>
+          <div><strong>{checkpointSummary}</strong><span>checkpoint gates passed for {candidateRelease.version}</span></div>
           <div><strong>7.62×</strong><span>faster startup than Node on M4</span></div>
           <div><strong>6 + WebAssembly</strong><span>native, WASI & browser targets</span></div>
           <div><strong>0</strong><span>unsafe blocks in the core VM</span></div>
@@ -62,14 +74,14 @@ export default function Home() {
             <div>
               <h3>Safety you can explain</h3>
               <p>Non-null types by default, checked overflow, typed results, explicit <code>needs</code>, scoped grants, and a verified bytecode boundary.</p>
-              <code>keep answer = load() or give</code>
+              <code>{"keep answer set perform load with {} or give"}</code>
             </div>
           </article>
           <article className="feature feature-tools">
             <span className="feature-number">02</span>
             <h3>Tooling is part of the language</h3>
-            <p>Formatter, checker, test runner, debugger, profiler, coverage, documentation generator, LSP, and VS Code support ship together.</p>
-            <div className="tool-cloud"><span>fmt</span><span>lsp</span><span>test</span><span>debug</span><span>profile</span></div>
+            <p>Formatter, checker, test and benchmark runners, DAP debugger, profiler, coverage, documentation, workspaces, LSP, and VS Code support ship together.</p>
+            <div className="tool-cloud"><span>fmt</span><span>lsp</span><span>test</span><span>bench</span><span>dap</span></div>
           </article>
           <article className="feature feature-runtime">
             <span className="feature-number">03</span>
@@ -81,7 +93,7 @@ export default function Home() {
           <article className="feature feature-packages">
             <span className="feature-number">04</span>
             <h3>Packages with receipts</h3>
-            <p>Exact versions, checksum-pinned lockfiles, deterministic archives, signed provenance, advisories, and rollback protection.</p>
+            <p>Exact versions, checksum-pinned dependency locks, reviewable transitive authority locks, deterministic archives, publisher ownership, yanking, signed provenance, advisories, and offline verification.</p>
               <div className="hash-line"><span>sha256</span><code>published per artifact</code></div>
           </article>
           <article className="feature feature-large feature-clarity">
@@ -110,7 +122,7 @@ export default function Home() {
       <section className="cta-wrap shell">
         <div className="cta-panel">
           <div>
-            <span className="kicker light">Edition 3 · public beta</span>
+            <span className="kicker light">Edition 4 · Product Proof in progress</span>
             <h2>Make the next program<br />feel obvious.</h2>
           </div>
           <div className="cta-actions">
