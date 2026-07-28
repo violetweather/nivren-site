@@ -8,6 +8,9 @@ export type PackageDoc = {
   useWhen: string;
   notes: string;
   example: string;
+  failures?: string[];
+  performance?: string;
+  checklist?: string[];
 };
 
 export const packages: PackageDoc[] = [
@@ -192,6 +195,45 @@ export const packages: PackageDoc[] = [
     limits: "Sample range, channel/frame alignment, arithmetic, header consistency, and the 16 MiB payload ceiling are enforced.",
     useWhen: "Use it for generated audio, analysis, fixtures, and a stable interchange layer for media applications.", notes: "Audio stores a sample rate, channel count, and interleaved signed integer samples. Only PCM16 is accepted in this package.",
     example: `keep tone = Audio(48000, 1, [0, 12000, 0, -12000])\nkeep wav = nivren_wav.encode_pcm16(tone) or give\nkeep decoded = nivren_wav.decode_pcm16(wav) or give`,
+  },
+  {
+    name: "nivren_database", purpose: "Database driver contracts",
+    summary: "Define bounded pools, parameterized driver requests, ordered migrations, and typed result pages behind one inspectable adapter boundary.",
+    api: ["PoolConfig", "DriverRequest", "Migration", "QueryPage", "validate_pool", "validate_request", "validate_migrations", "encode_request", "decode_page"],
+    capabilities: "The contract and codecs are pure. A concrete driver performs network or native work and must declare Network or Native authority in the application manifest.",
+    limits: "Pools cap at 1,024 connections; connect/query timeouts cap at 300 seconds; statements cap at 1 MiB; parameters at 65,536; and result requests at one million rows.",
+    useWhen: "Use it to keep application queries portable across PostgreSQL, MySQL, SQLite, or host-provided drivers while preserving visible transactions and limits.",
+    notes: "This package is the safe driver boundary, not a bundled database client. Adapters must preserve parameter ordering, typed failures, cancellation, and transaction cleanup.",
+    example: `define prepare_admins\ngives nivren_database.DriverRequest or String\n{\n    keep request set nivren_database.DriverRequest with {\n        operation set "query"\n        statement set "SELECT id, name FROM users WHERE role = ?"\n        parameters set ["admin"]\n        maximum_rows set 100\n        timeout set 10.0\n    }\n    give nivren_database.validate_request with { request set request }\n}`,
+    failures: ["Invalid pool bounds or timeouts", "Unsupported transaction/driver operation", "Oversized SQL, parameter list, or result ceiling", "Out-of-order or empty migrations", "Malformed typed result JSON"],
+    performance: "Validation is linear in migration count and otherwise constant-time apart from bounded JSON encoding. The package does not copy database rows until an adapter returns a page.",
+    checklist: ["Use parameters instead of interpolating values", "Set a measured query timeout and row ceiling", "Keep migrations strictly increasing", "Close or roll back transactions during cancellation", "Grant only the driver authority the deployment needs"],
+  },
+  {
+    name: "nivren_desktop", purpose: "Desktop host contracts",
+    summary: "Validate system-webview windows, encode a typed JSON bridge, and verify signed update metadata for cross-platform desktop hosts.",
+    api: ["Window", "BridgeMessage", "UpdateManifest", "validate_window", "encode_message", "validate_update"],
+    capabilities: "Contract validation and bridge encoding are pure. Opening a native webview, filesystem access, and downloading an update remain explicit host effects.",
+    limits: "Window dimensions are bounded; titles and command identifiers cap at 256/128 characters; bridge payloads cap at 1 MiB; update URLs require HTTPS.",
+    useWhen: "Use it for Nivren desktop applications whose interface runs in the operating system webview and communicates through a narrow typed host bridge.",
+    notes: "Treat every webview message as untrusted input. The native host must allowlist commands, isolate navigation, and verify checksum plus signature before staging an update.",
+    example: `keep window set nivren_desktop.Window with {\n    title set "Nivren Studio"\n    width set 1280\n    height set 800\n    start_url set "app://index.html"\n}\n\nchoose nivren_desktop.validate_window with { window set window } {\n    case Ok carries ready => show(ready.title)\n    case Err carries problem => show(problem)\n}`,
+    failures: ["Unsafe navigation scheme", "Out-of-range dimensions", "Empty or oversized bridge identity/command", "Bridge payload above 1 MiB", "Unknown update channel or invalid HTTPS/signature metadata"],
+    performance: "Validation is allocation-light and bridge encoding is linear in the bounded payload. Rendering performance remains the responsibility of the system webview and application frontend.",
+    checklist: ["Serve bundled UI from app://index.html", "Allowlist every bridge command", "Apply a strict content security policy", "Never place secrets in bridge logs", "Verify signed update metadata before download and again before activation"],
+  },
+  {
+    name: "nivren_gpu", purpose: "Portable checked compute",
+    summary: "Compile bounded vector-add work into deterministic WGSL while always producing a semantics-matched vectorized CPU fallback.",
+    api: ["ComputeLimits", "AddPlan", "ComputeArtifact", "validate_plan", "add_cpu", "add_wgsl", "compile_add"],
+    capabilities: "Plan validation, WGSL generation, and CPU fallback are pure. Submitting work to a GPU requires an explicit experimental device host.",
+    limits: "Inputs must have equal lengths, workgroups cap at 256 lanes, and each plan declares a maximum no greater than 1,048,576 items.",
+    useWhen: "Use it to prototype portable checked compute that must remain correct on machines without a compatible GPU.",
+    notes: "Edition 4 promises compute, not a rendering engine. Device selection, buffer ownership, shader validation, and fallback telemetry must remain visible at the host boundary.",
+    example: `keep plan set nivren_gpu.AddPlan with {\n    left set [1, 2, 3, 4]\n    right set [10, 20, 30, 40]\n    limits set nivren_gpu.ComputeLimits with {\n        maximum_items set 1024\n        workgroup_size set 64\n    }\n}\nkeep artifact set nivren_gpu.compile_add with { plan set plan } or give`,
+    failures: ["Mismatched vector lengths", "Invalid item or workgroup ceiling", "Input larger than the declared maximum", "Unavailable/unsupported GPU host", "GPU validation failure requiring CPU fallback"],
+    performance: "The CPU fallback processes four lanes per loop with a scalar tail. GPU benefit depends on transfer cost and workload size, so applications should measure both targets before selecting one.",
+    checklist: ["Declare the smallest safe maximum_items", "Keep GPU buffers free of secrets", "Test exact GPU/CPU result parity", "Record when fallback is selected", "Benchmark transfer plus execution—not shader time alone"],
   },
 ];
 

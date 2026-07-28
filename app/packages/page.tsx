@@ -10,15 +10,15 @@ export const metadata: Metadata = {
 export default function PackagesPage() {
   return <>
     <section className="page-hero compact"><div className="shell">
-      <span className="kicker">22 exact, inspectable dependencies</span>
+      <span className="kicker">25 exact, inspectable dependencies</span>
       <h1>Package reference</h1>
       <p>Every official package now has a practical guide covering its complete public surface, required authority, resource limits, intended use, sharp edges, and a copyable Nivren example.</p>
-      <div className="page-hero-meta"><span className="meta-pill">22 package guides</span><span className="meta-pill">Capability notes</span><span className="meta-pill">Typed examples</span></div>
+      <div className="page-hero-meta"><span className="meta-pill">25 package guides</span><span className="meta-pill">Capability notes</span><span className="meta-pill">Typed examples</span></div>
     </div></section>
     <div className="shell content-shell package-index">
       <div className="package-intro">
         <div><span className="kicker">Choose by job</span><h2>Small packages. Visible boundaries.</h2></div>
-        <p>Official packages are ordinary Edition 3 source: no lifecycle scripts, hidden network calls, or ambient permissions. Each guide tells you exactly what the package does—and what it deliberately leaves to your application.</p>
+        <p>Official packages are ordinary Edition 4 source: no lifecycle scripts, hidden network calls, or ambient permissions. Each guide covers authority, resource limits, failures, cost, production checks—and what the package deliberately leaves to your application.</p>
       </div>
       <div className="package-grid">
         {packages.map((item, index) => <article className="package-card" key={item.name}>

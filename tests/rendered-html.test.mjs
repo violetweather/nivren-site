@@ -56,8 +56,8 @@ test("presents the Edition 3 site and removes starter UI", async () => {
 test("publishes the official package catalog and compatibility contract", async () => {
   const response = await render("/packages");
   const html = await response.text();
-  const catalogChecks = new Set(["22 package guides", "nivren_aead", "ChaCha20-Poly1305", "nivren_redis", "semantic versions", "temporary immutable registry"]);
-  for (const phrase of ["22 package guides", "nivren_aead", "Opaque zeroized keys", "ChaCha20-Poly1305", "Sealed · import_key · generate_key · seal", "nivren_aws", "AWS Signature Version 4", "Signature · sign_v4", "nivren_columnar", "Column · Table · table · select", "nivren_image", "Image · image · encode_ppm · decode_ppm", "nivren_oidc", "Authorization · CoreClaims · pkce_challenge", "nivren_matrix", "Matrix · matrix · at · add · multiply", "nivren_svg", "Canvas · canvas · add · rect · text · render", "nivren_wav", "Audio · encode_pcm16 · decode_pcm16", "nivren_metrics", "Sample · sample · encode", "nivren_trace", "OtlpAttribute · OtlpSpan", "export_otlp_json", "nivren_compression", "mandatory decompression ceilings", "gzip · gunzip · zlib · unzlib", "nivren_crypto", "constant-time-verified HMAC-SHA-256", "nivren_csv", "quoted multiline fields", "decode · encode · decode_with · encode_with", "nivren_stats", "sum · mean · variance · minimum", "nivren_jwt", "sign_hs256 · verify_hs256", "nivren_secrets", "Argon2id v=19", "random_key · hash_password", "nivren_sql", "without interpolating values", "nivren_redis", "RESP2/RESP3 framing", "MOVED/ASK Cluster redirects", "live Redis 6.2 through 8.8", "nivren_discord", "nivren_testing", "nivren_routing", "nivren_validation", "semantic versions", "temporary immutable registry"]) {
+  const catalogChecks = new Set(["25 package guides", "nivren_aead", "ChaCha20-Poly1305", "nivren_redis", "nivren_database", "nivren_desktop", "nivren_gpu", "semantic versions", "temporary immutable registry"]);
+  for (const phrase of ["25 package guides", "nivren_aead", "Opaque zeroized keys", "ChaCha20-Poly1305", "Sealed · import_key · generate_key · seal", "nivren_aws", "AWS Signature Version 4", "Signature · sign_v4", "nivren_columnar", "Column · Table · table · select", "nivren_image", "Image · image · encode_ppm · decode_ppm", "nivren_oidc", "Authorization · CoreClaims · pkce_challenge", "nivren_matrix", "Matrix · matrix · at · add · multiply", "nivren_svg", "Canvas · canvas · add · rect · text · render", "nivren_wav", "Audio · encode_pcm16 · decode_pcm16", "nivren_metrics", "Sample · sample · encode", "nivren_trace", "OtlpAttribute · OtlpSpan", "export_otlp_json", "nivren_compression", "mandatory decompression ceilings", "gzip · gunzip · zlib · unzlib", "nivren_crypto", "constant-time-verified HMAC-SHA-256", "nivren_csv", "quoted multiline fields", "decode · encode · decode_with · encode_with", "nivren_stats", "sum · mean · variance · minimum", "nivren_jwt", "sign_hs256 · verify_hs256", "nivren_secrets", "Argon2id v=19", "random_key · hash_password", "nivren_sql", "without interpolating values", "nivren_redis", "RESP2/RESP3 framing", "MOVED/ASK Cluster redirects", "live Redis 6.2 through 8.8", "nivren_discord", "nivren_testing", "nivren_routing", "nivren_validation", "nivren_database", "nivren_desktop", "nivren_gpu", "semantic versions", "temporary immutable registry"]) {
     if (!catalogChecks.has(phrase)) continue;
     assert.match(html, new RegExp(phrase, "i"));
   }
@@ -66,12 +66,12 @@ test("publishes the official package catalog and compatibility contract", async 
 test("publishes a detailed guide for every official package", async () => {
   const catalog = await readFile(new URL("../app/packages/catalog.ts", import.meta.url), "utf8");
   const names = [...catalog.matchAll(/name: "(nivren_[a-z]+)"/g)].map((match) => match[1]);
-  assert.equal(names.length, 22);
+  assert.equal(names.length, 25);
   for (const name of names) {
     const response = await render(`/packages/${name}`);
     assert.equal(response.status, 200);
     const html = await response.text();
-    for (const phrase of [name, "Add it to a project", "A focused example", "Public API", "Required authority", "Bounds and failure behavior", "When to use it"]) {
+    for (const phrase of [name, "Add it to a project", "A focused example", "Public API", "Required authority", "Bounds and failure behavior", "Failures to handle", "Performance notes", "Production checklist", "When to use it"]) {
       assert.match(html, new RegExp(phrase));
     }
   }
