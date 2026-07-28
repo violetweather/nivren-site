@@ -7,7 +7,7 @@ export function SiteFooter() {
         <div className="footer-brand">
           <Link className="brand inverse" href="/"><span className="brand-mark">N</span><span>Nivren</span></Link>
           <p>Code that reads like intent.</p>
-          <span className="beta-note">Edition 4 candidate · not yet published</span>
+          <span className="beta-note">Edition 4 beta.7 · Product Proof in progress</span>
         </div>
         <div><h3>Learn</h3><Link href="/docs">Documentation</Link><Link href="/packages">Packages</Link><Link href="/install">Installation</Link><Link href="/examples">Examples</Link></div>
         <div><h3>Project</h3><Link href="/downloads">Downloads</Link><Link href="/benchmarks">Benchmarks</Link><a href="https://github.com/violetweather/nivren">GitHub</a><a href="https://github.com/violetweather/nivren/blob/main/ROADMAP.md">Roadmap</a></div>

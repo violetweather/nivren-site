@@ -18,7 +18,7 @@ type Section = {
 const sections: Section[] = [
   {
     id: "install", title: "Guided installation", group: "Start here", summary: "Install, update, roll back, and remove Nivren safely.", search: "install setup path vscode rollback windows mac linux",
-    paragraphs: ["The guided installer detects the operating system and CPU, verifies the selected archive, and asks before changing PATH or installing VS Code support. Every managed install has an ownership marker and machine-readable receipt.", "The current public download is the Edition 3 beta. Edition 4 remains an unpublished candidate until every Product Proof gate passes. Local rollback and signed stable, beta, and nightly manifests are implemented; the production channel key, manifests, clean-platform recovery matrix, and incident drill remain release gates."],
+    paragraphs: ["The guided installer detects the operating system and CPU, verifies the selected archive, and asks before changing PATH or installing VS Code support. Every managed install has an ownership marker and machine-readable receipt.", "The current public download is the working Edition 4 beta.7 prerelease. Product Proof is still 3/4, so this is not a stable or 1.0 claim. Local rollback and signed stable, beta, and nightly manifest support are implemented; the public production channel key and manifests, clean-platform recovery matrix, and incident drill remain release gates."],
     command: `# macOS or Linux
 sh install.sh
 sh install.sh --channel beta --channel-key ./nivren-channel.pub
@@ -206,7 +206,7 @@ niv coverage app.niv`,
   },
   {
     id: "production", title: "Production checklist", group: "Tools", summary: "Ship reproducibly with least authority and honest support boundaries.", search: "production security deploy release reproducible audit sbom signing",
-    paragraphs: ["A release must reproduce native, Wasm, library, container, desktop, mobile, and GPU artifacts where supported; verify SBOMs, manifests, checksums, signatures, and provenance; and compile every published snippet.", "Edition 4 remains unpublished until the Windows/macOS/Linux matrix, installer recovery, signed channels, platform hosts, accessibility/link checks, and independent security audit close every critical and high finding."],
+    paragraphs: ["A release must reproduce native, Wasm, library, container, desktop, mobile, and GPU artifacts where supported; verify SBOMs, manifests, checksums, signatures, and provenance; and compile every published snippet.", "Edition 4 beta is published as a working prerelease after its compiler and platform matrix passed. Stable remains blocked until installer recovery, signed production channels, all promised platform hosts, accessibility and link checks, and an independent security audit close every critical and high finding."],
     checks: ["Pin dependencies and review authority changes.", "Exercise failure, cancellation, slow-peer, and resource-ceiling paths.", "Measure startup, memory, latency, throughput, and fallback behavior.", "Keep experimental and unsupported areas labeled precisely."],
   },
   {
