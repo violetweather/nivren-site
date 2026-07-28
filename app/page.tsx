@@ -28,7 +28,7 @@ export default function Home() {
     <>
       <section className="hero shell">
         <div className="hero-copy">
-          <div className="eyebrow"><span className="pulse" /> Edition 4 product candidate</div>
+          <div className="eyebrow"><span className="pulse" /> Edition 4 public beta</div>
           <h1>Code that reads like <em>intent.</em></h1>
           <p className="hero-lede">
             Nivren is an intent-first application language with visible authority,
@@ -53,7 +53,7 @@ export default function Home() {
 
       <section className="proof-strip">
         <div className="shell proof-grid">
-          <div><strong>{checkpointSummary}</strong><span>checkpoint gates passed for {candidateRelease.version}</span></div>
+          <div><strong>{checkpointSummary}</strong><span>Product Proof checkpoints completed for {candidateRelease.version}</span></div>
           <div><strong>7.62×</strong><span>faster startup than Node on M4</span></div>
           <div><strong>6 + WebAssembly</strong><span>native, WASI & browser targets</span></div>
           <div><strong>0</strong><span>unsafe blocks in the core VM</span></div>
@@ -122,7 +122,7 @@ export default function Home() {
       <section className="cta-wrap shell">
         <div className="cta-panel">
           <div>
-            <span className="kicker light">Edition 4 · Product Proof in progress</span>
+            <span className="kicker light">Edition 4 beta · Product Proof in progress</span>
             <h2>Make the next program<br />feel obvious.</h2>
           </div>
           <div className="cta-actions">

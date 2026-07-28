@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SyntaxCode } from "../components/SyntaxCode";
 
 type Platform = "mac" | "linux" | "windows" | "source";
 
@@ -39,7 +40,7 @@ export function InstallChooser() {
     </div>
     <div className="installer-body">
       <div className="installer-title"><div><span>{item.available}</span><h2>{item.label} installation</h2></div>{platform !== "source" && <a className="button primary" href={installerHref}>Download installer</a>}</div>
-      <div className="command-block install-command"><button onClick={copy} aria-label="Copy install commands">{copied ? "Copied" : "Copy"}</button><pre><code>{item.commands}</code></pre></div>
+      <div className="command-block install-command"><button onClick={copy} aria-label="Copy install commands">{copied ? "Copied" : "Copy"}</button><pre><SyntaxCode code={item.commands} language={platform === "windows" ? "powershell" : "shell"} /></pre></div>
       <p className="install-note">{item.note}</p>
     </div>
     <div className="verify-row"><span className="verify-mark">✓</span><div><strong>Verification is built in</strong><p>The installer verifies SHA-256 automatically and also verifies GitHub provenance whenever GitHub CLI is available.</p></div></div>

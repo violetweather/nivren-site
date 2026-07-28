@@ -6,7 +6,11 @@ const versionPattern = /^\d+\.\d+\.\d+-beta\.\d+$/;
 assert.match(release.public.version, versionPattern);
 assert.match(release.candidate.version, versionPattern);
 assert.equal(release.public.published, true);
-assert.notEqual(release.public.version, release.candidate.version, "an unpublished candidate must not reuse a public tag");
+if (release.candidate.published) {
+  assert.equal(release.public.version, release.candidate.version, "a published candidate must match the public tag");
+} else {
+  assert.notEqual(release.public.version, release.candidate.version, "an unpublished candidate must not reuse a public tag");
+}
 assert.equal(new Set(release.public.assets).size, release.public.assets.length, "release assets must be unique");
 assert.ok(release.public.assets.includes("SHA256SUMS"));
 for (const asset of release.public.assets) {

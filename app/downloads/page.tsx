@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { betaLabel, publicRelease, releaseAssetUrl } from "../release";
+import { SyntaxCode } from "../components/SyntaxCode";
 
 export const metadata: Metadata = { title: "Downloads", description: "Download Nivren binaries and verify release integrity." };
 
@@ -23,7 +24,7 @@ const checksums = releaseAssetUrl("SHA256SUMS");
 
 export default function DownloadsPage() {
   return <>
-    <section className="page-hero compact"><div className="shell"><span className="kicker">Edition 3 public beta</span><h1>Downloads</h1><p>Every native archive includes the CLI, guided installers, native libraries and header, documentation, dependency notices, and an SPDX SBOM. Verified WASI/browser modules, a VS Code extension, and a non-root multi-architecture OCI image cover portable, editor, and container hosts.</p></div></section>
+    <section className="page-hero compact"><div className="shell"><span className="kicker">Edition 4 public beta</span><h1>Downloads</h1><p>Every native archive includes the CLI, guided installers, native libraries and header, documentation, dependency notices, and an SPDX SBOM. Verified WASI/browser modules, a VS Code extension, and a non-root multi-architecture OCI image cover portable, editor, and container hosts.</p></div></section>
     <div className="shell content-shell">
       <div className="release-line"><div><span className="release-dot" /><div><strong>Nivren {publicRelease.version} is published</strong><span>All listed targets are reproducible, checksum-listed, and signed with GitHub build provenance.</span></div></div><Link href="/install">Use the guided installer →</Link></div>
       <div className="download-grid">
@@ -34,9 +35,9 @@ export default function DownloadsPage() {
       </div>
       <section className="verify-section">
         <div><span className="kicker">Trust, then run</span><h2>Verify the download.</h2><p>Download the release checksum manifest and compare the entry for your artifact. Browser users need both the <a href={browserSdk}>JavaScript SDK</a> and its <a href={browserModule}>browser module</a>.</p><div className="digest"><span>SHA-256</span><a href={checksums}>Download SHA256SUMS ↗</a></div></div>
-        <div className="prose-card"><h3>GitHub attestation</h3><p>Verify an archive or WASM module&apos;s signed build provenance:</p><pre><code>gh attestation verify --repo violetweather/nivren &lt;artifact&gt;</code></pre><h3>Build it yourself</h3><pre><code>{`git clone https://github.com/violetweather/nivren.git
+        <div className="prose-card"><h3>GitHub attestation</h3><p>Verify an archive or WASM module&apos;s signed build provenance:</p><pre><SyntaxCode language="shell" code="gh attestation verify --repo violetweather/nivren <artifact>" /></pre><h3>Build it yourself</h3><pre><SyntaxCode language="shell" code={`git clone https://github.com/violetweather/nivren.git
 cd nivren
-cargo build --release --locked`}</code></pre><Link href="/install">Full installation guide →</Link></div>
+cargo build --release --locked`} /></pre><Link href="/install">Full installation guide →</Link></div>
       </section>
     </div>
   </>;

@@ -20,8 +20,8 @@ test("renders the complete Nivren landing page", async () => {
   const html = await response.text();
   assert.match(html, /<title>Nivren — Code that reads like intent<\/title>/i);
   assert.match(html, /Code that reads like/);
-  assert.match(html, /Edition 4 product candidate/);
-  assert.match(html, /0\.10\.0-beta\.6/);
+  assert.match(html, /Edition 4 public beta/);
+  assert.match(html, /0\.10\.0-beta\.7/);
   assert.match(html, /3 \/ 4/);
   assert.match(html, /6 \+ WebAssembly/);
   assert.match(html, /href="\/docs"/);
@@ -46,7 +46,7 @@ for (const [pathname, expected] of [
   });
 }
 
-test("presents the Edition 4 candidate site and removes starter UI", async () => {
+test("presents the Edition 4 beta site and removes starter UI", async () => {
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
   const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   assert.equal(packageJson.name, "nivren-site");
@@ -119,10 +119,21 @@ test("publishes every portable beta target", async () => {
   assert.match(html, /Linux x64 \+ ARM64/);
   assert.match(html, /Non-root/);
   assert.match(html, /Portable compiler \+ VM/);
-  assert.match(html, /nivren-v0\.10\.0-beta\.6-wasm32-wasip1\.wasm/);
-  assert.match(html, /nivren-v0\.10\.0-beta\.6-browser\.wasm/);
-  assert.match(html, /nivren-0\.10\.0-beta\.6\.vsix/);
+  assert.match(html, /nivren-v0\.10\.0-beta\.7-wasm32-wasip1\.wasm/);
+  assert.match(html, /nivren-v0\.10\.0-beta\.7-browser\.wasm/);
+  assert.match(html, /nivren-0\.10\.0-beta\.7\.vsix/);
   assert.match(html, /pkgs\/container\/nivren/);
+});
+
+test("syntax-highlights every block-level code sample", async () => {
+  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages/nivren_database"];
+  for (const route of routes) {
+    const response = await render(route);
+    const html = await response.text();
+    for (const block of html.matchAll(/<pre[^>]*>([\s\S]*?)<\/pre>/g)) {
+      assert.match(block[1], /class="[^"]*syn-|class="syntax-code/, `${route} contains an unhighlighted code block`);
+    }
+  }
 });
 
 test("publishes reproducible Nivren versus Node.js results", async () => {
@@ -146,7 +157,9 @@ test("keeps release versions and download assets synchronized", async () => {
   const response = await render("/downloads");
   const html = await response.text();
   assert.match(html, new RegExp(release.public.version.replaceAll(".", "\\.")));
-  assert.doesNotMatch(html, new RegExp(`/releases/download/v${release.candidate.version.replaceAll(".", "\\.")}/`));
+  if (!release.candidate.published) {
+    assert.doesNotMatch(html, new RegExp(`/releases/download/v${release.candidate.version.replaceAll(".", "\\.")}/`));
+  }
   for (const asset of release.public.assets) {
     assert.match(html, new RegExp(asset.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }

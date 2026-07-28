@@ -1,27 +1,27 @@
 {
   "repository": "violetweather/nivren",
   "public": {
-    "version": "0.10.0-beta.6",
-    "edition": 3,
+    "version": "0.10.0-beta.7",
+    "edition": 4,
     "published": true,
     "assets": [
-      "nivren-0.10.0-beta.6.vsix",
-      "nivren-v0.10.0-beta.6-browser.mjs",
-      "nivren-v0.10.0-beta.6-browser.wasm",
-      "nivren-v0.10.0-beta.6-linux-arm64.zip",
-      "nivren-v0.10.0-beta.6-linux-x64.zip",
-      "nivren-v0.10.0-beta.6-macos-arm64.zip",
-      "nivren-v0.10.0-beta.6-macos-x64.zip",
-      "nivren-v0.10.0-beta.6-wasm32-wasip1.wasm",
-      "nivren-v0.10.0-beta.6-windows-arm64.zip",
-      "nivren-v0.10.0-beta.6-windows-x64.zip",
+      "nivren-0.10.0-beta.7.vsix",
+      "nivren-v0.10.0-beta.7-browser.mjs",
+      "nivren-v0.10.0-beta.7-browser.wasm",
+      "nivren-v0.10.0-beta.7-linux-arm64.zip",
+      "nivren-v0.10.0-beta.7-linux-x64.zip",
+      "nivren-v0.10.0-beta.7-macos-arm64.zip",
+      "nivren-v0.10.0-beta.7-macos-x64.zip",
+      "nivren-v0.10.0-beta.7-wasm32-wasip1.wasm",
+      "nivren-v0.10.0-beta.7-windows-arm64.zip",
+      "nivren-v0.10.0-beta.7-windows-x64.zip",
       "SHA256SUMS"
     ]
   },
   "candidate": {
     "version": "0.10.0-beta.7",
     "edition": 4,
-    "published": false,
+    "published": true,
     "checkpointGatesPassed": 3,
     "checkpointGatesRequired": 4
   }

@@ -23,6 +23,20 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; }
 code, pre { font-family: var(--mono); }
+.syntax-code { color: #d9e6f1; }
+.syn-keyword { color: #ff8f7b; font-weight: 650; }
+.syn-type { color: #73d6cf; }
+.syn-string, .syn-url { color: #ffd580; }
+.syn-comment { color: #8193a5; font-style: italic; }
+.syn-number, .syn-literal { color: #c4a7ff; }
+.syn-function, .syn-property { color: #79bfff; }
+.syn-variable { color: #f0a7db; }
+.syn-flag { color: #7edba8; }
+.syn-operator { color: #ffac8f; }
+.syn-punctuation { color: #9fb0c1; }
+.syn-success { color: #78dda7; }
+.syn-error { color: #ff8f8f; }
+.syn-warning { color: #ffd166; }
 ::selection { background: var(--lime); color: var(--ink); }
 .shell { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
 .skip-link { position: fixed; z-index: 100; top: 12px; left: 12px; padding: 10px 16px; background: var(--ink); color: white; transform: translateY(-150%); }
