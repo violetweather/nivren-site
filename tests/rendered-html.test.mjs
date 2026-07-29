@@ -104,6 +104,23 @@ test("documents the guided cross-platform installers", async () => {
   assert.match(explorer, /-Rollback/);
 });
 
+test("documents the fail-closed Studio release matrix", async () => {
+  const downloads = await render("/studio/downloads");
+  const downloadHtml = await downloads.text();
+  for (const phrase of ["Notarized PKG + DMG", "Timestamped MSI + MSIX", "AppImage + DEB + RPM", "Six native receipts", "One source revision", "Not published"]) {
+    assert.match(downloadHtml, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+  const docs = await render("/studio/docs");
+  const docsHtml = await docs.text();
+  for (const phrase of ["Package and prove", "pinned signatures", "exact rollback", "same-source six-platform matrix"]) {
+    assert.match(docsHtml, new RegExp(phrase));
+  }
+  const compatibility = await render("/studio/compatibility");
+  const compatibilityHtml = await compatibility.text();
+  assert.match(compatibilityHtml, /ARM64 local artifact proof passes/);
+  assert.match(compatibilityHtml, /native system receipts pending/);
+});
+
 test("documents distinctive Edition 4 capabilities", async () => {
   const docs = await render("/docs");
   const html = await docs.text();
