@@ -14,6 +14,7 @@ export function SiteHeader() {
           <Link href="/examples">Examples</Link>
           <Link href="/benchmarks">Benchmarks</Link>
           <Link href="/downloads">Downloads</Link>
+          <Link href="/studio">Studio</Link>
         </nav>
         <div className="nav-actions">
           <a className="github-link" href="https://github.com/violetweather/nivren">GitHub <span aria-hidden="true">↗</span></a>
@@ -22,7 +23,7 @@ export function SiteHeader() {
         <details className="mobile-menu">
           <summary aria-label="Open navigation">Menu</summary>
           <nav aria-label="Mobile navigation">
-            <Link href="/docs">Docs</Link><Link href="/packages">Packages</Link><Link href="/install">Install</Link><Link href="/examples">Examples</Link><Link href="/benchmarks">Benchmarks</Link><Link href="/downloads">Downloads</Link>
+            <Link href="/docs">Docs</Link><Link href="/packages">Packages</Link><Link href="/install">Install</Link><Link href="/examples">Examples</Link><Link href="/benchmarks">Benchmarks</Link><Link href="/downloads">Downloads</Link><Link href="/studio">Studio</Link>
           </nav>
         </details>
       </div>

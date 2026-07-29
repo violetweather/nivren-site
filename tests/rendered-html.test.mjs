@@ -38,6 +38,14 @@ for (const [pathname, expected] of [
   ["/examples", "Examples"],
   ["/benchmarks", "Quick tools. Small processes. Explicit safety."],
   ["/packages", "Packages"],
+  ["/studio", "See what your program"],
+  ["/studio/docs", "Studio documentation"],
+  ["/studio/downloads", "Studio downloads"],
+  ["/studio/plugins", "Studio plugins"],
+  ["/studio/compatibility", "Compatibility"],
+  ["/studio/releases", "Studio releases"],
+  ["/studio/privacy", "Privacy"],
+  ["/studio/security", "Security"],
 ]) {
   test(`renders ${pathname}`, async () => {
     const response = await render(pathname);
@@ -94,6 +102,23 @@ test("documents the guided cross-platform installers", async () => {
   assert.match(explorer, /-Uninstall/);
   assert.match(explorer, /--rollback/);
   assert.match(explorer, /-Rollback/);
+});
+
+test("documents the fail-closed Studio release matrix", async () => {
+  const downloads = await render("/studio/downloads");
+  const downloadHtml = await downloads.text();
+  for (const phrase of ["Notarized PKG + DMG", "Timestamped MSI + MSIX", "AppImage + DEB + RPM", "Six native receipts", "One source revision", "Not published"]) {
+    assert.match(downloadHtml, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+  const docs = await render("/studio/docs");
+  const docsHtml = await docs.text();
+  for (const phrase of ["Package and prove", "pinned signatures", "exact rollback", "same-source six-platform matrix"]) {
+    assert.match(docsHtml, new RegExp(phrase));
+  }
+  const compatibility = await render("/studio/compatibility");
+  const compatibilityHtml = await compatibility.text();
+  assert.match(compatibilityHtml, /ARM64 local artifact proof passes/);
+  assert.match(compatibilityHtml, /native system receipts pending/);
 });
 
 test("documents distinctive Edition 4 capabilities", async () => {
@@ -168,7 +193,7 @@ test("keeps release versions and download assets synchronized", async () => {
 test("renders accessible landmarks and resolves every internal link", async () => {
   const catalog = await readFile(new URL("../app/packages/catalog.ts", import.meta.url), "utf8");
   const packageRoutes = [...catalog.matchAll(/name: "(nivren_[a-z]+)"/g)].map((match) => `/packages/${match[1]}`);
-  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages", ...packageRoutes];
+  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages", "/studio", "/studio/docs", "/studio/downloads", "/studio/plugins", "/studio/compatibility", "/studio/releases", "/studio/privacy", "/studio/security", ...packageRoutes];
   const known = new Set(routes);
   for (const route of routes) {
     const response = await render(route);
