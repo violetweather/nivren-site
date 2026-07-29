@@ -38,6 +38,14 @@ for (const [pathname, expected] of [
   ["/examples", "Examples"],
   ["/benchmarks", "Quick tools. Small processes. Explicit safety."],
   ["/packages", "Packages"],
+  ["/studio", "See what your program"],
+  ["/studio/docs", "Studio documentation"],
+  ["/studio/downloads", "Studio downloads"],
+  ["/studio/plugins", "Studio plugins"],
+  ["/studio/compatibility", "Compatibility"],
+  ["/studio/releases", "Studio releases"],
+  ["/studio/privacy", "Privacy"],
+  ["/studio/security", "Security"],
 ]) {
   test(`renders ${pathname}`, async () => {
     const response = await render(pathname);
@@ -168,7 +176,7 @@ test("keeps release versions and download assets synchronized", async () => {
 test("renders accessible landmarks and resolves every internal link", async () => {
   const catalog = await readFile(new URL("../app/packages/catalog.ts", import.meta.url), "utf8");
   const packageRoutes = [...catalog.matchAll(/name: "(nivren_[a-z]+)"/g)].map((match) => `/packages/${match[1]}`);
-  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages", ...packageRoutes];
+  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages", "/studio", "/studio/docs", "/studio/downloads", "/studio/plugins", "/studio/compatibility", "/studio/releases", "/studio/privacy", "/studio/security", ...packageRoutes];
   const known = new Set(routes);
   for (const route of routes) {
     const response = await render(route);
