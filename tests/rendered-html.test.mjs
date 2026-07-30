@@ -107,7 +107,7 @@ test("documents the guided cross-platform installers", async () => {
 test("documents the fail-closed Studio release matrix", async () => {
   const downloads = await render("/studio/downloads");
   const downloadHtml = await downloads.text();
-  for (const phrase of ["Notarized PKG + DMG", "Timestamped MSI + MSIX", "AppImage + DEB + RPM", "Six native receipts", "One source revision", "Not published"]) {
+  for (const phrase of ["Apple-silicon Macs", "Developer preview", "One verified build today", "Not published", "not Apple Developer ID signed or notarized"]) {
     assert.match(downloadHtml, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
   const docs = await render("/studio/docs");
@@ -117,8 +117,8 @@ test("documents the fail-closed Studio release matrix", async () => {
   }
   const compatibility = await render("/studio/compatibility");
   const compatibilityHtml = await compatibility.text();
-  assert.match(compatibilityHtml, /ARM64 local artifact proof passes/);
-  assert.match(compatibilityHtml, /native system receipts pending/);
+  assert.match(compatibilityHtml, /Developer-preview DMG verified/);
+  assert.match(compatibilityHtml, /installer and runtime evidence pending/);
 });
 
 test("documents distinctive Edition 4 capabilities", async () => {
