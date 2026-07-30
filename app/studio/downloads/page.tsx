@@ -4,11 +4,11 @@ const releaseBase = "https://github.com/violetweather/nivren-studio-releases/rel
 
 const downloads = [
   { name: "macOS 14+ · Apple silicon", asset: "Nivren-Studio-macOS-arm64-1.132.0-developer.dmg", status: "Developer preview · verified DMG" },
-  { name: "macOS 14+ · Intel", status: "Not published" },
+  { name: "macOS 14+ · Intel", status: "Build passed · release pending" },
   { name: "Windows 11 · x64", status: "Not published" },
   { name: "Windows 11 · ARM64", status: "Not published" },
-  { name: "Ubuntu / Fedora · x64", status: "Not published" },
-  { name: "Ubuntu / Fedora · ARM64", status: "Not published" },
+  { name: "Ubuntu / Fedora · x64", status: "Build passed · release pending" },
+  { name: "Ubuntu / Fedora · ARM64", status: "Build passed · release pending" },
 ];
 
 export const metadata = { title: "Studio downloads" };
