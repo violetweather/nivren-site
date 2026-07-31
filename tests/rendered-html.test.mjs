@@ -107,7 +107,7 @@ test("documents the guided cross-platform installers", async () => {
 test("documents the fail-closed Studio release matrix", async () => {
   const downloads = await render("/studio/downloads");
   const downloadHtml = await downloads.text();
-  for (const phrase of ["Apple-silicon Macs", "Developer preview", "One verified build today", "Not published", "not Apple Developer ID signed or notarized"]) {
+  for (const phrase of ["Apple-silicon Macs and Windows x64/ARM64", "Developer preview", "Three verified builds today", "Nivren-Studio-Windows-x64-1.132.0-developer.1.zip", "Nivren-Studio-Windows-ARM64-1.132.0-developer.1.zip", "unsigned portable ZIPs"]) {
     assert.match(downloadHtml, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
   const docs = await render("/studio/docs");
@@ -118,6 +118,7 @@ test("documents the fail-closed Studio release matrix", async () => {
   const compatibility = await render("/studio/compatibility");
   const compatibilityHtml = await compatibility.text();
   assert.match(compatibilityHtml, /Developer-preview DMG verified/);
+  assert.match(compatibilityHtml, /Portable previews built, tested, audited, and published/);
   assert.match(compatibilityHtml, /installer and runtime evidence pending/);
 });
 
