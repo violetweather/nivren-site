@@ -109,7 +109,9 @@ export default function Home() {
     <>
       <section className="stage">
         <p className="stage-meta">
-          <span className="dot" /> Edition 4 public beta · {publicRelease.version}
+          <span className="stamp">Edition 4 public beta</span>
+          <span className="stamp-rule" aria-hidden="true" />
+          <span className="stamp-version">{publicRelease.version}</span>
         </p>
         <h1>Code that reads like <em>intent.</em></h1>
         <div className="stage-foot">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { candidateRelease, publicRelease } from "../release";
+import { NivrenMark } from "./NivrenMark";
 
 const columns = [
   {
@@ -31,7 +32,10 @@ const external = [
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <p className="footer-wordmark" aria-hidden="true">NIVREN</p>
+      <div className="footer-brandline">
+        <NivrenMark className="footer-mark" />
+        <p className="footer-wordmark" aria-hidden="true">NIVREN</p>
+      </div>
       <div className="footer-cols">
         {columns.map((column) => (
           <div key={column.heading}>

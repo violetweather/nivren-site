@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NivrenMark } from "./NivrenMark";
 
 const links = [
   { href: "/docs", label: "Docs" },
@@ -12,7 +13,7 @@ export function SiteNav() {
   return (
     <div className="nav-dock">
       <Link className="nav-brand" href="/" aria-label="Nivren home">
-        <span className="nav-mark">N</span>
+        <NivrenMark className="nav-mark" />
         <span>NIVREN</span>
       </Link>
       <nav className="nav-pill" aria-label="Primary navigation">
