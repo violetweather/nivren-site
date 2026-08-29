@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "./components/SiteHeader";
 import { SiteFooter } from "./components/SiteFooter";
+import { SiteNav } from "./components/SiteNav";
 import "./globals.css";
 
 const officialOrigin = "https://violetweather.github.io/nivren-site";
@@ -16,5 +16,14 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><a className="skip-link" href="#main">Skip to content</a><SiteHeader /><main id="main">{children}</main><SiteFooter /></body></html>;
+  return (
+    <html lang="en">
+      <body>
+        <a className="skip-link" href="#main">Skip to content</a>
+        <SiteNav />
+        <main id="main">{children}</main>
+        <SiteFooter />
+      </body>
+    </html>
+  );
 }

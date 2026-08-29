@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Marquee } from "../components/Marquee";
 import { packages } from "./catalog";
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default function PackagesPage() {
       <p>Every official package now has a practical guide covering its complete public surface, required authority, resource limits, intended use, sharp edges, and a copyable Nivren example.</p>
       <div className="page-hero-meta"><span className="meta-pill">25 package guides</span><span className="meta-pill">Capability notes</span><span className="meta-pill">Typed examples</span></div>
     </div></section>
+    <Marquee items={packages.map(item => item.name)} />
     <div className="shell content-shell package-index">
       <div className="package-intro">
         <div><span className="kicker">Choose by job</span><h2>Small packages. Visible boundaries.</h2></div>

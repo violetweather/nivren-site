@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { betaLabel, publicRelease, releaseAssetUrl } from "../release";
+import { Marquee } from "../components/Marquee";
 import { SyntaxCode } from "../components/SyntaxCode";
 
 export const metadata: Metadata = { title: "Downloads", description: "Download Nivren binaries and verify release integrity." };
@@ -25,6 +26,7 @@ const checksums = releaseAssetUrl("SHA256SUMS");
 export default function DownloadsPage() {
   return <>
     <section className="page-hero compact"><div className="shell"><span className="kicker">Edition 4 public beta</span><h1>Downloads</h1><p>Every native archive includes the CLI, guided installers, native libraries and header, documentation, dependency notices, and an SPDX SBOM. Verified WASI/browser modules, a VS Code extension, and a non-root multi-architecture OCI image cover portable, editor, and container hosts.</p></div></section>
+    <Marquee tone="loud" items={builds.map(build => `${build.platform} ${build.arch}`)} />
     <div className="shell content-shell">
       <div className="release-line"><div><span className="release-dot" /><div><strong>Nivren {publicRelease.version} is published</strong><span>All listed targets are reproducible, checksum-listed, and signed with GitHub build provenance.</span></div></div><Link href="/install">Use the guided installer →</Link></div>
       <div className="download-grid">

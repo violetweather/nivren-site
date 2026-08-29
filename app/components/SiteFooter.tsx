@@ -1,19 +1,65 @@
 import Link from "next/link";
+import { candidateRelease, publicRelease } from "../release";
+
+const columns = [
+  {
+    heading: "Language",
+    links: [
+      { href: "/docs", label: "Documentation" },
+      { href: "/examples", label: "Examples" },
+      { href: "/packages", label: "Packages" },
+      { href: "/benchmarks", label: "Benchmarks" },
+    ],
+  },
+  {
+    heading: "Ship",
+    links: [
+      { href: "/install", label: "Install" },
+      { href: "/downloads", label: "Downloads" },
+      { href: "/studio", label: "Nivren Studio" },
+    ],
+  },
+];
+
+const external = [
+  { href: "https://github.com/violetweather/nivren", label: "Source" },
+  { href: "https://github.com/violetweather/nivren/tree/main/spec", label: "Specifications" },
+  { href: "https://github.com/violetweather/nivren/tree/main/conformance", label: "Conformance" },
+  { href: "https://github.com/violetweather/nivren/blob/main/SECURITY.md", label: "Security" },
+];
 
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div className="shell footer-grid">
-        <div className="footer-brand">
-          <Link className="brand inverse" href="/"><span className="brand-mark">N</span><span>Nivren</span></Link>
-          <p>Code that reads like intent.</p>
-          <span className="beta-note">Edition 4 beta.7 · Product Proof in progress</span>
+      <p className="footer-wordmark" aria-hidden="true">NIVREN</p>
+      <div className="footer-cols">
+        {columns.map((column) => (
+          <div key={column.heading}>
+            <h2>{column.heading}</h2>
+            {column.links.map((link) => (
+              <Link href={link.href} key={link.href}>{link.label}</Link>
+            ))}
+          </div>
+        ))}
+        <div>
+          <h2>Open</h2>
+          {external.map((link) => (
+            <a href={link.href} key={link.href}>
+              {link.label} <span aria-hidden="true">↗</span>
+            </a>
+          ))}
         </div>
-        <div><h3>Learn</h3><Link href="/docs">Documentation</Link><Link href="/packages">Packages</Link><Link href="/install">Installation</Link><Link href="/examples">Examples</Link></div>
-        <div><h3>Project</h3><Link href="/studio">Nivren Studio</Link><Link href="/downloads">Downloads</Link><Link href="/benchmarks">Benchmarks</Link><a href="https://github.com/violetweather/nivren">GitHub</a></div>
-        <div><h3>Edition 4</h3><a href="https://github.com/violetweather/nivren/tree/main/spec">Specifications</a><a href="https://github.com/violetweather/nivren/tree/main/conformance">Conformance</a><a href="https://github.com/violetweather/nivren/blob/main/docs/STYLE_GUIDE.md">Style guide</a><a href="https://github.com/violetweather/nivren/blob/main/SECURITY.md">Security</a></div>
+        <div className="footer-state">
+          <h2>State</h2>
+          <p>
+            <b>{publicRelease.version}</b> public beta
+          </p>
+          <p>
+            Product Proof {candidateRelease.checkpointGatesPassed}/{candidateRelease.checkpointGatesRequired} · not 1.0 until every gate passes
+          </p>
+          <p>Apache-2.0</p>
+        </div>
       </div>
-      <div className="shell footer-bottom"><span>Apache-2.0 licensed</span><span>Built with care for predictable software.</span></div>
     </footer>
   );
 }
