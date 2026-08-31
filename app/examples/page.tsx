@@ -6,12 +6,12 @@ export const metadata: Metadata = { title: "Examples", description: "See distinc
 
 const examples = [
   { tag: "Systems", title: "Share one checked atomic", copy: "AtomicInt crosses structured-task boundaries while overflow remains a typed result.", code: `define count
-gives Int or String
+gives Int or Problem
 needs Task
 {
     keep counter set std.atomics.create with { value set 0 }
     define increment
-    gives Nothing or String
+    gives Nothing or Problem
     {
         keep previous set std.atomics.add with { atomic set counter amount set 1 } or give
         give ok(none)
@@ -69,7 +69,7 @@ show(greeting with { user set mira access set Access.Member })` },
 takes {
     path is String
 }
-gives String or String
+gives String or Problem
 needs FileRead
 {
     keep opened set perform std.files.open_read with { path set path } or give
@@ -80,25 +80,25 @@ needs FileRead
 
 choose perform load_configuration with { path set "app.json" } {
     case Ok carries text => text
-    case Err carries problem => "configuration: " + problem
+    case Err carries problem => "configuration: " + problem.message
 }` },
   { tag: "Async files", title: "Queue bounded disk work", copy: "Disk work becomes a structured task and executor saturation remains typed.", code: `define load
 takes {
     path is String
 }
-gives String or String
+gives String or Problem
 needs FileRead, Task
 {
     keep queued set perform std.files.read_async with { path set path maximum set 1048576 } or give
     give wait queued
 }` },
   { tag: "Concurrency", title: "Bound the work", copy: "Intent words make ownership, joining, and backpressure explicit.", code: `define run
-gives Int or String
+gives Int or Problem
 needs Channel, Task
 {
     keep results set perform std.channels.create with { capacity set 8 }
     define calculate
-    gives Int or String
+    gives Int or Problem
     needs Channel
     {
         keep sent set perform std.channels.send with { channel set results value set 42 timeout set 2.0 } or give
@@ -113,7 +113,7 @@ needs Channel, Task
 takes {
     connection is TcpStream
 }
-gives Nothing or String
+gives Nothing or Problem
 needs Network
 {
     keep request set perform std.web.read_request with { stream set connection maximum set 65536 } or give
@@ -125,12 +125,12 @@ needs Network
     }
 }` },
   { tag: "Shared state", title: "Release every lock", copy: "Bounded acquisition and using make guard lifetime explicit.", code: `define run
-gives Int or String
+gives Int or Problem
 needs Task
 {
     keep counter set std.locks.create with { value set 0 }
     define increment
-    gives Nothing or String
+    gives Nothing or Problem
     needs Task
     {
         keep acquired set perform std.locks.acquire with { lock set counter timeout set 2.0 } or give
@@ -144,7 +144,7 @@ needs Task
     give ok(2)
 }` },
   { tag: "Resources", title: "Rollback unless committed", copy: "A transaction closes safely on every path; only commit publishes staged state.", code: `define update
-gives Map<String, Int> or String
+gives Map<String, Int> or Problem
 {
     keep original set std.map.of with { key set "count" value set 1 }
     keep transaction set std.transactions.create with { map set original }
@@ -157,7 +157,7 @@ gives Map<String, Int> or String
 takes {
     path is String
 }
-gives Int or String
+gives Int or Problem
 needs Native
 {
     keep opened set perform std.native.open with { path set path } or give
@@ -170,7 +170,7 @@ takes {
     seconds is Int
     zone is String
 }
-gives String or String
+gives String or Problem
 {
     keep instant set std.time.from_unix with { seconds set seconds zone set "UTC" } or give
     keep local set std.time.in_zone with { value set instant zone set zone } or give
@@ -185,7 +185,7 @@ define first
 takes {
     path is String
 }
-gives maybe Event or String
+gives maybe Event or Problem
 needs FileRead
 {
     keep opened set perform std.files.open_read with { path set path } or give

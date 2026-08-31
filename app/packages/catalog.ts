@@ -174,7 +174,7 @@ export const packages: PackageDoc[] = [
     summary: "Write typed assertions and coordinate concurrent tests through explicit channel-backed gates instead of sleeps.",
     api: ["Gate", "expect_equal", "expect_yes", "expect_no", "gate", "open", "pass", "checkpoint"], capabilities: "Assertions are pure. Gate and checkpoint operations declare Channel.",
     limits: "Scheduling remains bounded by ordinary channel capacity, deadlines, and the structured task tree.", useWhen: "Use it for readable unit checks and reproducible ordering in task, channel, and race-condition tests.",
-    notes: "Assertions return Result<Null,String>, so suites compose with or give. Gates control order without depending on runner speed.",
+    notes: "Assertions return Result<Null, Problem>, so suites compose with or give. Gates control order without depending on runner speed.",
     example: `keep ready set nivren_testing.gate with { }\nkeep opened set perform nivren_testing.open with { value set ready } or give\nkeep observed set perform nivren_testing.pass with { value set ready } or give\nkeep checked set nivren_testing.expect_equal with { actual set actual expected set expected label set "result" } or give`,
   },
   {
@@ -210,7 +210,7 @@ export const packages: PackageDoc[] = [
     limits: "Pools cap at 1,024 connections; connect/query timeouts cap at 300 seconds; statements cap at 1 MiB; parameters at 65,536; and result requests at one million rows.",
     useWhen: "Use it to keep application queries portable across PostgreSQL, MySQL, SQLite, or host-provided drivers while preserving visible transactions and limits.",
     notes: "This package is the safe driver boundary, not a bundled database client. Adapters must preserve parameter ordering, typed failures, cancellation, and transaction cleanup.",
-    example: `define prepare_admins\ngives nivren_database.DriverRequest or String\n{\n    keep request set nivren_database.DriverRequest with {\n        operation set "query"\n        statement set "SELECT id, name FROM users WHERE role = ?"\n        parameters set ["admin"]\n        maximum_rows set 100\n        timeout set 10.0\n    }\n    give nivren_database.validate_request with { request set request }\n}`,
+    example: `define prepare_admins\ngives nivren_database.DriverRequest or Problem\n{\n    keep request set nivren_database.DriverRequest with {\n        operation set "query"\n        statement set "SELECT id, name FROM users WHERE role = ?"\n        parameters set ["admin"]\n        maximum_rows set 100\n        timeout set 10.0\n    }\n    give nivren_database.validate_request with { request set request }\n}`,
     failures: ["Invalid pool bounds or timeouts", "Unsupported transaction/driver operation", "Oversized SQL, parameter list, or result ceiling", "Out-of-order or empty migrations", "Malformed typed result JSON"],
     performance: "Validation is linear in migration count and otherwise constant-time apart from bounded JSON encoding. The package does not copy database rows until an adapter returns a page.",
     checklist: ["Use parameters instead of interpolating values", "Set a measured query timeout and row ceiling", "Keep migrations strictly increasing", "Close or roll back transactions during cancellation", "Grant only the driver authority the deployment needs"],

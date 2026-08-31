@@ -55,10 +55,10 @@ define welcome
 takes {
     input is Signup
 }
-gives String or String
+gives String or Problem
 {
     when input.age < 13 {
-        give err("a signup must be at least 13")
+        give err(std.problems.create("app", "a signup must be at least 13"))
     }
     give ok("Welcome, " + input.name)
 }
@@ -66,7 +66,7 @@ gives String or String
 keep input set Signup with { name set "Mira" age set 24 }
 choose welcome with { input set input } {
     case Ok carries message => message
-    case Err carries problem => problem
+    case Err carries problem => problem.message
 }`,
   },
   {
@@ -76,7 +76,7 @@ choose welcome with { input set input } {
 takes {
     path is String
 }
-gives String or String
+gives String or Problem
 needs FileRead
 {
     keep opened set perform std.files.open_read with { path set path } or give
@@ -116,12 +116,12 @@ memory_bytes = "67108864"`,
     id: "concurrency", title: "Structured concurrency", group: "Applications", summary: "Bound tasks, channels, deadlines, and shared state.", search: "task start wait together race channel backpressure lock atomic cancellation",
     paragraphs: ["Parents own child lifetimes. Cancellation is cooperative, together and race retain ownership, and bounded channels surface backpressure instead of growing hidden queues. Locks use scoped guards; AtomicInt supports linearizable counters."],
     nivren: `define run
-gives Int or String
+gives Int or Problem
 needs Channel, Task
 {
     keep channel set perform std.channels.create with { capacity set 8 }
     define produce
-    gives Int or String
+    gives Int or Problem
     needs Channel
     {
         keep sent set perform std.channels.send with { channel set channel value set 42 timeout set 2.0 } or give
@@ -140,7 +140,7 @@ needs Channel, Task
 takes {
     url is String
 }
-gives String or String
+gives String or Problem
 needs Network
 {
     give perform std.web.get with { url set url timeout set 5.0 }
@@ -175,7 +175,7 @@ needs Network
 takes {
     path is String
 }
-gives Int or String
+gives Int or Problem
 needs Native
 {
     keep opened set perform std.native.open with { path set path } or give

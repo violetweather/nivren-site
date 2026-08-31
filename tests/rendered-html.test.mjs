@@ -127,7 +127,7 @@ test("documents distinctive Edition 5 capabilities", async () => {
   const html = await docs.text();
   assert.match(html, /Edition 5 guide/);
   const explorer = await readFile(new URL("../app/docs/DocsExplorer.tsx", import.meta.url), "utf8");
-  for (const phrase of ["or give", "memory_bytes", "kind:database", "shape Signup holds", "gives String or String", "prepare request", "perform request", "start produce", "std.channels.send", "std.web.get", "nivren_routing", "nivren_database", "nivren_discord", "nivren_desktop", "Kotlin/JNI", "nivren_gpu", "CPU fallback", "std.native.open", "std.native.call_int", "ABI v3", "WASI Preview 1", "zero-import", "25 official packages", "niv-workspace.toml", "niv dap", "independent security audit"]) {
+  for (const phrase of ["or give", "memory_bytes", "kind:database", "shape Signup holds", "gives String or Problem", "prepare request", "perform request", "start produce", "std.channels.send", "std.web.get", "nivren_routing", "nivren_database", "nivren_discord", "nivren_desktop", "Kotlin/JNI", "nivren_gpu", "CPU fallback", "std.native.open", "std.native.call_int", "ABI v3", "WASI Preview 1", "zero-import", "25 official packages", "niv-workspace.toml", "niv dap", "independent security audit"]) {
     assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
   for (const phrase of ["Intent-first language", "Failure, absence, and cleanup", "Database services", "Production checklist", "Previous", "Next"]) {
