@@ -34,9 +34,9 @@ export default function BenchmarksPage() {
   const groups = [
     {
       id: "strength-results",
-      kicker: "Where Nivren fits today",
-      title: "Fast, lean command-line work.",
-      description: "These fresh-process tests match Nivren’s current strengths: getting to a result quickly, checking a source file, and safely moving a typed document from disk to canonical JSON.",
+      kicker: "Everyday commands",
+      title: "The whole command, done in milliseconds.",
+      description: "Fresh-process runs of the work tools actually do: getting to a result, checking a source file, and safely moving a typed document from disk to canonical JSON — each finished before Node pays its startup cost.",
       results: strengths,
     },
     {
@@ -52,7 +52,7 @@ export default function BenchmarksPage() {
     <section className="page-hero benchmark-hero">
       <div className="shell">
         <span className="kicker">Measured on real Nivren-shaped work</span>
-        <h1>Quick tools. Small processes. Explicit safety.</h1>
+        <h1>Fast to start. Fast to compute. Explicit safety.</h1>
         <p>Nivren reaches useful command-line results in a few milliseconds while type and capability checks stay built in. With the Edition 5 engine compiling hot integer programs to machine code, the same transparent suite now shows Nivren ahead on every row — including the compute-heavy cases it previously lost.</p>
         <div className="page-hero-meta"><span className="meta-pill">AMD Ryzen 9 9950X3D · x64</span><span className="meta-pill">Nivren 0.10.0-beta.8 · Edition 5 engine pre-release</span><span className="meta-pill">Node.js 22.15.0</span><span className="meta-pill">August 31, 2026</span></div>
       </div>
@@ -62,7 +62,7 @@ export default function BenchmarksPage() {
       <section className="benchmark-verdict" aria-labelledby="benchmark-summary">
         <div className="benchmark-verdict-copy">
           <span className="kicker">The useful summary</span>
-          <h2 id="benchmark-summary">Built for work that starts now.</h2>
+          <h2 id="benchmark-summary">Fast when it starts. Fast when it runs hot.</h2>
           <p>Across startup, one-shot checking, typed JSON, and bounded text-file processing, Nivren completes the whole command before Node.js finishes paying most of its process-start cost. It does so with stricter default semantics, and peak memory stays reported whenever the platform can measure it.</p>
         </div>
         <div className="benchmark-stat-grid">
