@@ -20,8 +20,8 @@ test("renders the complete Nivren landing page", async () => {
   const html = await response.text();
   assert.match(html, /<title>Nivren — Code that reads like intent<\/title>/i);
   assert.match(html, /Code that reads like/);
-  assert.match(html, /Edition 4 public beta/);
-  assert.match(html, /0\.10\.0-beta\.7/);
+  assert.match(html, /Edition 5 public beta/);
+  assert.match(html, /0\.10\.0-beta\.8/);
   assert.match(html, /3 \/ 4/);
   assert.match(html, /6 \+ WebAssembly/);
   assert.match(html, /href="\/docs"/);
@@ -54,7 +54,7 @@ for (const [pathname, expected] of [
   });
 }
 
-test("presents the Edition 4 beta site and removes starter UI", async () => {
+test("presents the Edition 5 beta site and removes starter UI", async () => {
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
   const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   assert.equal(packageJson.name, "nivren-site");
@@ -122,10 +122,10 @@ test("documents the fail-closed Studio release matrix", async () => {
   assert.match(compatibilityHtml, /installer and runtime evidence pending/);
 });
 
-test("documents distinctive Edition 4 capabilities", async () => {
+test("documents distinctive Edition 5 capabilities", async () => {
   const docs = await render("/docs");
   const html = await docs.text();
-  assert.match(html, /Edition 4 guide/);
+  assert.match(html, /Edition 5 guide/);
   const explorer = await readFile(new URL("../app/docs/DocsExplorer.tsx", import.meta.url), "utf8");
   for (const phrase of ["or give", "memory_bytes", "kind:database", "shape Signup holds", "gives String or String", "prepare request", "perform request", "start produce", "std.channels.send", "std.web.get", "nivren_routing", "nivren_database", "nivren_discord", "nivren_desktop", "Kotlin/JNI", "nivren_gpu", "CPU fallback", "std.native.open", "std.native.call_int", "ABI v3", "WASI Preview 1", "zero-import", "25 official packages", "niv-workspace.toml", "niv dap", "independent security audit"]) {
     assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
@@ -145,9 +145,9 @@ test("publishes every portable beta target", async () => {
   assert.match(html, /Linux x64 \+ ARM64/);
   assert.match(html, /Non-root/);
   assert.match(html, /Portable compiler \+ VM/);
-  assert.match(html, /nivren-v0\.10\.0-beta\.7-wasm32-wasip1\.wasm/);
-  assert.match(html, /nivren-v0\.10\.0-beta\.7-browser\.wasm/);
-  assert.match(html, /nivren-0\.10\.0-beta\.7\.vsix/);
+  assert.match(html, /nivren-v0\.10\.0-beta\.8-wasm32-wasip1\.wasm/);
+  assert.match(html, /nivren-v0\.10\.0-beta\.8-browser\.wasm/);
+  assert.match(html, /nivren-0\.10\.0-beta\.8\.vsix/);
   assert.match(html, /pkgs\/container\/nivren/);
 });
 

@@ -24,7 +24,7 @@ export default async function PackageGuide({ params }: Props) {
       <span className="kicker">{item.purpose}</span>
       <h1 className="package-title">{item.name}</h1>
       <p>{item.summary}</p>
-      <div className="page-hero-meta"><span className="meta-pill">Edition 4</span><span className="meta-pill">1.0.0 package API</span><span className="meta-pill">Typed failures</span></div>
+      <div className="page-hero-meta"><span className="meta-pill">Edition 5</span><span className="meta-pill">1.0.0 package API</span><span className="meta-pill">Typed failures</span></div>
     </div></section>
     <article className="shell content-shell package-guide">
       <aside className="package-guide-nav" aria-label="On this page">

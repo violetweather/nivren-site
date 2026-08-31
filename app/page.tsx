@@ -60,8 +60,8 @@ keep quickest set race
     label: "resources",
     title: "Closed on success, failure, and crash",
     size: "wide" as const,
-    code: `using file = opened or give {
-    give perform std.files.read_open
+    code: `using file set opened or give {
+    give perform std.files.read_from
         with { file set file }
 }`,
   },
@@ -109,7 +109,7 @@ export default function Home() {
     <>
       <section className="stage">
         <p className="stage-meta">
-          <span className="stamp">Edition 4 public beta</span>
+          <span className="stamp">Edition 5 public beta</span>
           <span className="stamp-rule" aria-hidden="true" />
           <span className="stamp-version">{publicRelease.version}</span>
         </p>
@@ -118,6 +118,10 @@ export default function Home() {
           <p className="stage-lede">
             An application language where the source says what it keeps, changes, needs, and
             gives — and the compiler holds it to that.
+          </p>
+          <p className="stage-lede">
+            Edition 5 is a breaking update: Edition 2, 3, and 4 sources are no longer supported,
+            and every retired spelling stops with a diagnostic naming the Edition 5 form.
           </p>
           <div className="stage-actions">
             <Link className="button primary" href="/install">
@@ -194,7 +198,7 @@ export default function Home() {
       <Marquee items={packages} />
 
       <section className="finale">
-        <p className="stage-meta">Edition 4 beta · Product Proof in progress</p>
+        <p className="stage-meta">Edition 5 beta · Product Proof in progress</p>
         <h2>
           Make the next program
           <br />

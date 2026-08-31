@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Marquee } from "../components/Marquee";
 import { SyntaxCode } from "../components/SyntaxCode";
 
-export const metadata: Metadata = { title: "Examples", description: "See distinctive Edition 4 programs for typed failure, capabilities, structured concurrency, native hosts, and web services." };
+export const metadata: Metadata = { title: "Examples", description: "See distinctive Edition 5 programs for typed failure, capabilities, structured concurrency, native hosts, and web services." };
 
 const examples = [
   { tag: "Systems", title: "Share one checked atomic", copy: "AtomicInt crosses structured-task boundaries while overflow remains a typed result.", code: `define count
@@ -11,7 +11,7 @@ needs Task
 {
     keep counter set std.atomics.create with { value set 0 }
     define increment
-    gives Null or String
+    gives Nothing or String
     {
         keep previous set std.atomics.add with { atomic set counter amount set 1 } or give
         give ok(none)
@@ -41,7 +41,7 @@ choose value {
   { tag: "Language", title: "Model a small domain", copy: "Shapes, choices, and labeled construction make valid states visible.", code: `shape User holds {
     name is String
     active is Bool
-} with Json, Display, Validate
+} derives Json, Display, Validate
 
 choice Access holds {
     case Guest
@@ -73,8 +73,8 @@ gives String or String
 needs FileRead
 {
     keep opened set perform std.files.open_read with { path set path } or give
-    using file = opened {
-        give perform std.files.read_open with { file set file maximum set 1048576 }
+    using file set opened {
+        give perform std.files.read_from with { file set file maximum set 1048576 }
     }
 }
 
@@ -113,12 +113,12 @@ needs Channel, Task
 takes {
     connection is TcpStream
 }
-gives Null or String
+gives Nothing or String
 needs Network
 {
     keep request set perform std.web.read_request with { stream set connection maximum set 65536 } or give
     keep upgraded set perform std.web.websocket_accept with { stream set connection request set request } or give
-    using socket = upgraded {
+    using socket set upgraded {
         keep message set perform std.web.websocket_receive with { websocket set socket maximum set 1048576 } or give
         keep sent set perform std.web.websocket_send with { websocket set socket message set "Nivren heard: " + message } or give
         give ok(none)
@@ -130,11 +130,11 @@ needs Task
 {
     keep counter set std.locks.create with { value set 0 }
     define increment
-    gives Null or String
+    gives Nothing or String
     needs Task
     {
         keep acquired set perform std.locks.acquire with { lock set counter timeout set 2.0 } or give
-        using guard = acquired {
+        using guard set acquired {
             keep current set perform std.locks.read with { guard set guard } or give
             keep written set perform std.locks.write with { guard set guard value set current + 1 } or give
             give ok(none)
@@ -146,9 +146,9 @@ needs Task
   { tag: "Resources", title: "Rollback unless committed", copy: "A transaction closes safely on every path; only commit publishes staged state.", code: `define update
 gives Map<String, Int> or String
 {
-    keep original set std.map.single with { key set "count" value set 1 }
-    keep transaction set std.transactions.begin with { map set original }
-    using changes = transaction {
+    keep original set std.map.of with { key set "count" value set 1 }
+    keep transaction set std.transactions.create with { map set original }
+    using changes set transaction {
         keep written set std.transactions.set with { transaction set changes key set "count" value set 2 } or give
         give std.transactions.commit with { transaction set changes }
     }
@@ -161,7 +161,7 @@ gives Int or String
 needs Native
 {
     keep opened set perform std.native.open with { path set path } or give
-    using library = opened {
+    using library set opened {
         give perform std.native.call_int with { library set library symbol set "nivren_add" arguments set [20, 22] }
     }
 }` },
@@ -179,7 +179,7 @@ gives String or String
   { tag: "Data", title: "Stream through a shape", copy: "A derived shape drives decoding while each record stays under an explicit memory ceiling.", code: `shape Event holds {
     id is Int
     kind is String
-} with Json, Validate
+} derives Json, Validate
 
 define first
 takes {
@@ -189,14 +189,14 @@ gives maybe Event or String
 needs FileRead
 {
     keep opened set perform std.files.open_read with { path set path } or give
-    using file = opened {
+    using file set opened {
         give perform std.json.read_next_as with { schema set Event file set file maximum set 65536 }
     }
 }` },
 ];
 
 export default function ExamplesPage() {
-  return <><section className="page-hero compact"><div className="shell"><span className="kicker">Learn by reading</span><h1>Examples</h1><p>Complete, type-checked patterns showing what makes Edition 4 unmistakably Nivren.</p></div></section>
+  return <><section className="page-hero compact"><div className="shell"><span className="kicker">Learn by reading</span><h1>Examples</h1><p>Complete, type-checked patterns showing what makes Edition 5 unmistakably Nivren.</p></div></section>
   <Marquee items={examples.map(example => example.title)} />
   <div className="spread-list">{examples.map((example, index) => <article className="spread" key={example.title}>
     <div className="spread-copy">

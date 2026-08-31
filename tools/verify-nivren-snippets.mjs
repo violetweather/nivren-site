@@ -14,7 +14,7 @@ for (const [index, snippet] of packageSnippets.entries()) {
   if (/^\s*define\s+\w+\s*\(/m.test(snippet)
       || /^\s*(?:keep|change)\s+\w+(?:\s*:\s*[^=]+)?\s*=/m.test(snippet)
       || /^\s*(?:shape|choice)\s+\w+\s*\{/m.test(snippet)) {
-    throw new Error(`official package example ${index + 1} contains Edition 3 syntax`);
+    throw new Error(`official package example ${index + 1} contains pre-Edition-5 syntax`);
   }
 }
 const snippets = [
@@ -33,10 +33,10 @@ try {
     if (checked.status !== 0) {
       process.stderr.write(checked.stdout);
       process.stderr.write(checked.stderr);
-      throw new Error(`Edition 4 snippet ${index + 1} did not type-check`);
+      throw new Error(`Edition 5 snippet ${index + 1} did not type-check`);
     }
   }
-  console.log(`${snippets.length} Edition 4 site snippets type-check; 25 package examples pass the Edition 4 residue gate`);
+  console.log(`${snippets.length} Edition 5 site snippets type-check; 25 package examples pass the pre-Edition-5 residue gate`);
 } finally {
   rmSync(root, { recursive: true, force: true });
 }

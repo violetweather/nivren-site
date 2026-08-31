@@ -106,7 +106,7 @@ export const packages: PackageDoc[] = [
     api: ["Sample", "sample", "encode"], capabilities: "Building exposition text is pure; serving it needs explicit Network authority in application code.",
     limits: "Metric names, help, labels, sample counts, and final output have fixed ceilings.", useWhen: "Use it to expose application counters and gauges to Prometheus-compatible collectors.",
     notes: "The package validates metric kinds and canonicalizes label/help escaping. Collection, aggregation, and HTTP serving remain separate concerns.",
-    example: `keep labels set std.map.single with { key set "service" value set "worker" }\nkeep active set nivren_metrics.sample with { name set "active_jobs" help set "Running jobs" kind set "gauge" value set 3.0 labels set labels } or give\nkeep body set nivren_metrics.encode with { samples set [active] } or give`,
+    example: `keep labels set std.map.of with { key set "service" value set "worker" }\nkeep active set nivren_metrics.sample with { name set "active_jobs" help set "Running jobs" kind set "gauge" value set 3.0 labels set labels } or give\nkeep body set nivren_metrics.encode with { samples set [active] } or give`,
   },
   {
     name: "nivren_oidc", purpose: "OpenID Connect",
@@ -235,7 +235,7 @@ export const packages: PackageDoc[] = [
     capabilities: "Plan validation, WGSL generation, and CPU fallback are pure. execute_gpu declares Native within gpu and uses one opaque experimental device-host handle.",
     limits: "Inputs must have equal lengths, workgroups cap at 256 lanes, and each plan declares a maximum no greater than 1,048,576 items.",
     useWhen: "Use it to prototype portable checked compute that must remain correct on machines without a compatible GPU.",
-    notes: "Edition 4 promises compute, not a rendering engine. Device selection, buffer ownership, shader validation, and fallback telemetry must remain visible at the host boundary.",
+    notes: "Edition 5 promises compute, not a rendering engine. Device selection, buffer ownership, shader validation, and fallback telemetry must remain visible at the host boundary.",
     example: `keep plan set nivren_gpu.AddPlan with {\n    left set [1, 2, 3, 4]\n    right set [10, 20, 30, 40]\n    limits set nivren_gpu.ComputeLimits with {\n        maximum_items set 1024\n        workgroup_size set 64\n    }\n}\nkeep artifact set nivren_gpu.compile_add with { plan set plan } or give`,
     failures: ["Mismatched vector lengths", "Invalid item or workgroup ceiling", "Input larger than the declared maximum", "Unavailable/unsupported GPU host", "GPU validation failure requiring CPU fallback"],
     performance: "The CPU fallback processes four lanes per loop with a scalar tail. GPU benefit depends on transfer cost and workload size, so applications should measure both targets before selecting one.",

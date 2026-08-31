@@ -20,7 +20,7 @@ export default function PackagesPage() {
     <div className="shell content-shell package-index">
       <div className="package-intro">
         <div><span className="kicker">Choose by job</span><h2>Small packages. Visible boundaries.</h2></div>
-        <p>Official packages are ordinary Edition 4 source: no lifecycle scripts, hidden network calls, or ambient permissions. Each guide covers authority, resource limits, failures, cost, production checks—and what the package deliberately leaves to your application.</p>
+        <p>Official packages are ordinary Edition 5 source: no lifecycle scripts, hidden network calls, or ambient permissions. Each guide covers authority, resource limits, failures, cost, production checks—and what the package deliberately leaves to your application.</p>
       </div>
       <div className="package-grid">
         {packages.map((item, index) => <article className="package-card" key={item.name}>

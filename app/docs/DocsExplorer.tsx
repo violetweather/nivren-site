@@ -19,7 +19,7 @@ type Section = {
 const sections: Section[] = [
   {
     id: "install", title: "Guided installation", group: "Start here", summary: "Install, update, roll back, and remove Nivren safely.", search: "install setup path vscode rollback windows mac linux",
-    paragraphs: ["The guided installer detects the operating system and CPU, verifies the selected archive, and asks before changing PATH or installing VS Code support. Every managed install has an ownership marker and machine-readable receipt.", "The current public download is the working Edition 4 beta.7 prerelease. Product Proof is still 3/4, so this is not a stable or 1.0 claim. Local rollback and signed stable, beta, and nightly manifest support are implemented; the public production channel key and manifests, clean-platform recovery matrix, and incident drill remain release gates."],
+    paragraphs: ["The guided installer detects the operating system and CPU, verifies the selected archive, and asks before changing PATH or installing VS Code support. Every managed install has an ownership marker and machine-readable receipt.", "The current public download is the working Edition 5 beta.8 prerelease. Edition 5 is a breaking update: Edition 2, 3, and 4 sources are no longer supported, and retired spellings stop with diagnostics that name the Edition 5 form. Product Proof is still 3/4, so this is not a stable or 1.0 claim. Local rollback and signed stable, beta, and nightly manifest support are implemented; the public production channel key and manifests, clean-platform recovery matrix, and incident drill remain release gates."],
     command: `# macOS or Linux
 sh install.sh
 sh install.sh --channel beta --channel-key ./nivren-channel.pub
@@ -35,7 +35,7 @@ sh install.sh --uninstall
   },
   {
     id: "quickstart", title: "Quickstart", group: "Start here", summary: "Create, develop, test, explain, and ship one standard project.", search: "new dev check test explain ship first project",
-    paragraphs: ["A generated project contains a strict manifest, Edition 4 source, tests, explicit capabilities, and generated-documentation output. ship checks, tests, documents, packages, and creates a standalone executable; it never publishes externally."],
+    paragraphs: ["A generated project contains a strict manifest, Edition 5 source, tests, explicit capabilities, and generated-documentation output. ship checks, tests, documents, packages, and creates a standalone executable; it never publishes externally."],
     command: `niv new hello-nivren
 cd hello-nivren
 niv dev
@@ -44,12 +44,12 @@ niv explain src/main.niv
 niv ship`,
   },
   {
-    id: "language", title: "Intent-first language", group: "Language", summary: "Read Edition 4's canonical declarations, labeled calls, and exhaustive outcomes.", search: "shape choice define takes gives keep set choose case carries labeled",
+    id: "language", title: "Intent-first language", group: "Language", summary: "Read Edition 5's canonical declarations, labeled calls, and exhaustive outcomes.", search: "shape choice define takes gives keep set choose case carries labeled",
     paragraphs: ["shape and choice make data states nominal. define separates inputs, outputs, authority, and implementation. keep is immutable; change is explicitly mutable. Calls label every application-defined input.", "The formatter owns one canonical layout. Familiar arithmetic, indexing, literals, and property access remain compact."],
     nivren: `shape Signup holds {
     name is String
     age is Int
-} with Json, Display, Validate
+} derives Json, Display, Validate
 
 define welcome
 takes {
@@ -80,8 +80,8 @@ gives String or String
 needs FileRead
 {
     keep opened set perform std.files.open_read with { path set path } or give
-    using file = opened {
-        give perform std.files.read_open with { file set file maximum set 1048576 }
+    using file set opened {
+        give perform std.files.read_from with { file set file maximum set 1048576 }
     }
 }`,
   },
@@ -91,7 +91,7 @@ needs FileRead
     nivren: `shape FetchPlan holds {
     url is String
     timeout is Float
-} with Display, Validate
+} derives Display, Validate
 
 prepare request as FetchPlan with {
     url set "https://api.example.test/users"
@@ -149,16 +149,16 @@ needs Network
   },
   {
     id: "database", title: "Database services", group: "Applications", summary: "Use typed requests, bounded pages, transactions, migrations, and owned drivers.", search: "database sql driver pool migration transaction query rows postgres mysql sqlite",
-    paragraphs: ["nivren_database defines Edition 4 driver, pool, migration, request, row, and page contracts. The native CLI now ships a bundled SQLite host with rooted paths, parameterized query/execute, explicit transactions, bounded JSON rows, and deterministic opaque-handle cleanup.", "PostgreSQL and MySQL hosts, query streaming, pool integration, migration reference services, and the six-platform SQLite fixture matrix remain blocking work."],
+    paragraphs: ["nivren_database defines Edition 5 driver, pool, migration, request, row, and page contracts. The native CLI now ships a bundled SQLite host with rooted paths, parameterized query/execute, explicit transactions, bounded JSON rows, and deterministic opaque-handle cleanup.", "PostgreSQL and MySQL hosts, query streaming, pool integration, migration reference services, and the six-platform SQLite fixture matrix remain blocking work."],
     checks: ["Parameterize values and validate identifiers.", "Bound rows, field bytes, timeouts, and pool size.", "Test rollback, cancellation, saturation, reconnect, and migration recovery."],
   },
   {
     id: "realtime", title: "Realtime and Discord", group: "Applications", summary: "Model commands, gateway events, retries, and rate limits explicitly.", search: "discord realtime websocket event command retry rate limit gateway",
-    paragraphs: ["nivren_discord provides Edition 4 message and command shapes, typed gateway events, identify payloads, secure gateway plans, bounded retry decisions, and rate-limit handling. Network work remains behind perform and host grants.", "Production bots should persist gateway sequence state, honor server retry timing, redact tokens, bound event payloads, and make command idempotency explicit."],
+    paragraphs: ["nivren_discord provides Edition 5 message and command shapes, typed gateway events, identify payloads, secure gateway plans, bounded retry decisions, and rate-limit handling. Network work remains behind perform and host grants.", "Production bots should persist gateway sequence state, honor server retry timing, redact tokens, bound event payloads, and make command idempotency explicit."],
   },
   {
     id: "desktop", title: "Desktop applications", group: "Platforms", summary: "Embed Nivren behind a bounded native webview bridge.", search: "desktop gui webview bridge window signing updater mac windows linux",
-    paragraphs: ["nivren_desktop defines bounded window, bridge-message, and staged-update contracts plus a Native opaque-handle adapter with VM/native equivalence and deterministic cleanup.", "Edition 4 does not yet ship released macOS, Windows, and Linux system-webview hosts. Origin, CSP, command allowlists, packaging, signing, notarization, and updater recovery must pass before desktop support is promoted."],
+    paragraphs: ["nivren_desktop defines bounded window, bridge-message, and staged-update contracts plus a Native opaque-handle adapter with VM/native equivalence and deterministic cleanup.", "Edition 5 does not yet ship released macOS, Windows, and Linux system-webview hosts. Origin, CSP, command allowlists, packaging, signing, notarization, and updater recovery must pass before desktop support is promoted."],
   },
   {
     id: "mobile", title: "Experimental mobile embedding", group: "Platforms", summary: "Call ABI v3 from Swift or Kotlin/JNI without losing ownership safety.", search: "ios android swift kotlin jni mobile embed abi",
@@ -166,7 +166,7 @@ needs Network
   },
   {
     id: "gpu", title: "Portable GPU compute", group: "Platforms", summary: "Use checked compute plans with a required CPU fallback.", search: "gpu webgpu wgsl compute shader vector cpu fallback",
-    paragraphs: ["nivren_gpu validates vector-add plans, deterministic WGSL, explicit item/workgroup limits, and a four-lane checked CPU fallback. Its Native device adapter verifies returned length and matches VM/native-control behavior.", "Real WebGPU hosts, cancellation, buffer validation, workload benchmarks, and the GPU-unavailable/slow-fallback platform matrix remain required. Edition 4 does not promise GPU rendering or a game engine."],
+    paragraphs: ["nivren_gpu validates vector-add plans, deterministic WGSL, explicit item/workgroup limits, and a four-lane checked CPU fallback. Its Native device adapter verifies returned length and matches VM/native-control behavior.", "Real WebGPU hosts, cancellation, buffer validation, workload benchmarks, and the GPU-unavailable/slow-fallback platform matrix remain required. Edition 5 does not promise GPU rendering or a game engine."],
   },
   {
     id: "ffi", title: "Native libraries and embedding", group: "Runtime", summary: "Cross a visible C boundary with explicit ownership.", search: "ffi c abi native dynamic library callback handle unsafe embedding",
@@ -179,22 +179,22 @@ gives Int or String
 needs Native
 {
     keep opened set perform std.native.open with { path set path } or give
-    using library = opened {
+    using library set opened {
         give perform std.native.call_int with { library set library symbol set "nivren_add" arguments set [20, 22] }
     }
 }`,
   },
   {
-    id: "wasm", title: "Browser Wasm and WASI", group: "Runtime", summary: "Run the Edition 4 compiler and portable VM in sandboxed hosts.", search: "wasm wasi browser sdk portable vm compiler",
-    paragraphs: ["Reproducible WASI Preview 1 and zero-import browser guests check, format, compile, and execute Edition 4 through a bounded owned-memory ABI. The JavaScript SDK copies and frees every result exactly once.", "Native-only facilities fail explicitly in hosts that do not provide them; there is no silent TLS, filesystem, or FFI downgrade."],
+    id: "wasm", title: "Browser Wasm and WASI", group: "Runtime", summary: "Run the Edition 5 compiler and portable VM in sandboxed hosts.", search: "wasm wasi browser sdk portable vm compiler",
+    paragraphs: ["Reproducible WASI Preview 1 and zero-import browser guests check, format, compile, and execute Edition 5 through a bounded owned-memory ABI. The JavaScript SDK copies and frees every result exactly once.", "Native-only facilities fail explicitly in hosts that do not provide them; there is no silent TLS, filesystem, or FFI downgrade."],
   },
   {
     id: "packages", title: "Packages, registry, and offline work", group: "Projects", summary: "Pin immutable contents, authority, provenance, ownership, and advisories.", search: "package registry lock offline cache yank ownership provenance advisory",
-    paragraphs: ["The 25 official packages are Edition 4 modules rebuilt, documented, published to a fixture registry, installed, imported, and executed together. Exact dependencies and content hashes are recorded in niv.lock. Offline install verifies the cached graph without network access.", "niv.authority.lock separately records the exact root and transitive package identity behind every capability scope and declared unsafe module. niv authority report previews the verified graph, check detects an unreviewed change, and lock accepts the new deterministic record. niv cache list verifies archive, extracted source, identity, checksum, and reachability; prune removes only verified unreachable entries. Hosted recovery and signed administrative operations remain release blockers."],
+    paragraphs: ["The 25 official packages are Edition 5 modules rebuilt, documented, published to a fixture registry, installed, imported, and executed together. Exact dependencies and content hashes are recorded in niv.lock. Offline install verifies the cached graph without network access.", "niv.authority.lock separately records the exact root and transitive package identity behind every capability scope and declared unsafe module. niv authority report previews the verified graph, check detects an unreviewed change, and lock accepts the new deterministic record. niv cache list verifies archive, extracted source, identity, checksum, and reachability; prune removes only verified unreachable entries. Hosted recovery and signed administrative operations remain release blockers."],
   },
   {
     id: "tooling", title: "Tooling and workspaces", group: "Tools", summary: "Use one formatter, language server, debugger protocol, profiler, and workspace workflow.", search: "fmt lsp dap debug profile coverage benchmark workspace incremental",
-    paragraphs: ["niv-workspace.toml lists up to 256 normalized members. Nivren schedules exact-version internal dependencies first, preserves declaration order among independent members, and rejects cycles or member-version drift. check, build, test, bench, and ship retain each member's content fingerprint. niv bench reports warmups, 15 samples, median, p95, minimum, and versioned JSON. Property, compatibility, fuzz-smoke, and deterministic-time test profiles have first-class commands.", "niv profile reports execution and operation counts, allocation and garbage-collection work, materialized plans and ordered effects, async spawns/joins/cancellations/waits, and JIT/native decisions without recording source, values, secrets, or absolute project paths. The LSP provides diagnostics, completion, formatting, and Unicode-correct workspace rename. VS Code registers Edition 4 highlighting and a niv dap launch adapter; real pause/resume semantics and multi-editor evidence remain unfinished."],
+    paragraphs: ["niv-workspace.toml lists up to 256 normalized members. Nivren schedules exact-version internal dependencies first, preserves declaration order among independent members, and rejects cycles or member-version drift. check, build, test, bench, and ship retain each member's content fingerprint. niv bench reports warmups, 15 samples, median, p95, minimum, and versioned JSON. Property, compatibility, fuzz-smoke, and deterministic-time test profiles have first-class commands.", "niv profile reports execution and operation counts, allocation and garbage-collection work, materialized plans and ordered effects, async spawns/joins/cancellations/waits, and JIT/native decisions without recording source, values, secrets, or absolute project paths. The LSP provides diagnostics, completion, formatting, and Unicode-correct workspace rename. VS Code registers Edition 5 highlighting and a niv dap launch adapter; real pause/resume semantics and multi-editor evidence remain unfinished."],
     command: `niv workspace check .
 niv workspace test .
 niv workspace bench .
@@ -207,7 +207,7 @@ niv coverage app.niv`,
   },
   {
     id: "production", title: "Production checklist", group: "Tools", summary: "Ship reproducibly with least authority and honest support boundaries.", search: "production security deploy release reproducible audit sbom signing",
-    paragraphs: ["A release must reproduce native, Wasm, library, container, desktop, mobile, and GPU artifacts where supported; verify SBOMs, manifests, checksums, signatures, and provenance; and compile every published snippet.", "Edition 4 beta is published as a working prerelease after its compiler and platform matrix passed. Stable remains blocked until installer recovery, signed production channels, all promised platform hosts, accessibility and link checks, and an independent security audit close every critical and high finding."],
+    paragraphs: ["A release must reproduce native, Wasm, library, container, desktop, mobile, and GPU artifacts where supported; verify SBOMs, manifests, checksums, signatures, and provenance; and compile every published snippet.", "Edition 5 beta is published as a working prerelease after its compiler and platform matrix passed. Stable remains blocked until installer recovery, signed production channels, all promised platform hosts, accessibility and link checks, and an independent security audit close every critical and high finding."],
     checks: ["Pin dependencies and review authority changes.", "Exercise failure, cancellation, slow-peer, and resource-ceiling paths.", "Measure startup, memory, latency, throughput, and fallback behavior.", "Keep experimental and unsupported areas labeled precisely."],
   },
   {
@@ -250,7 +250,7 @@ export function DocsExplorer() {
     <article className="docs-content" key={current.id}>
       <span className="doc-group">{current.group}</span><h2>{current.title}</h2><p className="doc-summary">{current.summary}</p>
       <div className="doc-body">{current.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}{current.nivren ? <pre><SyntaxCode code={current.nivren} /></pre> : null}{current.command ? <pre><SyntaxCode code={current.command} language="shell" /></pre> : null}{current.checks ? <><h3>Production checks</h3><ul>{current.checks.map((check) => <li key={check}>{check}</li>)}</ul></> : null}{current.id === "packages" ? <p>Explore the <Link className="inline-code" href="/packages">official package guides</Link> for APIs, failures, performance notes, and release checks.</p> : null}</div>
-      <div className="doc-source">Normative behavior is defined by the executable Edition 4 draft and source-controlled standard-library, bytecode, package, embedding, and Wasm specifications.</div>
+      <div className="doc-source">Normative behavior is defined by the executable Edition 5 draft and source-controlled standard-library, bytecode, package, embedding, and Wasm specifications.</div>
       <nav className="doc-pager" aria-label="Previous and next documentation sections">{previous ? <button type="button" onClick={() => setActive(previous.id)}><span>Previous</span>{previous.title}</button> : <span />}{next ? <button type="button" onClick={() => setActive(next.id)}><span>Next</span>{next.title}</button> : <span />}</nav>
     </article>
   </div>;
