@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Marquee } from "../components/Marquee";
 import { SyntaxCode } from "../components/SyntaxCode";
 
-export const metadata: Metadata = { title: "Examples", description: "See distinctive Edition 5 programs for typed failure, capabilities, structured concurrency, native hosts, and web services." };
+export const metadata: Metadata = { title: "Examples", description: "See distinctive Nivren 1.0.0 programs for typed failure, capabilities, structured concurrency, native hosts, and web services." };
 
 const examples = [
   { tag: "Systems", title: "Share one checked atomic", copy: "AtomicInt crosses structured-task boundaries while overflow remains a typed result.", code: `define count
@@ -196,7 +196,7 @@ needs FileRead
 ];
 
 export default function ExamplesPage() {
-  return <><section className="page-hero compact"><div className="shell"><span className="kicker">Learn by reading</span><h1>Examples</h1><p>Complete, type-checked patterns showing what makes Edition 5 unmistakably Nivren.</p></div></section>
+  return <><section className="page-hero compact"><div className="shell"><span className="kicker">Learn by reading</span><h1>Examples</h1><p>Complete, type-checked patterns showing what makes 1.0.0 unmistakably Nivren — the same frozen syntax Edition 6 runs as native machine code.</p></div></section>
   <Marquee items={examples.map(example => example.title)} />
   <div className="spread-list">{examples.map((example, index) => <article className="spread" key={example.title}>
     <div className="spread-copy">

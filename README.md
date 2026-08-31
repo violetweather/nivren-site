@@ -1,13 +1,15 @@
 # Nivren website
 
-The official documentation and download site for the Nivren Edition 4 product program and eventual 1.0 release.
+The official documentation and download site for Nivren 1.0.0 stable, the Edition 6 runtime edition.
 
 Live site: <https://violetweather.github.io/nivren-site/>
 
 ## Site sections
 
 - Landing page with language overview and verified implementation evidence
-- Searchable Edition 4 documentation
+- Searchable Edition 6 documentation
+- The twelve-workload Edition 6 benchmark suite, wins and losses published
+- Package guides for all 25 official 1.0.0 packages and the live signed registry
 - Platform-specific installation instructions
 - Release downloads, checksums, and provenance guidance
 - Complete language examples

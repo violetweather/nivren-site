@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { candidateRelease, publicRelease } from "../release";
+import { publicRelease } from "../release";
 import { NivrenMark } from "./NivrenMark";
 
 const columns = [
@@ -24,6 +24,7 @@ const columns = [
 
 const external = [
   { href: "https://github.com/violetweather/nivren", label: "Source" },
+  { href: "https://violetweather.github.io/nivren-registry", label: "Registry" },
   { href: "https://github.com/violetweather/nivren/tree/main/spec", label: "Specifications" },
   { href: "https://github.com/violetweather/nivren/tree/main/conformance", label: "Conformance" },
   { href: "https://github.com/violetweather/nivren/blob/main/SECURITY.md", label: "Security" },
@@ -56,10 +57,10 @@ export function SiteFooter() {
         <div className="footer-state">
           <h2>State</h2>
           <p>
-            <b>{publicRelease.version}</b> public beta
+            <b>{publicRelease.version}</b> stable · Edition 6
           </p>
           <p>
-            Product Proof {candidateRelease.checkpointGatesPassed}/{candidateRelease.checkpointGatesRequired} · not 1.0 until every gate passes
+            The syntax is frozen; from 1.0 onward, your source runs unchanged on every later release
           </p>
           <p>Apache-2.0</p>
         </div>

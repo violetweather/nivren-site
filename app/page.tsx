@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CodeTile } from "./components/CodeTile";
 import { Marquee } from "./components/Marquee";
 import { SyntaxCode } from "./components/SyntaxCode";
-import { candidateRelease, publicRelease } from "./release";
+import { publicRelease } from "./release";
 
 const heroCode = `keep language is String set "Nivren"
 
@@ -13,7 +13,7 @@ gives String
     give "Hello, " + name + "!"
 }`;
 
-type Tile = { label: string; title: string; code: string; size?: "one" | "wide" | "tall" };
+type Tile = { label: string; title: string; code: string; size?: "one" | "wide" | "tall"; language?: "nivren" | "shell" };
 
 const tiles: Tile[] = [
   {
@@ -66,17 +66,18 @@ keep quickest set race
 }`,
   },
   {
-    label: "pipelines",
-    title: "Left to right, in source order",
-    code: `keep batches set [1, 2, 3, 4, 5]
-    through std.list.batch
-    with { size set 2 }`,
+    label: "native",
+    title: "Whole programs compile to machine code",
+    language: "shell" as const,
+    code: `niv build --aot app.niv
+# aot native-program 1
+# wrote target/program_native.o`,
   },
 ];
 
 const commands = [
   "niv new", "niv dev", "niv check", "niv test", "niv fmt", "niv doc",
-  "niv debug", "niv profile", "niv coverage", "niv explain", "niv build", "niv ship",
+  "niv debug", "niv dap", "niv profile", "niv explain", "niv build --aot", "niv ship", "niv trust",
 ];
 
 const packages = [
@@ -86,9 +87,9 @@ const packages = [
 ];
 
 const numbers = [
-  { value: `${candidateRelease.checkpointGatesPassed} / ${candidateRelease.checkpointGatesRequired}`, label: "Product Proof checkpoints", note: `Completed for ${candidateRelease.version}. The rest gate 1.0.` },
-  { value: "3.18×", label: "Faster startup than Node", note: "Source to printed result on a Ryzen 9 9950X3D, fresh process each run." },
-  { value: "6 + WebAssembly", label: "Compile targets", note: "Native, standalone, WASI, and a zero-import browser guest." },
+  { value: "3.1×", label: "Faster startup than Node.js", note: "Source to printed result on a Ryzen 9 9950X3D, fresh process each run." },
+  { value: "25 × 1.0.0", label: "Official packages in the live registry", note: "Signed, immutable, and verified against a pinned Ed25519 root before install." },
+  { value: "6 + WebAssembly", label: "Compile targets", note: "Native, standalone, AOT objects, WASI, and a zero-import browser guest." },
   { value: "0", label: "Unsafe blocks in the core VM", note: "Unsafe authority never reaches a safe module implicitly." },
 ];
 
@@ -109,7 +110,7 @@ export default function Home() {
     <>
       <section className="stage">
         <p className="stage-meta">
-          <span className="stamp">Edition 5 public beta</span>
+          <span className="stamp">Edition 6 · stable</span>
           <span className="stamp-rule" aria-hidden="true" />
           <span className="stamp-version">{publicRelease.version}</span>
         </p>
@@ -120,8 +121,9 @@ export default function Home() {
             gives — and the compiler holds it to that.
           </p>
           <p className="stage-lede">
-            Edition 5 is a breaking update: Edition 2, 3, and 4 sources are no longer supported,
-            and every retired spelling stops with a diagnostic naming the Edition 5 form.
+            Nivren {publicRelease.version} is stable. Edition 6 is the runtime edition: the syntax
+            is frozen for good, and this release ships compiled native code, a leaner memory
+            engine, a working debugger, and a live signed package registry.
           </p>
           <div className="stage-actions">
             <Link className="button primary" href="/install">
@@ -146,12 +148,13 @@ export default function Home() {
           </h2>
           <p>
             Six ideas carry the whole language. Every one of them is visible in the source, checked
-            before it runs, and reported by the tooling.
+            before it runs, and reported by the tooling — and in Edition 6 the hot ones run as
+            native machine code.
           </p>
         </div>
         <div className="wall-grid">
           {tiles.map((tile) => (
-            <CodeTile key={tile.label} label={tile.label} title={tile.title} code={tile.code} size={tile.size} />
+            <CodeTile key={tile.label} label={tile.label} title={tile.title} code={tile.code} size={tile.size} language={tile.language} />
           ))}
         </div>
       </section>
@@ -159,7 +162,7 @@ export default function Home() {
       <section className="figures">
         <div className="figures-head">
           <h2>Evidence, not adjectives.</h2>
-          <p>Every claim below has a public harness, a checked-in result, or an open gate.</p>
+          <p>Every claim below has a public harness, a checked-in result, or a signed artifact behind it — including the benchmark rows Nivren still loses.</p>
           <Link className="text-link" href="/benchmarks">
             See the full comparison <span aria-hidden="true">→</span>
           </Link>
@@ -198,7 +201,7 @@ export default function Home() {
       <Marquee items={packages} />
 
       <section className="finale">
-        <p className="stage-meta">Edition 5 beta · Product Proof in progress</p>
+        <p className="stage-meta">Edition 6 · Nivren {publicRelease.version} stable</p>
         <h2>
           Make the next program
           <br />

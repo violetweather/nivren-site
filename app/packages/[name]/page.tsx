@@ -24,7 +24,7 @@ export default async function PackageGuide({ params }: Props) {
       <span className="kicker">{item.purpose}</span>
       <h1 className="package-title">{item.name}</h1>
       <p>{item.summary}</p>
-      <div className="page-hero-meta"><span className="meta-pill">Edition 5</span><span className="meta-pill">1.0.0 package API</span><span className="meta-pill">Typed failures</span></div>
+      <div className="page-hero-meta"><span className="meta-pill">Edition 6</span><span className="meta-pill">1.0.0 in the live registry</span><span className="meta-pill">Typed failures</span></div>
     </div></section>
     <article className="shell content-shell package-guide">
       <aside className="package-guide-nav" aria-label="On this page">
@@ -32,7 +32,7 @@ export default async function PackageGuide({ params }: Props) {
         <a href="#install">Install</a><a href="#example">Example</a><a href="#api">Public API</a><a href="#authority">Authority</a><a href="#limits">Limits</a><a href="#failures">Failures</a><a href="#performance">Performance</a><a href="#production">Production</a><a href="#guidance">Guidance</a>
       </aside>
       <div className="package-guide-body">
-        <section id="install"><span className="doc-group">Install and import</span><h2>Add it to a project</h2><p>Package versions are exact and recorded in <code className="inline-code">niv.lock</code>. Installation verifies the immutable archive before code becomes importable.</p><pre><SyntaxCode language="shell" code={`niv add ${item.name} 1.0.0\nniv install /path/to/registry`} /></pre><pre><SyntaxCode code={`use "@${item.name}"`} /></pre></section>
+        <section id="install"><span className="doc-group">Install and import</span><h2>Add it to a project</h2><p>Package versions are exact and recorded in <code className="inline-code">niv.lock</code>. Installation from the live registry verifies the signed provenance and immutable archive against the pinned root key before code becomes importable.</p><pre><SyntaxCode language="shell" code={`niv add ${item.name} 1.0.0\nniv install --trusted https://violetweather.github.io/nivren-registry ./nivren-root.pub`} /></pre><pre><SyntaxCode code={`use "@${item.name}"`} /></pre></section>
         <section id="example"><span className="doc-group">Working pattern</span><h2>A focused example</h2><pre><SyntaxCode code={item.example} /></pre><p>Operations that can fail use <code className="inline-code">gives Value or Problem</code>; use <code className="inline-code">or give</code> inside a failure-aware function or handle every case with <code className="inline-code">choose</code>.</p></section>
         <section id="api"><span className="doc-group">Reference</span><h2>Public API</h2><div className="api-token-grid">{item.api.map((member) => <code key={member}>{member}</code>)}</div><p>Only these exposed names are package API. Helpers stay private to the module and cannot become accidental dependencies.</p></section>
         <section id="authority"><span className="doc-group">Capability model</span><h2>Required authority</h2><p>{item.capabilities}</p></section>

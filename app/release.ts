@@ -11,7 +11,7 @@ export function releaseAssetUrl(asset: string) {
   return `https://github.com/${releaseRepository}/releases/download/v${publicRelease.version}/${asset}`;
 }
 
-export function betaLabel(version: string) {
+export function releaseLabel(version: string) {
   const match = version.match(/-beta\.(\d+)$/);
-  return match ? `Beta ${match[1]}` : version;
+  return match ? `Beta ${match[1]}` : "Stable";
 }

@@ -20,15 +20,16 @@ test("renders the complete Nivren landing page", async () => {
   const html = await response.text();
   assert.match(html, /<title>Nivren — Code that reads like intent<\/title>/i);
   assert.match(html, /Code that reads like/);
-  assert.match(html, /Edition 5 public beta/);
-  assert.match(html, /0\.10\.0-beta\.9/);
-  assert.match(html, /3 \/ 4/);
+  assert.match(html, /Edition 6 · stable/);
+  assert.match(html, /1\.0\.0/);
+  assert.match(html, /25 × 1\.0\.0/);
   assert.match(html, /6 \+ WebAssembly/);
   assert.match(html, /href="\/docs"/);
   assert.match(html, /href="\/install"/);
   assert.match(html, /href="\/downloads"/);
   assert.match(html, /property="og:image" content="https:\/\/violetweather\.github\.io\/nivren-site\/og-edition4\.png"/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
+  assert.doesNotMatch(html, /public beta|Product Proof|Edition [245] /);
 });
 
 for (const [pathname, expected] of [
@@ -36,7 +37,7 @@ for (const [pathname, expected] of [
   ["/install", "Install Nivren"],
   ["/downloads", "Downloads"],
   ["/examples", "Examples"],
-  ["/benchmarks", "Fast to start. Fast to compute. Explicit safety."],
+  ["/benchmarks", "Twelve workloads. Every row published."],
   ["/packages", "Packages"],
   ["/studio", "See what your program"],
   ["/studio/docs", "Studio documentation"],
@@ -54,19 +55,26 @@ for (const [pathname, expected] of [
   });
 }
 
-test("presents the Edition 5 beta site and removes starter UI", async () => {
+test("presents the Edition 6 stable site and removes starter UI", async () => {
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
   const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   assert.equal(packageJson.name, "nivren-site");
   assert.equal(packageJson.dependencies["react-loading-skeleton"], undefined);
 });
 
-test("publishes the official package catalog and compatibility contract", async () => {
+test("publishes the official package catalog, live registry, and compatibility contract", async () => {
   const response = await render("/packages");
   const html = await response.text();
-  const catalogChecks = new Set(["25 package guides", "nivren_aead", "ChaCha20-Poly1305", "nivren_redis", "nivren_database", "nivren_desktop", "nivren_gpu", "semantic versions", "temporary immutable registry"]);
-  for (const phrase of ["25 package guides", "nivren_aead", "Opaque zeroized keys", "ChaCha20-Poly1305", "Sealed · import_key · generate_key · seal", "nivren_aws", "AWS Signature Version 4", "Signature · sign_v4", "nivren_columnar", "Column · Table · table · select", "nivren_image", "Image · image · encode_ppm · decode_ppm", "nivren_oidc", "Authorization · CoreClaims · pkce_challenge", "nivren_matrix", "Matrix · matrix · at · add · multiply", "nivren_svg", "Canvas · canvas · add · rect · text · render", "nivren_wav", "Audio · encode_pcm16 · decode_pcm16", "nivren_metrics", "Sample · sample · encode", "nivren_trace", "OtlpAttribute · OtlpSpan", "export_otlp_json", "nivren_compression", "mandatory decompression ceilings", "gzip · gunzip · zlib · unzlib", "nivren_crypto", "constant-time-verified HMAC-SHA-256", "nivren_csv", "quoted multiline fields", "decode · encode · decode_with · encode_with", "nivren_stats", "sum · mean · variance · minimum", "nivren_jwt", "sign_hs256 · verify_hs256", "nivren_secrets", "Argon2id v=19", "random_key · hash_password", "nivren_sql", "without interpolating values", "nivren_redis", "RESP2/RESP3 framing", "MOVED/ASK Cluster redirects", "live Redis 6.2 through 8.8", "nivren_discord", "nivren_testing", "nivren_routing", "nivren_validation", "nivren_database", "nivren_desktop", "nivren_gpu", "semantic versions", "temporary immutable registry"]) {
-    if (!catalogChecks.has(phrase)) continue;
+  for (const phrase of [
+    "25 package guides", "every one at 1\\.0\\.0", "Live signed registry",
+    "violetweather\\.github\\.io/nivren-registry", "--trusted", "Ed25519",
+    "signed advisory, never a deletion", "niv trust",
+    "nivren_aead", "ChaCha20-Poly1305", "nivren_aws", "AWS Signature Version 4",
+    "nivren_compression", "gzip · gzip_decode · zlib · zlib_decode",
+    "nivren_discord", "validate_retry_policy",
+    "nivren_redis", "nivren_database", "nivren_desktop", "nivren_gpu",
+    "semantic versions",
+  ]) {
     assert.match(html, new RegExp(phrase, "i"));
   }
 });
@@ -79,7 +87,7 @@ test("publishes a detailed guide for every official package", async () => {
     const response = await render(`/packages/${name}`);
     assert.equal(response.status, 200);
     const html = await response.text();
-    for (const phrase of [name, "Add it to a project", "A focused example", "Public API", "Required authority", "Bounds and failure behavior", "Failures to handle", "Performance notes", "Production checklist", "When to use it"]) {
+    for (const phrase of [name, "Add it to a project", "--trusted", "violetweather\\.github\\.io/nivren-registry", "A focused example", "Public API", "Required authority", "Bounds and failure behavior", "Failures to handle", "Performance notes", "Production checklist", "When to use it"]) {
       assert.match(html, new RegExp(phrase));
     }
   }
@@ -89,6 +97,7 @@ test("documents the guided cross-platform installers", async () => {
   const install = await render("/install");
   const html = await install.text();
   assert.match(html, /install\/install\.sh/);
+  assert.match(html, /stable is ready/);
   assert.match(html, /Verification is built in/);
   assert.match(html, /ownership marker/);
   assert.match(html, /Roll back without redownloading/);
@@ -120,23 +129,24 @@ test("documents the fail-closed Studio release matrix", async () => {
   assert.match(compatibilityHtml, /Developer-preview DMG verified/);
   assert.match(compatibilityHtml, /Portable previews built, tested, audited, and published/);
   assert.match(compatibilityHtml, /installer and runtime evidence pending/);
+  assert.match(compatibilityHtml, /Nivren 1\.0 · Edition 6/);
 });
 
-test("documents distinctive Edition 5 capabilities", async () => {
+test("documents distinctive Edition 6 capabilities", async () => {
   const docs = await render("/docs");
   const html = await docs.text();
-  assert.match(html, /Edition 5 guide/);
+  assert.match(html, /Edition 6 guide/);
   const explorer = await readFile(new URL("../app/docs/DocsExplorer.tsx", import.meta.url), "utf8");
-  for (const phrase of ["or give", "memory_bytes", "kind:database", "shape Signup holds", "gives String or Problem", "prepare request", "perform request", "start produce", "std.channels.send", "std.web.get", "nivren_routing", "nivren_database", "nivren_discord", "nivren_desktop", "Kotlin/JNI", "nivren_gpu", "CPU fallback", "std.native.open", "std.native.call_int", "ABI v3", "WASI Preview 1", "zero-import", "25 official packages", "niv-workspace.toml", "niv dap", "independent security audit"]) {
+  for (const phrase of ["or give", "memory_bytes", "kind:database", "shape Signup holds", "gives String or Problem", "prepare request", "perform request", "start produce", "std.channels.send", "std.web.get", "nivren_routing", "nivren_database", "nivren_discord", "nivren_desktop", "Kotlin/JNI", "nivren_gpu", "CPU fallback", "std.native.open", "std.native.call_int", "ABI v3", "WASI Preview 1", "zero-import", "25 official packages", "niv-workspace.toml", "niv dap", "niv trust", "niv install --trusted", "niv build --aot", "WebView2", "wgpu", "postgres://", "mysql://", "mimalloc", "independent security audit"]) {
     assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
   for (const phrase of ["Intent-first language", "Failure, absence, and cleanup", "Database services", "Production checklist", "Previous", "Next"]) {
     assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
-  assert.match(html, /19 detailed guides/);
+  assert.match(html, /20 detailed guides/);
 });
 
-test("publishes every portable beta target", async () => {
+test("publishes every portable stable target", async () => {
   const response = await render("/downloads");
   const html = await response.text();
   assert.match(html, /WASI Preview 1/);
@@ -145,14 +155,14 @@ test("publishes every portable beta target", async () => {
   assert.match(html, /Linux x64 \+ ARM64/);
   assert.match(html, /Non-root/);
   assert.match(html, /Portable compiler \+ VM/);
-  assert.match(html, /nivren-v0\.10\.0-beta\.9-wasm32-wasip1\.wasm/);
-  assert.match(html, /nivren-v0\.10\.0-beta\.9-browser\.wasm/);
-  assert.match(html, /nivren-0\.10\.0-beta\.9\.vsix/);
+  assert.match(html, /nivren-v1\.0\.0-wasm32-wasip1\.wasm/);
+  assert.match(html, /nivren-v1\.0\.0-browser\.wasm/);
+  assert.match(html, /nivren-1\.0\.0\.vsix/);
   assert.match(html, /pkgs\/container\/nivren/);
 });
 
 test("syntax-highlights every block-level code sample", async () => {
-  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages/nivren_database"];
+  const routes = ["/", "/docs", "/install", "/downloads", "/examples", "/benchmarks", "/packages", "/packages/nivren_database"];
   for (const route of routes) {
     const response = await render(route);
     const html = await response.text();
@@ -162,20 +172,24 @@ test("syntax-highlights every block-level code sample", async () => {
   }
 });
 
-test("publishes reproducible Nivren versus Node.js results", async () => {
+test("publishes the complete Edition 6 benchmark suite", async () => {
   const response = await render("/benchmarks");
   const html = await response.text();
-  for (const phrase of ["Measured on real Nivren-shaped work", "Everyday commands", "Former limits", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "AMD Ryzen 9 9950X3D", "Nivren 0.10.0-beta.9", "Node.js 22.15.0", "What the strengths mean", "The wins and losses use one public harness"]) {
+  for (const phrase of ["The Edition 6 benchmark suite", "Twelve workloads", "Everyday commands", "Compute and data", "Concurrency", "Warmed service", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "Shape-heavy loop", "Large typed JSON transform", "Allocation churn", "Tasks and channels", "Warmed HTTP service", "AMD Ryzen 9 9950X3D", "Nivren 1.0.0 · Edition 6 engine", "Open rows, published anyway", "The wins and losses use one public harness"]) {
     assert.match(html, new RegExp(phrase));
   }
-  const benchmarkReport = JSON.parse(await readFile(new URL("../benchmarks/nivren-vs-node/results/2026-08-31-windows-x64.json", import.meta.url), "utf8"));
-  assert.equal(benchmarkReport.results.length, 7);
+  const benchmarkReport = JSON.parse(await readFile(new URL("../benchmarks/nivren-vs-node/results/2026-08-31-phase-n.json", import.meta.url), "utf8"));
+  assert.equal(benchmarkReport.results.length, 12);
   assert.equal(benchmarkReport.results.filter(result => result.category === "strength").length, 4);
-  assert.equal(benchmarkReport.results.filter(result => result.category === "limit").length, 3);
+  assert.equal(benchmarkReport.results.filter(result => result.category === "limit").length, 6);
+  assert.equal(benchmarkReport.results.filter(result => result.category === "concurrency").length, 1);
+  assert.equal(benchmarkReport.results.filter(result => result.category === "service").length, 1);
   assert.equal(benchmarkReport.results[0].output, "42");
   assert.equal(benchmarkReport.results[1].output, "successful check");
-  assert.ok(benchmarkReport.results[2].output.includes("Nivren benchmark events"));
-  assert.ok(benchmarkReport.results[3].output.includes("start worker=alpha"));
+  const losses = benchmarkReport.results.filter(result => result.node.median_ms < result.nivren.median_ms);
+  for (const loss of losses) {
+    assert.match(html, new RegExp(loss.label), `losing row "${loss.label}" must stay published`);
+  }
 });
 
 test("keeps release versions and download assets synchronized", async () => {

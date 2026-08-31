@@ -2,9 +2,12 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const release = JSON.parse(await readFile(new URL("../release.json", import.meta.url), "utf8"));
-const versionPattern = /^\d+\.\d+\.\d+-beta\.\d+$/;
+const versionPattern = /^\d+\.\d+\.\d+(?:-beta\.\d+)?$/;
 assert.match(release.public.version, versionPattern);
 assert.match(release.candidate.version, versionPattern);
+if (release.public.channel === "stable") {
+  assert.doesNotMatch(release.public.version, /-beta\./, "a stable release must not carry a beta version");
+}
 assert.equal(release.public.published, true);
 if (release.candidate.published) {
   assert.equal(release.public.version, release.candidate.version, "a published candidate must match the public tag");
@@ -18,7 +21,7 @@ for (const asset of release.public.assets) {
 }
 
 const downloads = await readFile(new URL("../app/downloads/page.tsx", import.meta.url), "utf8");
-assert.doesNotMatch(downloads, /0\.10\.0-beta\.\d+/, "downloads must derive versions from release.json");
+assert.doesNotMatch(downloads, /\d+\.\d+\.\d+(?:-beta\.\d+)?-(?:linux|macos|windows|wasm32|browser)/, "downloads must derive versions from release.json");
 
 if (process.argv.includes("--remote")) {
   const response = await fetch(`https://api.github.com/repos/${release.repository}/releases/tags/v${release.public.version}`, {
@@ -27,7 +30,7 @@ if (process.argv.includes("--remote")) {
   assert.equal(response.status, 200, `GitHub release lookup failed: ${response.status}`);
   const remote = await response.json();
   assert.equal(remote.draft, false);
-  assert.equal(remote.prerelease, true);
+  assert.equal(remote.prerelease, release.public.version.includes("-beta."));
   assert.ok(remote.published_at);
   const remoteAssets = remote.assets.map((asset) => asset.name).sort();
   assert.deepEqual(remoteAssets, [...release.public.assets].sort());
