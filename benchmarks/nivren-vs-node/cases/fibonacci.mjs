@@ -3,4 +3,4 @@ function fibonacci(value) {
   return fibonacci(value - 1) + fibonacci(value - 2);
 }
 
-console.log(fibonacci(30));
+console.log(fibonacci(34));

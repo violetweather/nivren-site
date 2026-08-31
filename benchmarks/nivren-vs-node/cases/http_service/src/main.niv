@@ -1,0 +1,26 @@
+define handle takes { connection is TcpStream } gives Nothing or Problem needs Network {
+    using stream set connection {
+        keep request set std.web.read_request(stream, 65536) or give
+        keep headers set std.map.of("Content-Type", "text/plain")
+        keep sent set std.web.respond(stream, 200, headers, "ok") or give
+        give ok(none)
+    }
+}
+
+define serve takes { } gives Nothing or Problem needs Network {
+    keep opened set std.net.listen("127.0.0.1", 46898) or give
+    using server set opened {
+        change served set 0
+        repeat served < 1000000 {
+            keep accepted set std.net.accept(server, 60.0)
+            keep handled set choose accepted {
+                case Ok carries connection => handle(connection)
+                case Err carries problem => err(problem)
+            }
+            served = served + 1
+        }
+        give ok(none)
+    }
+}
+
+serve()

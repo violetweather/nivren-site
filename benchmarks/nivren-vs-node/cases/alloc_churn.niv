@@ -1,0 +1,9 @@
+change index set 0
+change total set 0
+repeat index < 150000 {
+    keep triplet set [index, index + 1, index + 2]
+    keep label set text "event-{index}"
+    total = total + triplet[2] + len(label)
+    index = index + 1
+}
+show(total)

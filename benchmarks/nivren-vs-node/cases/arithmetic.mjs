@@ -3,7 +3,7 @@ function kernel(value, salt) {
 }
 
 let result = 0;
-for (let index = 0; index < 2_000_000; index += 1) {
+for (let index = 0; index < 50000000; index += 1) {
   result = kernel(index, 3);
 }
 console.log(result);

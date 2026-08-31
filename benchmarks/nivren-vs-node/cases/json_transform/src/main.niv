@@ -1,0 +1,28 @@
+shape Event holds {
+    id is Int
+    kind is String
+    active is Bool
+    score is Int
+}
+
+shape Feed holds {
+    title is String
+    events is [Event]
+}
+
+define main takes { } gives Result<Nothing, Problem> needs FileRead {
+    keep source set std.files.read("data/events.json") or give
+    keep feed set std.json.decode(Feed, source) or give
+    change active_count set 0
+    change score_total set 0
+    each event in feed.events {
+        when event.active {
+            active_count = active_count + 1
+            score_total = score_total + event.score
+        }
+    }
+    show(text "{active_count}:{score_total}")
+    give ok(none)
+}
+
+main()

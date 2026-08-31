@@ -1,0 +1,11 @@
+[package]
+name = "http-service-benchmark"
+version = "0.1.0"
+entry = "src/main.niv"
+
+[capabilities]
+Network = "allow"
+
+[limits]
+instructions = "4000000000"
+memory_bytes = "268435456"

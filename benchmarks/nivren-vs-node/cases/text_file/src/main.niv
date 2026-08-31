@@ -1,4 +1,4 @@
-define main takes { } gives Result<Nothing, String> needs FileRead {
+define main takes { } gives Result<Nothing, Problem> needs FileRead {
     keep source set std.files.read("data/events.log") or give
     keep lines set std.text.split(source, "
 ", 1000) or give

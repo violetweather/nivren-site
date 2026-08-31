@@ -1,0 +1,26 @@
+define run takes { } gives Int or Problem needs Channel, Task {
+    keep channel set perform std.channels.create(64)
+    define produce takes { } gives Int or Problem needs Channel {
+        change index set 0
+        repeat index < 20000 {
+            keep sent set perform std.channels.send(channel, index, 10.0) or give
+            index = index + 1
+        }
+        give ok(index)
+    }
+    keep worker set start produce
+    change total set 0
+    change received set 0
+    repeat received < 20000 {
+        keep value set perform std.channels.receive(channel, 10.0) or give
+        total = total + value
+        received = received + 1
+    }
+    keep finished set wait worker or give
+    give ok(total)
+}
+
+show(choose run() {
+    case Ok carries value => value
+    case Err carries problem => 0 - 1
+})

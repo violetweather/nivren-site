@@ -4,7 +4,7 @@ define kernel takes { value is Int, salt is Int } gives Int {
 
 change index set 0
 change result set 0
-repeat index < 2000000 {
+repeat index < 50000000 {
     result = kernel(index, 3)
     index = index + 1
 }

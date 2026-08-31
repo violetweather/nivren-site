@@ -1,0 +1,14 @@
+shape Point holds {
+    x is Int
+    y is Int
+    z is Int
+}
+
+change index set 0
+change total set 0
+repeat index < 300000 {
+    keep point set Point with { x set index y set index * 2 z set index % 7 }
+    total = total + point.x + point.z
+    index = index + 1
+}
+show(total)

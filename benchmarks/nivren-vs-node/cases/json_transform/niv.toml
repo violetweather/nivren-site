@@ -1,0 +1,11 @@
+[package]
+name = "json-transform-benchmark"
+version = "0.1.0"
+entry = "src/main.niv"
+
+[capabilities]
+FileRead = "path:./data"
+
+[limits]
+instructions = "50000000"
+memory_bytes = "268435456"

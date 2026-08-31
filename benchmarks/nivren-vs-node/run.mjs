@@ -1,5 +1,7 @@
-import { execFileSync, spawnSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { execFileSync, spawn, spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { connect } from "node:net";
+import { request as httpRequest } from "node:http";
 import { arch, cpus, platform, release } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,6 +17,23 @@ if (!Number.isInteger(measuredRuns) || measuredRuns < 3 || !Number.isInteger(war
   throw new Error("BENCH_RUNS must be at least 3 and BENCH_WARMUPS must be non-negative integers");
 }
 
+// The typed JSON transform input is deterministic and generated on demand,
+// so the repository does not carry a megabyte fixture.
+const eventsPath = join(casesRoot, "json_transform", "data", "events.json");
+if (!existsSync(eventsPath)) {
+  const events = [];
+  for (let index = 0; index < 20000; index += 1) {
+    events.push({
+      id: index,
+      kind: index % 3 === 0 ? "deploy" : "build",
+      active: index % 2 === 0,
+      score: (index * 17) % 1000,
+    });
+  }
+  mkdirSync(dirname(eventsPath), { recursive: true });
+  writeFileSync(eventsPath, JSON.stringify({ title: "Nivren benchmark events", events }, null, 1));
+}
+
 const definitions = [
   { id: "startup", category: "strength", label: "Source-to-result startup", description: "Parse, check, compile, execute, and print one integer.", runs: Math.max(measuredRuns, 21), warmups: 2 },
   { id: "cli_check", category: "strength", label: "One-shot source check", description: "Nivren performs semantic and capability checks; Node.js performs its built-in syntax check.", compareOutput: false, runs: Math.max(measuredRuns, 15), warmups: 2 },
@@ -22,8 +41,21 @@ const definitions = [
   { id: "text_file", category: "strength", label: "Text file pipeline", description: "Read a UTF-8 log, split bounded lines, and emit a JSON array.", runs: Math.max(measuredRuns, 15), warmups: 2 },
   { id: "arithmetic", category: "limit", label: "Tiered integer loop", description: "Two million calls to a small checked-integer kernel.", runs: measuredRuns, warmups: warmupRuns },
   { id: "fibonacci", category: "limit", label: "Recursive calls", description: "Naive recursive Fibonacci(30).", runs: measuredRuns, warmups: warmupRuns },
-  { id: "nested_loops", category: "limit", label: "Nested loop arithmetic", description: "A 500 × 500 checked-integer checksum.", runs: measuredRuns, warmups: warmupRuns },
+  { id: "nested_loops", category: "limit", label: "Nested loop arithmetic", description: "A 2000 × 2000 checked-integer checksum.", runs: measuredRuns, warmups: warmupRuns },
+  { id: "shape_churn", category: "limit", label: "Shape-heavy loop", description: "Three hundred thousand typed shape constructions with field reads.", runs: measuredRuns, warmups: warmupRuns },
+  { id: "json_transform", category: "limit", label: "Large typed JSON transform", description: "Decode a twenty-thousand-event JSON document through a declared schema and aggregate it.", runs: measuredRuns, warmups: warmupRuns },
+  { id: "alloc_churn", category: "limit", label: "Allocation churn", description: "Short-lived arrays and strings built and dropped in a hot loop.", runs: measuredRuns, warmups: warmupRuns },
+  { id: "tasks_channels", category: "concurrency", label: "Tasks and channels", description: "A bounded producer/consumer pair moving twenty thousand values; Nivren uses structured tasks and channels, Node an async queue.", runs: measuredRuns, warmups: warmupRuns },
 ];
+
+const serviceDefinition = {
+  id: "http_service",
+  category: "service",
+  label: "Warmed HTTP service",
+  description: "One long-lived server process measured hot: per-request latency over one thousand sequential HTTP requests after two hundred warmup requests, same Node client for both runtimes.",
+  requests: 1000,
+  serviceWarmups: 200,
+};
 
 function commandFor(runtime, id) {
   if (id === "cli_check") {
@@ -31,7 +63,7 @@ function commandFor(runtime, id) {
       ? { command: nivren, args: ["check", join(casesRoot, "arithmetic.niv")] }
       : { command: node, args: ["--check", join(casesRoot, "arithmetic.mjs")] };
   }
-  if (id === "typed_json_file" || id === "text_file") {
+  if (id === "typed_json_file" || id === "text_file" || id === "json_transform" || id === "http_service") {
     return runtime === "nivren"
       ? { command: nivren, args: ["run", "."], cwd: join(casesRoot, id) }
       : { command: node, args: [join(casesRoot, `${id}.mjs`)] };
@@ -65,6 +97,15 @@ function summarize(values) {
 }
 
 function residentMemoryKb(spec) {
+  if (platform() === "win32") {
+    const command = [spec.command, ...spec.args]
+      .map(part => `'` + String(part).replaceAll(`'`, `''`) + `'`)
+      .join(",");
+    const script = `$p = Start-Process -FilePath ${command.split(",")[0]} -ArgumentList @(${command.split(",").slice(1).join(",") || "' '"}) -WorkingDirectory '${(spec.cwd ?? process.cwd()).replaceAll(`'`, `''`)}' -NoNewWindow -PassThru; $p.WaitForExit(); [Math]::Round($p.PeakWorkingSet64 / 1KB)`;
+    const timed = spawnSync("powershell", ["-NoProfile", "-Command", script], { encoding: "utf8", timeout: 240_000 });
+    const value = Number.parseInt(String(timed.stdout).trim(), 10);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
   if (platform() !== "darwin") return null;
   const timed = spawnSync("/usr/bin/time", ["-l", spec.command, ...spec.args], { cwd: spec.cwd, encoding: "utf8", timeout: 120_000 });
   const match = timed.stderr.match(/(\d+)\s+maximum resident set size/);
@@ -111,6 +152,88 @@ for (const definition of definitions) {
     node_speedup: Number((nivrenSummary.median_ms / nodeSummary.median_ms).toFixed(2)),
   });
 }
+
+function waitForPort(port, deadlineMs) {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    const attempt = () => {
+      const socket = connect({ port, host: "127.0.0.1" }, () => {
+        socket.destroy();
+        resolve();
+      });
+      socket.on("error", () => {
+        socket.destroy();
+        if (Date.now() - started > deadlineMs) {
+          reject(new Error(`service did not open port ${port}`));
+        } else {
+          setTimeout(attempt, 100);
+        }
+      });
+    };
+    attempt();
+  });
+}
+
+function measureRequest(port) {
+  return new Promise((resolve, reject) => {
+    const started = process.hrtime.bigint();
+    const request = httpRequest(
+      { host: "127.0.0.1", port, path: "/", method: "GET", agent: false },
+      response => {
+        let body = "";
+        response.on("data", chunk => {
+          body += chunk;
+        });
+        response.on("end", () => {
+          resolve({ elapsedMs: Number(process.hrtime.bigint() - started) / 1_000_000, body });
+        });
+      },
+    );
+    request.on("error", reject);
+    request.end();
+  });
+}
+
+async function benchmarkService(definition) {
+  const ports = { nivren: 46898, node: 46899 };
+  const row = {};
+  for (const runtime of ["nivren", "node"]) {
+    const spec = commandFor(runtime, definition.id);
+    const server = spawn(spec.command, spec.args, { cwd: spec.cwd, stdio: "ignore" });
+    try {
+      await waitForPort(ports[runtime], 30_000);
+      for (let index = 0; index < definition.serviceWarmups; index += 1) {
+        await measureRequest(ports[runtime]);
+      }
+      const latencies = [];
+      let body;
+      for (let index = 0; index < definition.requests; index += 1) {
+        const sample = await measureRequest(ports[runtime]);
+        body = sample.body;
+        latencies.push(sample.elapsedMs);
+      }
+      if (body !== "ok") throw new Error(`${definition.id} ${runtime} body mismatch: ${body}`);
+      row[runtime] = { ...summarize(latencies), peak_rss_kb: null };
+    } finally {
+      server.kill("SIGKILL");
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
+  results.push({
+    id: definition.id,
+    category: definition.category,
+    label: definition.label,
+    description: definition.description,
+    runs: definition.requests,
+    warmups: definition.serviceWarmups,
+    output: "ok",
+    nivren: row.nivren,
+    node: row.node,
+    node_speedup: Number((row.nivren.median_ms / row.node.median_ms).toFixed(2)),
+  });
+}
+
+await benchmarkService(serviceDefinition);
 
 const report = {
   schema: "org.nivren.benchmark.v1",

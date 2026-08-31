@@ -5,4 +5,4 @@ define fibonacci takes { value is Int } gives Int {
     give fibonacci(value - 1) + fibonacci(value - 2)
 }
 
-show(fibonacci(30))
+show(fibonacci(34))

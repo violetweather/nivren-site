@@ -1,7 +1,7 @@
 shape Event { id is Int, kind is String, active is Bool }
 shape Dataset { title is String, events is [Event] }
 
-define main takes { } gives Result<Nothing, String> needs FileRead {
+define main takes { } gives Result<Nothing, Problem> needs FileRead {
     keep source set std.files.read("data/input.json") or give
     keep dataset set std.json.decode(Dataset, source) or give
     keep encoded set std.json.encode(dataset) or give
