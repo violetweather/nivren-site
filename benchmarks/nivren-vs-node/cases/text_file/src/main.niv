@@ -1,7 +1,8 @@
-define main() gives Result<Null, String> needs FileRead {
-    keep source = std.files.read("data/events.log") or give
-    keep lines = std.text.split(source, "\n", 1000) or give
-    keep encoded = std.json.stringify(lines) or give
+define main takes { } gives Result<Nothing, String> needs FileRead {
+    keep source set std.files.read("data/events.log") or give
+    keep lines set std.text.split(source, "
+", 1000) or give
+    keep encoded set std.json.encode(lines) or give
     show(encoded)
     give ok(none)
 }

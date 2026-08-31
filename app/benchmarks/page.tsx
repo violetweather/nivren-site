@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import report from "@/benchmarks/nivren-vs-node/results/2026-07-27-macos-arm64.json";
+import report from "@/benchmarks/nivren-vs-node/results/2026-08-31-windows-x64.json";
 import { SyntaxCode } from "../components/SyntaxCode";
 
 export const metadata: Metadata = {
@@ -54,7 +54,7 @@ export default function BenchmarksPage() {
         <span className="kicker">Measured on real Nivren-shaped work</span>
         <h1>Quick tools. Small processes. Explicit safety.</h1>
         <p>Nivren reaches useful command-line results in a few milliseconds while type and capability checks stay built in. The same transparent suite also shows where Node.js remains faster: long-running, compute-heavy JavaScript.</p>
-        <div className="page-hero-meta"><span className="meta-pill">Apple M4 · arm64</span><span className="meta-pill">Nivren 0.10.0-beta.6 + Phase 2</span><span className="meta-pill">Node.js 26.5.0</span><span className="meta-pill">July 27, 2026</span></div>
+        <div className="page-hero-meta"><span className="meta-pill">AMD Ryzen 9 9950X3D · x64</span><span className="meta-pill">Nivren 0.10.0-beta.8 · Edition 5</span><span className="meta-pill">Node.js 22.15.0</span><span className="meta-pill">August 31, 2026</span></div>
       </div>
     </section>
 
@@ -63,11 +63,11 @@ export default function BenchmarksPage() {
         <div className="benchmark-verdict-copy">
           <span className="kicker">The useful summary</span>
           <h2 id="benchmark-summary">Built for work that starts now.</h2>
-          <p>Across startup, one-shot checking, typed JSON, and bounded text-file processing, Nivren completes the whole command before Node.js finishes paying most of its process-start cost. It does so with lower peak memory and stricter default semantics.</p>
+          <p>Across startup, one-shot checking, typed JSON, and bounded text-file processing, Nivren completes the whole command before Node.js finishes paying most of its process-start cost. It does so with stricter default semantics, and peak memory stays reported whenever the platform can measure it.</p>
         </div>
         <div className="benchmark-stat-grid">
           <article className="benchmark-stat nivren-win"><strong>{Math.min(...strengthLeads).toFixed(1)}–{Math.max(...strengthLeads).toFixed(1)}×</strong><span>Nivren&apos;s lead</span><p>Across the four strength-first workflows</p></article>
-          <article className="benchmark-stat memory-win"><strong>{Math.min(...memoryRatios).toFixed(1)}–{Math.max(...memoryRatios).toFixed(1)}×</strong><span>Lower peak memory</span><p>Across the same fresh processes</p></article>
+          {memoryRatios.length ? <article className="benchmark-stat memory-win"><strong>{Math.min(...memoryRatios).toFixed(1)}–{Math.max(...memoryRatios).toFixed(1)}×</strong><span>Lower peak memory</span><p>Across the same fresh processes</p></article> : null}
           <article className="benchmark-stat node-win"><strong>{Math.min(...computeLeads).toFixed(1)}–{Math.max(...computeLeads).toFixed(1)}×</strong><span>Node&apos;s compute lead</span><p>The optimization target remains visible</p></article>
         </div>
       </section>
@@ -99,7 +99,7 @@ export default function BenchmarksPage() {
 
       <section className="benchmark-method" aria-labelledby="method-title">
         <div><span className="kicker">Reproduce it</span><h2 id="method-title">The wins and losses use one public harness.</h2><p>Every sample starts a fresh process, runtime order alternates, paired programs must succeed with matching output, and the report includes medians, p95s, ranges, runtime versions, memory, and machine details. The strength-first presentation changes emphasis—not the underlying evidence.</p><a className="button primary" href={sourceUrl}>View benchmark source <span aria-hidden="true">↗</span></a></div>
-        <div className="prose-card benchmark-recipe"><h3>Measured environment</h3><dl><div><dt>Processor</dt><dd>{report.environment.cpu}</dd></div><div><dt>System</dt><dd>{report.environment.os} · {report.environment.architecture}</dd></div><div><dt>Nivren</dt><dd>{report.environment.nivren}</dd></div><div><dt>Node.js</dt><dd>{report.environment.node}</dd></div></dl><h3>Run it</h3><pre><SyntaxCode language="shell" code="NIVREN_BIN=/path/to/niv node benchmarks/nivren-vs-node/run.mjs" /></pre></div>
+        <div className="prose-card benchmark-recipe"><h3>Measured environment</h3><dl><div><dt>Processor</dt><dd>{report.environment.cpu.trim()}</dd></div><div><dt>System</dt><dd>{report.environment.os} · {report.environment.architecture}</dd></div><div><dt>Nivren</dt><dd>{report.environment.nivren}</dd></div><div><dt>Node.js</dt><dd>{report.environment.node}</dd></div></dl><h3>Run it</h3><pre><SyntaxCode language="shell" code="NIVREN_BIN=/path/to/niv node benchmarks/nivren-vs-node/run.mjs" /></pre></div>
       </section>
 
       <div className="benchmark-next"><div><strong>Performance is a visible product promise.</strong><span>Each release can rerun the same workflows, keep the limits public, and add new real-world cases without rewriting history.</span></div><Link href="/downloads">Try the measured beta →</Link></div>

@@ -1,7 +1,7 @@
-change row = 0
-change checksum = 0
+change row set 0
+change checksum set 0
 repeat row < 500 {
-    change column = 0
+    change column set 0
     repeat column < 500 {
         checksum = checksum + ((row * 17 + column * 31) % 1000)
         column = column + 1

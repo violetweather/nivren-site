@@ -87,7 +87,7 @@ const packages = [
 
 const numbers = [
   { value: `${candidateRelease.checkpointGatesPassed} / ${candidateRelease.checkpointGatesRequired}`, label: "Product Proof checkpoints", note: `Completed for ${candidateRelease.version}. The rest gate 1.0.` },
-  { value: "7.62×", label: "Faster startup than Node", note: "Source to printed result on an M4, fresh process each run." },
+  { value: "3.18×", label: "Faster startup than Node", note: "Source to printed result on a Ryzen 9 9950X3D, fresh process each run." },
   { value: "6 + WebAssembly", label: "Compile targets", note: "Native, standalone, WASI, and a zero-import browser guest." },
   { value: "0", label: "Unsafe blocks in the core VM", note: "Unsafe authority never reaches a safe module implicitly." },
 ];

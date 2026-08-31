@@ -1,4 +1,4 @@
-define fibonacci(value: Int) gives Int {
+define fibonacci takes { value is Int } gives Int {
     when value < 2 {
         give value
     }

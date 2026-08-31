@@ -1,9 +1,9 @@
-define kernel(value: Int, salt: Int) gives Int {
+define kernel takes { value is Int, salt is Int } gives Int {
     give (value + salt) * 2
 }
 
-change index = 0
-change result = 0
+change index set 0
+change result set 0
 repeat index < 2000000 {
     result = kernel(index, 3)
     index = index + 1
