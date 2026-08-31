@@ -21,7 +21,7 @@ test("renders the complete Nivren landing page", async () => {
   assert.match(html, /<title>Nivren — Code that reads like intent<\/title>/i);
   assert.match(html, /Code that reads like/);
   assert.match(html, /Edition 5 public beta/);
-  assert.match(html, /0\.10\.0-beta\.8/);
+  assert.match(html, /0\.10\.0-beta\.9/);
   assert.match(html, /3 \/ 4/);
   assert.match(html, /6 \+ WebAssembly/);
   assert.match(html, /href="\/docs"/);
@@ -145,9 +145,9 @@ test("publishes every portable beta target", async () => {
   assert.match(html, /Linux x64 \+ ARM64/);
   assert.match(html, /Non-root/);
   assert.match(html, /Portable compiler \+ VM/);
-  assert.match(html, /nivren-v0\.10\.0-beta\.8-wasm32-wasip1\.wasm/);
-  assert.match(html, /nivren-v0\.10\.0-beta\.8-browser\.wasm/);
-  assert.match(html, /nivren-0\.10\.0-beta\.8\.vsix/);
+  assert.match(html, /nivren-v0\.10\.0-beta\.9-wasm32-wasip1\.wasm/);
+  assert.match(html, /nivren-v0\.10\.0-beta\.9-browser\.wasm/);
+  assert.match(html, /nivren-0\.10\.0-beta\.9\.vsix/);
   assert.match(html, /pkgs\/container\/nivren/);
 });
 
@@ -165,7 +165,7 @@ test("syntax-highlights every block-level code sample", async () => {
 test("publishes reproducible Nivren versus Node.js results", async () => {
   const response = await render("/benchmarks");
   const html = await response.text();
-  for (const phrase of ["Measured on real Nivren-shaped work", "Everyday commands", "Former limits", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "AMD Ryzen 9 9950X3D", "Nivren 0.10.0-beta.8", "Node.js 22.15.0", "What the strengths mean", "The wins and losses use one public harness"]) {
+  for (const phrase of ["Measured on real Nivren-shaped work", "Everyday commands", "Former limits", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "AMD Ryzen 9 9950X3D", "Nivren 0.10.0-beta.9", "Node.js 22.15.0", "What the strengths mean", "The wins and losses use one public harness"]) {
     assert.match(html, new RegExp(phrase));
   }
   const benchmarkReport = JSON.parse(await readFile(new URL("../benchmarks/nivren-vs-node/results/2026-08-31-windows-x64.json", import.meta.url), "utf8"));

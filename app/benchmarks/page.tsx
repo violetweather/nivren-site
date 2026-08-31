@@ -54,7 +54,7 @@ export default function BenchmarksPage() {
         <span className="kicker">Measured on real Nivren-shaped work</span>
         <h1>Fast to start. Fast to compute. Explicit safety.</h1>
         <p>Nivren reaches useful command-line results in a few milliseconds while type and capability checks stay built in. With the Edition 5 engine compiling hot integer programs to machine code, the same transparent suite now shows Nivren ahead on every row — including the compute-heavy cases it previously lost.</p>
-        <div className="page-hero-meta"><span className="meta-pill">AMD Ryzen 9 9950X3D · x64</span><span className="meta-pill">Nivren 0.10.0-beta.8 · Edition 5 engine pre-release</span><span className="meta-pill">Node.js 22.15.0</span><span className="meta-pill">August 31, 2026</span></div>
+        <div className="page-hero-meta"><span className="meta-pill">AMD Ryzen 9 9950X3D · x64</span><span className="meta-pill">Nivren 0.10.0-beta.9 · Edition 5</span><span className="meta-pill">Node.js 22.15.0</span><span className="meta-pill">August 31, 2026</span></div>
       </div>
     </section>
 
@@ -94,7 +94,7 @@ export default function BenchmarksPage() {
 
       <section className="benchmark-reading">
         <article><span>01</span><h2>What the strengths mean</h2><p>Low startup and memory make Nivren a natural fit for command-line tools, scripts, automation steps, short-lived workers, and local data utilities. The data cases cover bounded text splitting plus typed JSON with file-capability enforcement, complete schema validation, and deterministic output.</p></article>
-        <article><span>02</span><h2>How to read the caveats</h2><p>The source-check row is intentionally not identical work: Nivren performs semantic, type, and capability checks, while <code>node --check</code> checks JavaScript syntax. Compute cases use checked 64-bit Nivren integers and optimized JavaScript numbers. The measured binary is the Edition 5 engine build from main, ahead of the published beta.8 archives. This is a workload comparison, not a universal language ranking.</p></article>
+        <article><span>02</span><h2>How to read the caveats</h2><p>The source-check row is intentionally not identical work: Nivren performs semantic, type, and capability checks, while <code>node --check</code> checks JavaScript syntax. Compute cases use checked 64-bit Nivren integers and optimized JavaScript numbers. The measured engine ships in the published beta.9 archives. This is a workload comparison, not a universal language ranking.</p></article>
       </section>
 
       <section className="benchmark-method" aria-labelledby="method-title">

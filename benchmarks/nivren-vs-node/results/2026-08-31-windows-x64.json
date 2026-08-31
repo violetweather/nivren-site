@@ -13,7 +13,7 @@
     "architecture": "x64",
     "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor          ",
     "logical_cpus": 32,
-    "nivren": "Nivren 0.10.0-beta.8 + Edition 5 engine (pre-release build from main)",
+    "nivren": "Nivren 0.10.0-beta.9",
     "node": "v22.15.0"
   },
   "results": [
