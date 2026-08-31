@@ -1,0 +1,310 @@
+{
+  "schema": "org.nivren.benchmark.v1",
+  "generated_at": "2026-08-31T21:25:34.287Z",
+  "methodology": {
+    "measured_processes": "fresh process per sample",
+    "ordering": "alternating Nivren-first and Node-first",
+    "statistic": "median with p95, minimum, and maximum",
+    "scope": "wall-clock source-to-result latency; not a complete language ranking",
+    "semantics": "paired programs produce identical output; source checking reflects each runtime's built-in checker, while Nivren's typed JSON case additionally enforces a declared schema and file capability"
+  },
+  "environment": {
+    "os": "win32 10.0.26200",
+    "architecture": "x64",
+    "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor          ",
+    "logical_cpus": 32,
+    "nivren": "Nivren 0.10.0-beta.9",
+    "node": "v22.15.0"
+  },
+  "results": [
+    {
+      "id": "startup",
+      "category": "strength",
+      "label": "Source-to-result startup",
+      "description": "Parse, check, compile, execute, and print one integer.",
+      "runs": 21,
+      "warmups": 2,
+      "output": "42",
+      "nivren": {
+        "median_ms": 13.372,
+        "p95_ms": 14.124,
+        "min_ms": 12.634,
+        "max_ms": 14.292,
+        "peak_rss_kb": 42
+      },
+      "node": {
+        "median_ms": 40.838,
+        "p95_ms": 42.6,
+        "min_ms": 39.779,
+        "max_ms": 42.711,
+        "peak_rss_kb": 42
+      },
+      "node_speedup": 0.33
+    },
+    {
+      "id": "cli_check",
+      "category": "strength",
+      "label": "One-shot source check",
+      "description": "Nivren performs semantic and capability checks; Node.js performs its built-in syntax check.",
+      "compareOutput": false,
+      "runs": 15,
+      "warmups": 2,
+      "output": "successful check",
+      "nivren": {
+        "median_ms": 13.11,
+        "p95_ms": 14.533,
+        "min_ms": 12.242,
+        "max_ms": 14.533,
+        "peak_rss_kb": null
+      },
+      "node": {
+        "median_ms": 35.965,
+        "p95_ms": 39.113,
+        "min_ms": 34.823,
+        "max_ms": 39.113,
+        "peak_rss_kb": null
+      },
+      "node_speedup": 0.36
+    },
+    {
+      "id": "typed_json_file",
+      "category": "strength",
+      "label": "Typed JSON file pipeline",
+      "description": "Read a file, validate its complete schema, and emit canonical JSON.",
+      "runs": 15,
+      "warmups": 2,
+      "output": "{\"events\":[{\"active\":true,\"id\":1,\"kind\":\"start\"},{\"active\":true,\"id\":2,\"kind\":\"parse\"},{\"active\":true,\"id\":3,\"kind\":\"check\"},{\"active\":true,\"id\":4,\"kind\":\"compile\"},{\"active\":true,\"id\":5,\"kind\":\"execute\"},{\"active\":false,\"id\":6,\"kind\":\"observe\"},{\"active\":true,\"id\":7,\"kind\":\"package\"},{\"active\":true,\"id\":8,\"kind\":\"install\"},{\"active\":true,\"id\":9,\"kind\":\"test\"},{\"active\":false,\"id\":10,\"kind\":\"ship\"},{\"active\":true,\"id\":11,\"kind\":\"start\"},{\"active\":true,\"id\":12,\"kind\":\"parse\"},{\"active\":true,\"id\":13,\"kind\":\"check\"},{\"active\":true,\"id\":14,\"kind\":\"compile\"},{\"active\":true,\"id\":15,\"kind\":\"execute\"},{\"active\":false,\"id\":16,\"kind\":\"observe\"},{\"active\":true,\"id\":17,\"kind\":\"package\"},{\"active\":true,\"id\":18,\"kind\":\"install\"},{\"active\":true,\"id\":19,\"kind\":\"test\"},{\"active\":false,\"id\":20,\"kind\":\"ship\"}],\"title\":\"Nivren benchmark events\"}",
+      "nivren": {
+        "median_ms": 14.857,
+        "p95_ms": 15.825,
+        "min_ms": 13.267,
+        "max_ms": 15.825,
+        "peak_rss_kb": null
+      },
+      "node": {
+        "median_ms": 41.383,
+        "p95_ms": 42.294,
+        "min_ms": 40.228,
+        "max_ms": 42.294,
+        "peak_rss_kb": null
+      },
+      "node_speedup": 0.36
+    },
+    {
+      "id": "text_file",
+      "category": "strength",
+      "label": "Text file pipeline",
+      "description": "Read a UTF-8 log, split bounded lines, and emit a JSON array.",
+      "runs": 15,
+      "warmups": 2,
+      "output": "[\"2026-07-27T20:00:01Z start worker=alpha\\r\",\"2026-07-27T20:00:02Z parse records=20\\r\",\"2026-07-27T20:00:03Z check schemas=2\\r\",\"2026-07-27T20:00:04Z compile modules=4\\r\",\"2026-07-27T20:00:05Z execute tasks=8\\r\",\"2026-07-27T20:00:06Z observe spans=16\\r\",\"2026-07-27T20:00:07Z package files=32\\r\",\"2026-07-27T20:00:08Z install target=local\\r\",\"2026-07-27T20:00:09Z test passed=142\\r\",\"2026-07-27T20:00:10Z ship status=ready\\r\",\"2026-07-27T20:00:11Z start worker=beta\\r\",\"2026-07-27T20:00:12Z parse records=20\\r\",\"2026-07-27T20:00:13Z check schemas=2\\r\",\"2026-07-27T20:00:14Z compile modules=4\\r\",\"2026-07-27T20:00:15Z execute tasks=8\\r\",\"2026-07-27T20:00:16Z observe spans=16\\r\",\"2026-07-27T20:00:17Z package files=32\\r\",\"2026-07-27T20:00:18Z install target=local\\r\",\"2026-07-27T20:00:19Z test passed=142\\r\",\"2026-07-27T20:00:20Z ship status=ready\\r\",\"\"]",
+      "nivren": {
+        "median_ms": 14.52,
+        "p95_ms": 16.02,
+        "min_ms": 14.017,
+        "max_ms": 16.02,
+        "peak_rss_kb": null
+      },
+      "node": {
+        "median_ms": 41.541,
+        "p95_ms": 45.597,
+        "min_ms": 40,
+        "max_ms": 45.597,
+        "peak_rss_kb": null
+      },
+      "node_speedup": 0.35
+    },
+    {
+      "id": "arithmetic",
+      "category": "limit",
+      "label": "Tiered integer loop",
+      "description": "Two million calls to a small checked-integer kernel.",
+      "runs": 9,
+      "warmups": 2,
+      "output": "100000004",
+      "nivren": {
+        "median_ms": 44.955,
+        "p95_ms": 45.645,
+        "min_ms": 43.843,
+        "max_ms": 45.645,
+        "peak_rss_kb": 100000004
+      },
+      "node": {
+        "median_ms": 59.046,
+        "p95_ms": 61.454,
+        "min_ms": 58.263,
+        "max_ms": 61.454,
+        "peak_rss_kb": 100000004
+      },
+      "node_speedup": 0.76
+    },
+    {
+      "id": "fibonacci",
+      "category": "limit",
+      "label": "Recursive calls",
+      "description": "Naive recursive Fibonacci(30).",
+      "runs": 9,
+      "warmups": 2,
+      "output": "5702887",
+      "nivren": {
+        "median_ms": 33.663,
+        "p95_ms": 34.591,
+        "min_ms": 32.978,
+        "max_ms": 34.591,
+        "peak_rss_kb": 5702887
+      },
+      "node": {
+        "median_ms": 76.278,
+        "p95_ms": 77.755,
+        "min_ms": 75.744,
+        "max_ms": 77.755,
+        "peak_rss_kb": 5702887
+      },
+      "node_speedup": 0.44
+    },
+    {
+      "id": "nested_loops",
+      "category": "limit",
+      "label": "Nested loop arithmetic",
+      "description": "A 2000 × 2000 checked-integer checksum.",
+      "runs": 9,
+      "warmups": 2,
+      "output": "1998000000",
+      "nivren": {
+        "median_ms": 21.216,
+        "p95_ms": 22.173,
+        "min_ms": 20.53,
+        "max_ms": 22.173,
+        "peak_rss_kb": 1998000000
+      },
+      "node": {
+        "median_ms": 46.354,
+        "p95_ms": 48.05,
+        "min_ms": 44.826,
+        "max_ms": 48.05,
+        "peak_rss_kb": 1998000000
+      },
+      "node_speedup": 0.46
+    },
+    {
+      "id": "shape_churn",
+      "category": "limit",
+      "label": "Shape-heavy loop",
+      "description": "Three hundred thousand typed shape constructions with field reads.",
+      "runs": 9,
+      "warmups": 2,
+      "output": "45000749997",
+      "nivren": {
+        "median_ms": 16.251,
+        "p95_ms": 18.376,
+        "min_ms": 14.949,
+        "max_ms": 18.376,
+        "peak_rss_kb": 45000749997
+      },
+      "node": {
+        "median_ms": 48.552,
+        "p95_ms": 54.038,
+        "min_ms": 45.341,
+        "max_ms": 54.038,
+        "peak_rss_kb": 45000749997
+      },
+      "node_speedup": 0.33
+    },
+    {
+      "id": "json_transform",
+      "category": "limit",
+      "label": "Large typed JSON transform",
+      "description": "Decode a twenty-thousand-event JSON document through a declared schema and aggregate it.",
+      "runs": 9,
+      "warmups": 2,
+      "output": "10000:4990000",
+      "nivren": {
+        "median_ms": 49.623,
+        "p95_ms": 52.022,
+        "min_ms": 48.002,
+        "max_ms": 52.022,
+        "peak_rss_kb": 10000
+      },
+      "node": {
+        "median_ms": 48.863,
+        "p95_ms": 57.268,
+        "min_ms": 47.141,
+        "max_ms": 57.268,
+        "peak_rss_kb": 10000
+      },
+      "node_speedup": 1.02
+    },
+    {
+      "id": "alloc_churn",
+      "category": "limit",
+      "label": "Allocation churn",
+      "description": "Short-lived arrays and strings built and dropped in a hot loop.",
+      "runs": 9,
+      "warmups": 2,
+      "output": "11251913890",
+      "nivren": {
+        "median_ms": 122.104,
+        "p95_ms": 125.637,
+        "min_ms": 119.944,
+        "max_ms": 125.637,
+        "peak_rss_kb": 11251913890
+      },
+      "node": {
+        "median_ms": 46.245,
+        "p95_ms": 47.555,
+        "min_ms": 45.088,
+        "max_ms": 47.555,
+        "peak_rss_kb": 11251913890
+      },
+      "node_speedup": 2.64
+    },
+    {
+      "id": "tasks_channels",
+      "category": "concurrency",
+      "label": "Tasks and channels",
+      "description": "A bounded producer/consumer pair moving twenty thousand values; Nivren uses structured tasks and channels, Node an async queue.",
+      "runs": 9,
+      "warmups": 2,
+      "output": "199990000",
+      "nivren": {
+        "median_ms": 106.129,
+        "p95_ms": 114.032,
+        "min_ms": 100.445,
+        "max_ms": 114.032,
+        "peak_rss_kb": 199990000
+      },
+      "node": {
+        "median_ms": 44.435,
+        "p95_ms": 51.751,
+        "min_ms": 42.895,
+        "max_ms": 51.751,
+        "peak_rss_kb": 199990000
+      },
+      "node_speedup": 2.39
+    },
+    {
+      "id": "http_service",
+      "category": "service",
+      "label": "Warmed HTTP service",
+      "description": "One long-lived server process measured hot: per-request latency over one thousand sequential HTTP requests after two hundred warmup requests, same Node client for both runtimes.",
+      "runs": 1000,
+      "warmups": 200,
+      "output": "ok",
+      "nivren": {
+        "median_ms": 0.435,
+        "p95_ms": 0.546,
+        "min_ms": 0.318,
+        "max_ms": 0.999,
+        "peak_rss_kb": null
+      },
+      "node": {
+        "median_ms": 0.461,
+        "p95_ms": 0.594,
+        "min_ms": 0.325,
+        "max_ms": 1.395,
+        "peak_rss_kb": null
+      },
+      "node_speedup": 0.94
+    }
+  ]
+}
