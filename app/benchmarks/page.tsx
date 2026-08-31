@@ -27,7 +27,7 @@ export default function BenchmarksPage() {
   const strengths = report.results.filter(result => result.category === "strength");
   const limits = report.results.filter(result => result.category === "limit");
   const strengthLeads = strengths.map(result => result.node.median_ms / result.nivren.median_ms);
-  const computeLeads = limits.map(result => result.node_speedup);
+  const computeLeads = limits.map(result => result.node.median_ms / result.nivren.median_ms);
   const memoryRatios = strengths.flatMap(result => result.nivren.peak_rss_kb && result.node.peak_rss_kb
     ? [result.node.peak_rss_kb / result.nivren.peak_rss_kb]
     : []);
@@ -41,9 +41,9 @@ export default function BenchmarksPage() {
     },
     {
       id: "limit-results",
-      kicker: "Current limits",
-      title: "Hot compute still belongs to V8.",
-      description: "We keep the compute-heavy cases visible so optimization progress remains measurable. They are useful engineering diagnostics, not the whole story of either language.",
+      kicker: "Former limits",
+      title: "Hot compute, now compiled.",
+      description: "These three compute-heavy rows were Nivren’s published losses — up to 25× behind V8. The Edition 5 engine now compiles whole integer programs, loops, and recursive calls to native machine code, and the same transparent rows record the turnaround.",
       results: limits,
     },
   ];
@@ -53,8 +53,8 @@ export default function BenchmarksPage() {
       <div className="shell">
         <span className="kicker">Measured on real Nivren-shaped work</span>
         <h1>Quick tools. Small processes. Explicit safety.</h1>
-        <p>Nivren reaches useful command-line results in a few milliseconds while type and capability checks stay built in. The same transparent suite also shows where Node.js remains faster: long-running, compute-heavy JavaScript.</p>
-        <div className="page-hero-meta"><span className="meta-pill">AMD Ryzen 9 9950X3D · x64</span><span className="meta-pill">Nivren 0.10.0-beta.8 · Edition 5</span><span className="meta-pill">Node.js 22.15.0</span><span className="meta-pill">August 31, 2026</span></div>
+        <p>Nivren reaches useful command-line results in a few milliseconds while type and capability checks stay built in. With the Edition 5 engine compiling hot integer programs to machine code, the same transparent suite now shows Nivren ahead on every row — including the compute-heavy cases it previously lost.</p>
+        <div className="page-hero-meta"><span className="meta-pill">AMD Ryzen 9 9950X3D · x64</span><span className="meta-pill">Nivren 0.10.0-beta.8 · Edition 5 engine pre-release</span><span className="meta-pill">Node.js 22.15.0</span><span className="meta-pill">August 31, 2026</span></div>
       </div>
     </section>
 
@@ -68,7 +68,7 @@ export default function BenchmarksPage() {
         <div className="benchmark-stat-grid">
           <article className="benchmark-stat nivren-win"><strong>{Math.min(...strengthLeads).toFixed(1)}–{Math.max(...strengthLeads).toFixed(1)}×</strong><span>Nivren&apos;s lead</span><p>Across the four strength-first workflows</p></article>
           {memoryRatios.length ? <article className="benchmark-stat memory-win"><strong>{Math.min(...memoryRatios).toFixed(1)}–{Math.max(...memoryRatios).toFixed(1)}×</strong><span>Lower peak memory</span><p>Across the same fresh processes</p></article> : null}
-          <article className="benchmark-stat node-win"><strong>{Math.min(...computeLeads).toFixed(1)}–{Math.max(...computeLeads).toFixed(1)}×</strong><span>Node&apos;s compute lead</span><p>The optimization target remains visible</p></article>
+          <article className="benchmark-stat nivren-win"><strong>{Math.min(...computeLeads).toFixed(1)}–{Math.max(...computeLeads).toFixed(1)}×</strong><span>Compute lead, formerly a loss</span><p>The three rows V8 used to win, now compiled native</p></article>
         </div>
       </section>
 
@@ -94,7 +94,7 @@ export default function BenchmarksPage() {
 
       <section className="benchmark-reading">
         <article><span>01</span><h2>What the strengths mean</h2><p>Low startup and memory make Nivren a natural fit for command-line tools, scripts, automation steps, short-lived workers, and local data utilities. The data cases cover bounded text splitting plus typed JSON with file-capability enforcement, complete schema validation, and deterministic output.</p></article>
-        <article><span>02</span><h2>How to read the caveats</h2><p>The source-check row is intentionally not identical work: Nivren performs semantic, type, and capability checks, while <code>node --check</code> checks JavaScript syntax. Compute cases use checked 64-bit Nivren integers and optimized JavaScript numbers. This is a workload comparison, not a universal language ranking.</p></article>
+        <article><span>02</span><h2>How to read the caveats</h2><p>The source-check row is intentionally not identical work: Nivren performs semantic, type, and capability checks, while <code>node --check</code> checks JavaScript syntax. Compute cases use checked 64-bit Nivren integers and optimized JavaScript numbers. The measured binary is the Edition 5 engine build from main, ahead of the published beta.8 archives. This is a workload comparison, not a universal language ranking.</p></article>
       </section>
 
       <section className="benchmark-method" aria-labelledby="method-title">

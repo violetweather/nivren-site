@@ -165,7 +165,7 @@ test("syntax-highlights every block-level code sample", async () => {
 test("publishes reproducible Nivren versus Node.js results", async () => {
   const response = await render("/benchmarks");
   const html = await response.text();
-  for (const phrase of ["Measured on real Nivren-shaped work", "Where Nivren fits today", "Current limits", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "AMD Ryzen 9 9950X3D", "Nivren 0.10.0-beta.8", "Node.js 22.15.0", "What the strengths mean", "The wins and losses use one public harness"]) {
+  for (const phrase of ["Measured on real Nivren-shaped work", "Where Nivren fits today", "Former limits", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "AMD Ryzen 9 9950X3D", "Nivren 0.10.0-beta.8", "Node.js 22.15.0", "What the strengths mean", "The wins and losses use one public harness"]) {
     assert.match(html, new RegExp(phrase));
   }
   const benchmarkReport = JSON.parse(await readFile(new URL("../benchmarks/nivren-vs-node/results/2026-08-31-windows-x64.json", import.meta.url), "utf8"));
