@@ -1,26 +1,26 @@
 {
   "repository": "violetweather/nivren",
   "public": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "edition": 6,
     "channel": "stable",
     "published": true,
     "assets": [
-      "nivren-1.0.0.vsix",
-      "nivren-v1.0.0-browser.mjs",
-      "nivren-v1.0.0-browser.wasm",
-      "nivren-v1.0.0-linux-arm64.zip",
-      "nivren-v1.0.0-linux-x64.zip",
-      "nivren-v1.0.0-macos-arm64.zip",
-      "nivren-v1.0.0-macos-x64.zip",
-      "nivren-v1.0.0-wasm32-wasip1.wasm",
-      "nivren-v1.0.0-windows-arm64.zip",
-      "nivren-v1.0.0-windows-x64.zip",
+      "nivren-1.0.1.vsix",
+      "nivren-v1.0.1-browser.mjs",
+      "nivren-v1.0.1-browser.wasm",
+      "nivren-v1.0.1-linux-arm64.zip",
+      "nivren-v1.0.1-linux-x64.zip",
+      "nivren-v1.0.1-macos-arm64.zip",
+      "nivren-v1.0.1-macos-x64.zip",
+      "nivren-v1.0.1-wasm32-wasip1.wasm",
+      "nivren-v1.0.1-windows-arm64.zip",
+      "nivren-v1.0.1-windows-x64.zip",
       "SHA256SUMS"
     ]
   },
   "candidate": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "edition": 6,
     "channel": "stable",
     "published": true

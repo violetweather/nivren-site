@@ -21,7 +21,7 @@ test("renders the complete Nivren landing page", async () => {
   assert.match(html, /<title>Nivren — Code that reads like intent<\/title>/i);
   assert.match(html, /Code that reads like/);
   assert.match(html, /Edition 6 · stable/);
-  assert.match(html, /1\.0\.0/);
+  assert.match(html, /1\.0\.1/);
   assert.match(html, /25 × 1\.0\.0/);
   assert.match(html, /6 \+ WebAssembly/);
   assert.match(html, /href="\/docs"/);
@@ -155,9 +155,9 @@ test("publishes every portable stable target", async () => {
   assert.match(html, /Linux x64 \+ ARM64/);
   assert.match(html, /Non-root/);
   assert.match(html, /Portable compiler \+ VM/);
-  assert.match(html, /nivren-v1\.0\.0-wasm32-wasip1\.wasm/);
-  assert.match(html, /nivren-v1\.0\.0-browser\.wasm/);
-  assert.match(html, /nivren-1\.0\.0\.vsix/);
+  assert.match(html, /nivren-v1\.0\.1-wasm32-wasip1\.wasm/);
+  assert.match(html, /nivren-v1\.0\.1-browser\.wasm/);
+  assert.match(html, /nivren-1\.0\.1\.vsix/);
   assert.match(html, /pkgs\/container\/nivren/);
 });
 
