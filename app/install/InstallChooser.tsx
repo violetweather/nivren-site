@@ -7,12 +7,12 @@ type Platform = "mac" | "linux" | "windows" | "source";
 
 const instructions: Record<Platform, { label: string; available: string; commands: string; note: string }> = {
   mac: { label: "macOS", available: "Guided installer · Apple Silicon and Intel", commands: `curl --proto '=https' --tlsv1.2 -fsSLO \\
-  https://raw.githubusercontent.com/violetweather/nivren/main/install/install.sh
+  https://raw.githubusercontent.com/violetweather/nivren/v1.0.1/install/install.sh
 sh install.sh`, note: "The installer detects your Mac, verifies the archive, keeps the SDK/SBOM and one recovery version, writes an install receipt, and offers to configure PATH and VS Code." },
   linux: { label: "Linux", available: "Guided installer · x64 and ARM64", commands: `curl --proto '=https' --tlsv1.2 -fsSLO \\
-  https://raw.githubusercontent.com/violetweather/nivren/main/install/install.sh
+  https://raw.githubusercontent.com/violetweather/nivren/v1.0.1/install/install.sh
 sh install.sh`, note: "The installer detects your architecture, verifies the archive, keeps the SDK/SBOM and one recovery version, writes an install receipt, and offers to configure PATH and VS Code." },
-  windows: { label: "Windows", available: "Guided installer · x64 and ARM64", commands: `Invoke-WebRequest https://raw.githubusercontent.com/violetweather/nivren/main/install/install.ps1 -OutFile install.ps1
+  windows: { label: "Windows", available: "Guided installer · x64 and ARM64", commands: `Invoke-WebRequest https://raw.githubusercontent.com/violetweather/nivren/v1.0.1/install/install.ps1 -OutFile install.ps1
 Set-ExecutionPolicy -Scope Process Bypass
 .\\install.ps1`, note: "The installer verifies the archive, retains its SDK/SBOM and one recovery version, writes an install receipt, and offers to update PATH and VS Code." },
   source: { label: "From source", available: "Rust 1.88+", commands: `git clone https://github.com/violetweather/nivren.git
@@ -27,8 +27,8 @@ export function InstallChooser() {
   const [copied, setCopied] = useState(false);
   const item = instructions[platform];
   const installerHref = platform === "windows"
-    ? "https://raw.githubusercontent.com/violetweather/nivren/main/install/install.ps1"
-    : "https://raw.githubusercontent.com/violetweather/nivren/main/install/install.sh";
+    ? "https://raw.githubusercontent.com/violetweather/nivren/v1.0.1/install/install.ps1"
+    : "https://raw.githubusercontent.com/violetweather/nivren/v1.0.1/install/install.sh";
   async function copy() {
     await navigator.clipboard.writeText(item.commands);
     setCopied(true);
