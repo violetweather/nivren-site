@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "channel": "stable",
+  "version": "1.0.1",
+  "generation": 1,
+  "issued_at": 1788322179,
+  "expires_at": 1796098179,
+  "base_url": "https://github.com/violetweather/nivren/releases/download/v1.0.1",
+  "assets": {
+    "nivren-1.0.1.vsix": "84fd48190b40f30c61bc383d87288a3708689bf3ca6298a4cf847d8523b40b86",
+    "nivren-v1.0.1-browser.mjs": "cabc23851ea72fbda123b6c25cde008c42c5f689c330cbf4911715d109779019",
+    "nivren-v1.0.1-browser.wasm": "0f0fd1eab3d25e7fee32de70d9208e1d14e9560782262f43e2dd8e230791b4a1",
+    "nivren-v1.0.1-linux-arm64.zip": "216e597e620659c9ef276c2afddf34fe4978b3785f96d9a662f384799b369614",
+    "nivren-v1.0.1-linux-x64.zip": "6a9a72034a7f379ad474c4cdc8e0f64dbda57dbbea1e9c635544e2dd4944b729",
+    "nivren-v1.0.1-macos-arm64.zip": "372927e6cdce7a8e805070411f416d9329789acd089599fde2badabcd3a87b67",
+    "nivren-v1.0.1-macos-x64.zip": "12ea143ce8b645405c4eb29b1f43d5dd009a827b1ba807979388f5f68ffd2419",
+    "nivren-v1.0.1-wasm32-wasip1.wasm": "a7fe68a1e4d9f3ea15faf065deef1d665cc15015aa1b9f9e05db9459c487fefd",
+    "nivren-v1.0.1-windows-arm64.zip": "f086f13c158b92d2e70631c310130bba7e352c28ce3e8d3b26ef52b29a380d8e",
+    "nivren-v1.0.1-windows-x64.zip": "4be17c960ddf8e2e6cde07d404fac17e96f613b442bfa66c3a1e8ddd2ad33cbc"
+  },
+  "signature": "2f1aa7b327f0156e7a6d10c46b5fe46f8263e591f934b3746f728e6c45d5be861db21ab9e9bea74c052decb17af3a72d6559ac3709057b565ad09a5d90d6510b"
+}
