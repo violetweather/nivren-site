@@ -3,7 +3,7 @@ import { SiteFooter } from "./components/SiteFooter";
 import { SiteNav } from "./components/SiteNav";
 import "./globals.css";
 
-const officialOrigin = "https://violetweather.github.io/nivren-site";
+const officialOrigin = "https://nivren.nnx.fyi";
 const image = `${officialOrigin}/og-edition4.png`;
 
 export const metadata: Metadata = {

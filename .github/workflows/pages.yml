@@ -31,7 +31,9 @@ jobs:
       - run: npm run build:pages
         env:
           GITHUB_PAGES: "true"
-          NEXT_PUBLIC_BASE_PATH: /nivren-site
+          # The site is served at the root of the custom domain; keep this
+          # empty. Set it to /nivren-site only for the project Pages URL.
+          NEXT_PUBLIC_BASE_PATH: ""
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

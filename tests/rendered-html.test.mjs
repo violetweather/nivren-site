@@ -27,7 +27,7 @@ test("renders the complete Nivren landing page", async () => {
   assert.match(html, /href="\/docs"/);
   assert.match(html, /href="\/install"/);
   assert.match(html, /href="\/downloads"/);
-  assert.match(html, /property="og:image" content="https:\/\/violetweather\.github\.io\/nivren-site\/og-edition4\.png"/i);
+  assert.match(html, /property="og:image" content="https:\/\/nivren\.nnx\.fyi\/og-edition4\.png"/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
   assert.doesNotMatch(html, /public beta|Product Proof|Edition [245] /);
 });
