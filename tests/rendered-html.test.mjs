@@ -31,7 +31,7 @@ test("renders the complete Nivren landing page", async () => {
   assert.match(html, /href="\/docs"/);
   assert.match(html, /href="\/install"/);
   assert.match(html, /href="\/downloads"/);
-  assert.match(html, /property="og:image" content="https:\/\/nivren\.nnx\.fyi\/og-edition4\.png"/i);
+  assert.match(html, /property="og:image" content="https:\/\/nivren\.nnx\.fyi\/og-nivren\.png"/i);
   assert.doesNotMatch(html, /name="robots" content="[^"]*noindex/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
   assert.doesNotMatch(html, /public beta|Product Proof|Edition [245] /);
@@ -232,8 +232,8 @@ test("renders accessible landmarks and resolves every internal link", async () =
     for (const match of html.matchAll(/href="([^"]+)"/g)) {
       const href = match[1];
       if (!href.startsWith("/") || href.startsWith("/assets/")) continue;
-      if (href === "/favicon.svg") {
-        await access(new URL("../public/favicon.svg", import.meta.url));
+      if (["/favicon.svg", "/apple-touch-icon.png"].includes(href.split("?")[0])) {
+        await access(new URL(`../public${href.split("?")[0]}`, import.meta.url));
         continue;
       }
       const target = href.split(/[?#]/, 1)[0].replace(/\/$/, "") || "/";

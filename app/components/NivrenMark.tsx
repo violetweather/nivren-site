@@ -1,10 +1,9 @@
-/** The Nivren N: two upright stems with a coral diagonal cutting through them. */
+/** A folded N with forward-cut terminals and a continuous vermilion stroke. */
 export function NivrenMark({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" width="24" height="24" role="img" aria-hidden="true" focusable="false">
-      <rect x="1.6" y="2.6" width="4.4" height="18.8" fill="currentColor" />
-      <rect x="18" y="2.6" width="4.4" height="18.8" fill="currentColor" />
-      <polygon points="6,2.6 11.2,2.6 18,21.4 12.8,21.4" fill="#ff4d29" />
+    <svg className={className} viewBox="0 0 64 64" width="32" height="32" aria-hidden="true" focusable="false">
+      <path d="M6 58V20L20 6v38L6 58ZM44 6h14v38L44 58V6Z" fill="currentColor" />
+      <path d="m20 6 24 32v20L20 26V6Z" fill="#ef4b23" />
     </svg>
   );
 }
