@@ -19,15 +19,20 @@ test("renders the complete Nivren landing page", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
   assert.match(html, /<title>Nivren — Code that reads like intent<\/title>/i);
-  assert.match(html, /Code that reads like/);
-  assert.match(html, /Edition 6 · stable/);
+  const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  assert.match(text, /Code that reads like intent\./);
+  assert.match(text, /Edition 6 · Stable/);
   assert.match(html, /1\.0\.1/);
-  assert.match(html, /25 × 1\.0\.0/);
-  assert.match(html, /6 \+ WebAssembly/);
+  assert.match(html, /role="tablist" aria-label="Language examples"/);
+  assert.match(html, /Readable intent/);
+  assert.match(html, /Explicit authority/);
+  assert.match(html, /Typed outcomes/);
+  assert.match(html, /role="tabpanel"/);
   assert.match(html, /href="\/docs"/);
   assert.match(html, /href="\/install"/);
   assert.match(html, /href="\/downloads"/);
   assert.match(html, /property="og:image" content="https:\/\/nivren\.nnx\.fyi\/og-edition4\.png"/i);
+  assert.doesNotMatch(html, /name="robots" content="[^"]*noindex/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
   assert.doesNotMatch(html, /public beta|Product Proof|Edition [245] /);
 });
@@ -37,7 +42,7 @@ for (const [pathname, expected] of [
   ["/install", "Install Nivren"],
   ["/downloads", "Downloads"],
   ["/examples", "Examples"],
-  ["/benchmarks", "Twelve workloads. Every row published."],
+  ["/benchmarks", "Performance, in context."],
   ["/packages", "Packages"],
   ["/studio", "See what your program"],
   ["/studio/docs", "Studio documentation"],
@@ -62,21 +67,20 @@ test("presents the Edition 6 stable site and removes starter UI", async () => {
   assert.equal(packageJson.dependencies["react-loading-skeleton"], undefined);
 });
 
-test("publishes the official package catalog, live registry, and compatibility contract", async () => {
+test("publishes the official package directory and registry verification guidance", async () => {
   const response = await render("/packages");
   const html = await response.text();
   for (const phrase of [
-    "25 package guides", "every one at 1\\.0\\.0", "Live signed registry",
+    "official packages", "Version 1\\.0\\.0", "Signed registry",
     "violetweather\\.github\\.io/nivren-registry", "--trusted", "Ed25519",
-    "signed advisory, never a deletion", "niv trust",
-    "nivren_aead", "ChaCha20-Poly1305", "nivren_aws", "AWS Signature Version 4",
-    "nivren_compression", "gzip · gzip_decode · zlib · zlib_decode",
-    "nivren_discord", "validate_retry_policy",
+    "immutable package archives", "pinned Ed25519 root key",
+    "nivren_aead", "nivren_aws", "nivren_compression", "nivren_discord",
     "nivren_redis", "nivren_database", "nivren_desktop", "nivren_gpu",
-    "semantic versions",
+    "Obtain and verify",
   ]) {
     assert.match(html, new RegExp(phrase, "i"));
   }
+  assert.equal((html.match(/href="\/packages\/nivren_[a-z]+"/g) ?? []).length, 25);
 });
 
 test("publishes a detailed guide for every official package", async () => {
@@ -96,17 +100,20 @@ test("publishes a detailed guide for every official package", async () => {
 test("documents the guided cross-platform installers", async () => {
   const install = await render("/install");
   const html = await install.text();
-  assert.match(html, /install\/install\.sh/);
-  assert.match(html, /stable is ready/);
-  assert.match(html, /Verification is built in/);
-  assert.match(html, /ownership marker/);
-  assert.match(html, /Roll back without redownloading/);
-  assert.match(html, /install-receipt\.json/);
+  assert.match(html, /install\/install\.ps1/);
+  assert.match(html, /Your next idea starts here/);
+  assert.match(html, /Verified before it runs/);
+  assert.match(html, /SHA-256/);
+  assert.match(html, /keeps a previous verified version/);
+  assert.match(html, /Copy install commands/);
   assert.match(html, /--rollback/);
   assert.match(html, /-Rollback/);
   const chooser = await readFile(new URL("../app/install/InstallChooser.tsx", import.meta.url), "utf8");
   assert.match(chooser, /install\.ps1/);
+  assert.match(chooser, /install\.sh/);
   const explorer = await readFile(new URL("../app/docs/DocsExplorer.tsx", import.meta.url), "utf8");
+  assert.match(explorer, /ownership marker/);
+  assert.match(explorer, /machine-readable receipt/);
   assert.match(explorer, /--uninstall/);
   assert.match(explorer, /-Uninstall/);
   assert.match(explorer, /--rollback/);
@@ -135,7 +142,7 @@ test("documents the fail-closed Studio release matrix", async () => {
 test("documents distinctive Edition 6 capabilities", async () => {
   const docs = await render("/docs");
   const html = await docs.text();
-  assert.match(html, /Edition 6 guide/);
+  assert.match(html, /The Nivren guide/);
   const explorer = await readFile(new URL("../app/docs/DocsExplorer.tsx", import.meta.url), "utf8");
   for (const phrase of ["or give", "memory_bytes", "kind:database", "shape Signup holds", "gives String or Problem", "prepare request", "perform request", "start produce", "std.channels.send", "std.web.get", "nivren_routing", "nivren_database", "nivren_discord", "nivren_desktop", "Kotlin/JNI", "nivren_gpu", "CPU fallback", "std.native.open", "std.native.call_int", "ABI v3", "WASI Preview 1", "zero-import", "25 official packages", "niv-workspace.toml", "niv dap", "niv trust", "niv install --trusted", "niv build --aot", "WebView2", "wgpu", "postgres://", "mysql://", "mimalloc", "independent security audit"]) {
     assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
@@ -143,7 +150,9 @@ test("documents distinctive Edition 6 capabilities", async () => {
   for (const phrase of ["Intent-first language", "Failure, absence, and cleanup", "Database services", "Production checklist", "Previous", "Next"]) {
     assert.match(explorer, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
-  assert.match(html, /20 detailed guides/);
+  assert.match(html, /Search documentation/);
+  assert.match(html, /Choose a guide/);
+  assert.equal((explorer.match(/^    id: "/gm) ?? []).length, 20);
 });
 
 test("publishes every portable stable target", async () => {
@@ -172,13 +181,15 @@ test("syntax-highlights every block-level code sample", async () => {
   }
 });
 
-test("publishes the complete Edition 6 benchmark suite", async () => {
+test("publishes every benchmark result with its recorded runtime version", async () => {
   const response = await render("/benchmarks");
   const html = await response.text();
-  for (const phrase of ["The Edition 6 benchmark suite", "Twelve workloads", "Everyday commands", "Compute and data", "Concurrency", "Warmed service", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "Shape-heavy loop", "Large typed JSON transform", "Allocation churn", "Tasks and channels", "Warmed HTTP service", "AMD Ryzen 9 9950X3D", "Nivren 1.0.0 · Edition 6 engine", "Open rows, published anyway", "The wins and losses use one public harness"]) {
+  for (const phrase of ["Performance, in context", "Twelve workloads", "Source-to-result startup", "One-shot source check", "Typed JSON file pipeline", "Text file pipeline", "Tiered integer loop", "Recursive calls", "Nested loop arithmetic", "Shape-heavy loop", "Large typed JSON transform", "Allocation churn", "Tasks and channels", "Warmed HTTP service", "AMD Ryzen 9 9950X3D", "Runtimes recorded", "Median wall-clock time", "Lower is better", "Inspect the harness and complete results"]) {
     assert.match(html, new RegExp(phrase));
   }
   const benchmarkReport = JSON.parse(await readFile(new URL("../benchmarks/nivren-vs-node/results/2026-08-31-phase-n.json", import.meta.url), "utf8"));
+  assert.ok(html.includes(benchmarkReport.environment.nivren));
+  assert.ok(html.includes(benchmarkReport.environment.node));
   assert.equal(benchmarkReport.results.length, 12);
   assert.equal(benchmarkReport.results.filter(result => result.category === "strength").length, 4);
   assert.equal(benchmarkReport.results.filter(result => result.category === "limit").length, 6);
@@ -221,6 +232,10 @@ test("renders accessible landmarks and resolves every internal link", async () =
     for (const match of html.matchAll(/href="([^"]+)"/g)) {
       const href = match[1];
       if (!href.startsWith("/") || href.startsWith("/assets/")) continue;
+      if (href === "/favicon.svg") {
+        await access(new URL("../public/favicon.svg", import.meta.url));
+        continue;
+      }
       const target = href.split(/[?#]/, 1)[0].replace(/\/$/, "") || "/";
       assert.ok(known.has(target), `${route} links to unknown internal route ${href}`);
     }

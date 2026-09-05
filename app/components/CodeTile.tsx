@@ -19,7 +19,7 @@ export function CodeTile({
         <span className="tile-label">{label}</span>
         <h3>{title}</h3>
       </div>
-      <pre aria-label={`${title} sample`}>
+      <pre tabIndex={0} aria-label={`${title} sample`}>
         <SyntaxCode code={code} language={language} />
       </pre>
     </article>

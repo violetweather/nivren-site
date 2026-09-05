@@ -250,7 +250,7 @@ export function DocsExplorer() {
   const [active, setActive] = useState("quickstart");
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return needle ? sections.filter((section) => `${section.title} ${section.group} ${section.summary} ${section.search}`.toLowerCase().includes(needle)) : sections;
+    return needle ? sections.filter((section) => `${section.id} ${section.title} ${section.group} ${section.summary} ${section.search}`.toLowerCase().includes(needle)) : sections;
   }, [query]);
   const current = filtered.find((section) => section.id === active) ?? filtered[0] ?? sections[0];
   const currentIndex = sections.findIndex((section) => section.id === current.id);
@@ -261,13 +261,14 @@ export function DocsExplorer() {
     <aside className="docs-sidebar">
       <label className="doc-search"><span aria-hidden="true">⌕</span><span className="sr-only">Search documentation</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search docs" /></label>
       <p className="doc-count">{filtered.length} of {sections.length} detailed guides</p>
-      <nav aria-label="Documentation sections">{filtered.length ? filtered.map((section) => <button className={current.id === section.id ? "active" : ""} key={section.id} onClick={() => setActive(section.id)}><span>{section.group}</span>{section.title}</button>) : <p className="no-results">No sections match “{query}”.</p>}</nav>
+      <div className="doc-mobile-picker"><label htmlFor="doc-topic">Choose a guide</label><select id="doc-topic" value={current.id} onChange={event=>setActive(event.target.value)} disabled={!filtered.length}>{filtered.map(section=><option key={section.id} value={section.id}>{section.group} — {section.title}</option>)}</select></div><nav aria-label="Documentation sections">{filtered.length ? filtered.map((section) => <button className={current.id === section.id ? "active" : ""} key={section.id} aria-current={current.id === section.id ? "page" : undefined} onClick={() => setActive(section.id)}><span>{section.group}</span>{section.title}</button>) : <p className="no-results">No sections match “{query}”.</p>}</nav>
     </aside>
-    <article className="docs-content" key={current.id}>
+    <article className="docs-content" key={current.id} hidden={!filtered.length}>
       <span className="doc-group">{current.group}</span><h2>{current.title}</h2><p className="doc-summary">{current.summary}</p>
-      <div className="doc-body">{current.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}{current.nivren ? <pre><SyntaxCode code={current.nivren} /></pre> : null}{current.command ? <pre><SyntaxCode code={current.command} language="shell" /></pre> : null}{current.checks ? <><h3>Production checks</h3><ul>{current.checks.map((check) => <li key={check}>{check}</li>)}</ul></> : null}{current.id === "packages" ? <p>Explore the <Link className="inline-code" href="/packages">official package guides</Link> for APIs, failures, performance notes, and release checks.</p> : null}</div>
+      <div className="doc-body">{current.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}{current.nivren ? <pre tabIndex={0}><SyntaxCode code={current.nivren} /></pre> : null}{current.command ? <pre tabIndex={0}><SyntaxCode code={current.command} language="shell" /></pre> : null}{current.checks ? <><h3>Production checks</h3><ul>{current.checks.map((check) => <li key={check}>{check}</li>)}</ul></> : null}{current.id === "packages" ? <p>Explore the <Link className="inline-code" href="/packages">official package guides</Link> for APIs, failures, performance notes, and release checks.</p> : null}</div>
       <div className="doc-source">Normative behavior is defined by the frozen language specification — Edition 6 adds no syntax — and the source-controlled standard-library, bytecode, package, embedding, and Wasm specifications.</div>
-      <nav className="doc-pager" aria-label="Previous and next documentation sections">{previous ? <button type="button" onClick={() => setActive(previous.id)}><span>Previous</span>{previous.title}</button> : <span />}{next ? <button type="button" onClick={() => setActive(next.id)}><span>Next</span>{next.title}</button> : <span />}</nav>
+      <nav className="doc-pager" aria-label="Previous and next documentation sections">{previous ? <button type="button" onClick={() => {setQuery(""); setActive(previous.id);}}><span>Previous</span>{previous.title}</button> : <span />}{next ? <button type="button" onClick={() => {setQuery(""); setActive(next.id);}}><span>Next</span>{next.title}</button> : <span />}</nav>
     </article>
+    {!filtered.length && <div className="docs-empty" role="status"><h2>No guides found.</h2><p>Try a language feature, command, or topic.</p><button type="button" onClick={()=>setQuery("")}>Clear search</button></div>}
   </div>;
 }

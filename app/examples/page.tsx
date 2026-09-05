@@ -196,7 +196,7 @@ needs FileRead
 ];
 
 export default function ExamplesPage() {
-  return <><section className="page-hero compact"><div className="shell"><span className="kicker">Learn by reading</span><h1>Examples</h1><p>Complete, type-checked patterns showing what makes 1.0.0 unmistakably Nivren — the same frozen syntax Edition 6 runs as native machine code.</p></div></section>
+  return <><section className="page-hero compact"><div className="shell"><span className="kicker">Learn by reading</span><h1>Examples</h1><p>Practical patterns for typed data, explicit permissions, concurrency, and file access.</p></div></section>
   <Marquee items={examples.map(example => example.title)} />
   <div className="spread-list">{examples.map((example, index) => <article className="spread" key={example.title}>
     <div className="spread-copy">
@@ -205,6 +205,6 @@ export default function ExamplesPage() {
       <h2>{example.title}</h2>
       <p>{example.copy}</p>
     </div>
-    <pre className="spread-code" aria-label={`${example.title} source`}><SyntaxCode code={example.code} /></pre>
+    <pre tabIndex={0} className="spread-code" aria-label={`${example.title} source`}><SyntaxCode code={example.code} /></pre>
   </article>)}</div></>;
 }
