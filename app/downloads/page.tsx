@@ -16,7 +16,7 @@ const builds = [
   { platform: "WebAssembly", arch: "WASI Preview 1", icon: "W", asset: `nivren-v${publicRelease.version}-wasm32-wasip1.wasm`, action: "Download module", detail: "Portable compiler + VM · WASM" },
   { platform: "WebAssembly", arch: "Browser SDK", icon: "W", asset: `nivren-v${publicRelease.version}-browser.mjs`, action: "Download SDK", detail: "JavaScript loader · companion WASM below" },
   { platform: "VS Code", arch: "Extension", icon: "{ }", asset: `nivren-${publicRelease.version}.vsix`, action: "Download VSIX", detail: "Syntax, diagnostics, formatting, completion" },
-  { platform: "Container", arch: "Linux x64 + ARM64", icon: "□", href: "https://github.com/violetweather/nivren/pkgs/container/nivren", action: "Open package", detail: "Non-root · OCI + SBOM" },
+  { platform: "Container", arch: "Linux x64 + ARM64", icon: "□", href: "https://github.com/nnxdot/nivren/pkgs/container/nivren", action: "Open package", detail: "Non-root · OCI + SBOM" },
 ];
 
 const browserSdk = releaseAssetUrl(`nivren-v${publicRelease.version}-browser.mjs`);
@@ -37,7 +37,7 @@ export default function DownloadsPage() {
       </div>
       <section className="verify-section">
         <div><span className="kicker">Trust, then run</span><h2>Verify the download.</h2><p>Download the release checksum manifest and compare the entry for your artifact. Browser users need both the <a href={browserSdk}>JavaScript SDK</a> and its <a href={browserModule}>browser module</a>.</p><div className="digest"><span>SHA-256</span><a href={checksums}>Download SHA256SUMS ↗</a></div></div>
-        <div className="prose-card"><h3>GitHub attestation</h3><p>Verify an archive or WASM module&apos;s signed build provenance:</p><pre tabIndex={0}><SyntaxCode language="shell" code="gh attestation verify --repo violetweather/nivren <artifact>" /></pre><h3>Build it yourself</h3><pre tabIndex={0}><SyntaxCode language="shell" code={`git clone https://github.com/violetweather/nivren.git
+        <div className="prose-card"><h3>GitHub attestation</h3><p>Verify an archive or WASM module&apos;s signed build provenance:</p><pre tabIndex={0}><SyntaxCode language="shell" code="gh attestation verify --repo nnxdot/nivren <artifact>" /></pre><h3>Build it yourself</h3><pre tabIndex={0}><SyntaxCode language="shell" code={`git clone https://github.com/nnxdot/nivren.git
 cd nivren
 cargo build --release --locked`} /></pre><Link href="/install">Full installation guide →</Link></div>
       </section>

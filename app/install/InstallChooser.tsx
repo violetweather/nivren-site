@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {SyntaxCode} from "../components/SyntaxCode";
 import {publicRelease} from "../release";
 
-const releaseRoot=`https://raw.githubusercontent.com/violetweather/nivren/v${publicRelease.version}/install`;
+const releaseRoot=`https://raw.githubusercontent.com/nnxdot/nivren/v${publicRelease.version}/install`;
 const platforms=[
  {id:"windows",label:"Windows",support:"x64 and ARM64",code:`Invoke-WebRequest ${releaseRoot}/install.ps1 -OutFile install.ps1
 Set-ExecutionPolicy -Scope Process Bypass
@@ -14,7 +14,7 @@ sh install.sh`,file:`${releaseRoot}/install.sh`},
  {id:"linux",label:"Linux",support:"x64 and ARM64",code:`curl --proto '=https' --tlsv1.2 -fsSLO \\
   ${releaseRoot}/install.sh
 sh install.sh`,file:`${releaseRoot}/install.sh`},
- {id:"source",label:"From source",support:"Requires Rust 1.88 or newer",code:`git clone https://github.com/violetweather/nivren.git
+ {id:"source",label:"From source",support:"Requires Rust 1.88 or newer",code:`git clone https://github.com/nnxdot/nivren.git
 cd nivren
 cargo build --release --workspace --locked
 ./target/release/niv version`,file:null},
